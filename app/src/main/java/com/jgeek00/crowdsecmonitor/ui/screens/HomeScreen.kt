@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jgeek00.crowdsecmonitor.ui.components.CreateServerSheet
+import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 
 @Composable
@@ -43,9 +45,19 @@ fun NoServerConfiguredContent() {
     if (showSheet) {
         Dialog(
             onDismissRequest = { showSheet = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
+            )
         ) {
-            CreateServerSheet(onClose = { showSheet = false })
+            CrowdSecMonitorTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    CreateServerSheet(onClose = { showSheet = false })
+                }
+            }
         }
     }
 

@@ -1,13 +1,13 @@
 package com.jgeek00.crowdsecmonitor.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,33 +23,50 @@ fun CreateServerSheet(
 ) {
     val scope = rememberCoroutineScope()
     var showDiscardDialog by remember { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
-            CenterAlignedTopAppBar(
+            LargeTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                ),
+                scrollBehavior = scrollBehavior,
                 title = { Text(stringResource(R.string.create_server)) },
                 navigationIcon = {
                     IconButton(
                         onClick = { showDiscardDialog = true },
                         enabled = !viewModel.connecting
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = stringResource(R.string.close)
+                        )
                     }
                 },
                 actions = {
-                    TextButton(
-                        onClick = {
-                            scope.launch {
-                                if (viewModel.connect()) {
-                                    onClose()
+                    if (viewModel.connecting) {
+                        Box(
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                strokeWidth = 3.dp,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    } else {
+                        TextButton(
+                            onClick = {
+                                scope.launch {
+                                    if (viewModel.connect()) {
+                                        onClose()
+                                    }
                                 }
                             }
-                        },
-                        enabled = !viewModel.connecting
-                    ) {
-                        if (viewModel.connecting) {
-                            CircularProgressIndicator(modifier = Modifier.padding(end = 8.dp))
-                        } else {
+                        ) {
                             Text(stringResource(R.string.connect))
                         }
                     }
@@ -57,13 +74,14 @@ fun CreateServerSheet(
             )
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-            ConnectionForm(
-                viewModel = viewModel,
-                showHeader = false,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        ConnectionForm(
+            viewModel = viewModel,
+            showHeader = false,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+        )
     }
 
     if (showDiscardDialog) {

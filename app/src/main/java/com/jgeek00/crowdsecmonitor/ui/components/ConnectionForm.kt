@@ -23,20 +23,22 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.Enums
 import com.jgeek00.crowdsecmonitor.viewmodel.ConnectionFormViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ConnectionForm(
     viewModel: ConnectionFormViewModel,
     modifier: Modifier = Modifier,
-    showHeader: Boolean = true
+    showHeader: Boolean = true,
+    scrollState: androidx.compose.foundation.ScrollState = rememberScrollState()
 ) {
     val clipboardManager = LocalClipboardManager.current
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .imePadding()
+            .verticalScroll(scrollState)
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         if (showHeader) {
@@ -57,10 +59,12 @@ fun ConnectionForm(
                     fontSize = 30.sp
                 )
             }
+        } else {
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         // Server Information Section
-        SectionTitle(stringResource(R.string.server_information))
+        SectionTitle(stringResource(R.string.server_information), paddingTop = showHeader)
         OutlinedTextField(
             value = viewModel.name,
             onValueChange = { viewModel.name = it },
@@ -76,15 +80,16 @@ fun ConnectionForm(
         
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(text = stringResource(R.string.connection_method), style = MaterialTheme.typography.labelMedium)
-            Row(
+            ButtonGroup(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                overflowIndicator = {}
             ) {
                 Enums.ConnectionMethod.entries.forEach { method ->
-                    FilterChip(
-                        selected = viewModel.connectionMethod == method,
-                        onClick = { viewModel.connectionMethod = method },
-                        label = { Text(method.name) },
+                    toggleableItem(
+                        checked = viewModel.connectionMethod == method,
+                        onCheckedChange = { viewModel.connectionMethod = method },
+                        label = method.name,
+                        weight = 1f,
                         enabled = !viewModel.connecting
                     )
                 }
@@ -228,7 +233,7 @@ fun ConnectionForm(
             else -> {}
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(48.dp))
     }
 
     // Alerts
@@ -260,11 +265,12 @@ fun ConnectionForm(
 }
 
 @Composable
-private fun SectionTitle(title: String) {
+private fun SectionTitle(title: String, paddingTop: Boolean = true) {
     Text(
-        text = title.uppercase(),
+        text = title,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        modifier = if (paddingTop) Modifier.padding(top = 12.dp) else Modifier
     )
 }
