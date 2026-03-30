@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">CrowdSec Monitor</string>
+    <string name="setup_server_connection">Setup the server connection</string>
+    <string name="server_information">Server information</string>
+    <string name="name">Name</string>
+    <string name="server_route">Server route</string>
+    <string name="connection_method">Connection method</string>
+    <string name="ip_address_or_domain">IP address or domain</string>
+    <string name="port">Port</string>
+    <string name="path">Path</string>
+    <string name="authentication">Authentication</string>
+    <string name="method">Method</string>
+    <string name="none">None</string>
+    <string name="username_password">Username and password</string>
+    <string name="access_token">Access token</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="token">Token</string>
+    <string name="connect">Connect</string>
+    <string name="create_server">Create server</string>
+    <string name="discard_changes">Discard changes</string>
+    <string name="discard_changes_msg">Are you sure you want to discard changes?</string>
+    <string name="close">Close</string>
+    <string name="invalid_values">Invalid values</string>
+    <string name="connection_error">Connection error</string>
+</resources>
