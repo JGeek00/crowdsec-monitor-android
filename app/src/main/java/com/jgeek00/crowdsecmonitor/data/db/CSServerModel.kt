@@ -1,11 +1,11 @@
-package com.jgeek00.crowdsecmonitor.data.models
+package com.jgeek00.crowdsecmonitor.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity(tableName = "CSServers")
-data class CSServer(
+data class CSServerModel(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
     val name: String,
     val http: String,

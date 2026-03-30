@@ -1,7 +1,7 @@
 package com.jgeek00.crowdsecmonitor.data.repository
 
 import com.jgeek00.crowdsecmonitor.data.db.CSServerDao
-import com.jgeek00.crowdsecmonitor.data.models.CSServer
+import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 import javax.inject.Inject
@@ -11,17 +11,17 @@ import javax.inject.Singleton
 class ServerRepository @Inject constructor(
     private val csServerDao: CSServerDao
 ) {
-    fun getAllServers(): Flow<List<CSServer>> = csServerDao.getAllServers()
+    fun getAllServers(): Flow<List<CSServerModel>> = csServerDao.getAllServers()
 
-    fun getDefaultServer(): Flow<CSServer?> = csServerDao.getDefaultServer()
+    fun getDefaultServer(): Flow<CSServerModel?> = csServerDao.getDefaultServer()
 
-    suspend fun getServerById(id: UUID): CSServer? = csServerDao.getServerById(id)
+    suspend fun getServerById(id: UUID): CSServerModel? = csServerDao.getServerById(id)
 
-    suspend fun insertServer(server: CSServer) = csServerDao.insertServer(server)
+    suspend fun insertServer(server: CSServerModel) = csServerDao.insertServer(server)
 
-    suspend fun updateServer(server: CSServer) = csServerDao.updateServer(server)
+    suspend fun updateServer(server: CSServerModel) = csServerDao.updateServer(server)
 
-    suspend fun deleteServer(server: CSServer) = csServerDao.deleteServer(server)
+    suspend fun deleteServer(server: CSServerModel) = csServerDao.deleteServer(server)
 
     suspend fun setDefaultServer(id: UUID) = csServerDao.setDefaultServer(id)
 
@@ -38,7 +38,7 @@ class ServerRepository @Inject constructor(
     ) {
         val count = csServerDao.countServers()
         val isFirst = count == 0
-        val server = CSServer(
+        val server = CSServerModel(
             name = name,
             http = connectionMethod,
             domain = ipDomain,

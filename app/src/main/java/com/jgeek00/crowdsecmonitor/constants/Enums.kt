@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.data.models
+package com.jgeek00.crowdsecmonitor.constants
 
 object Enums {
     enum class ConnectionMethod(val value: String) {

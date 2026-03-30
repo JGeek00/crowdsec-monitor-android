@@ -1,30 +1,28 @@
 package com.jgeek00.crowdsecmonitor.viewmodel
 
+import android.content.Context
 import android.util.Patterns
 import java.util.regex.Pattern
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.api.CrowdSecApiClient
-import com.jgeek00.crowdsecmonitor.data.models.CSServer
-import com.jgeek00.crowdsecmonitor.data.models.Enums
+import com.jgeek00.crowdsecmonitor.data.models.HttpClientException
+import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
+import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.repository.ServerRepository
 import com.jgeek00.crowdsecmonitor.utils.InputFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import okhttp3.Request
 import javax.inject.Inject
-
-@Serializable
-data class ApiStatusResponse(
-    val status: String? = null
-)
 
 @HiltViewModel
 class ConnectionFormViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val serverRepository: ServerRepository
 ) : ViewModel() {
     val name = InputFieldState()
@@ -141,7 +139,7 @@ class ConnectionFormViewModel @Inject constructor(
                 val portValue = port.value.ifBlank { null }?.toIntOrNull()
                 val pathValue = path.value.ifBlank { null }
                 
-                val tempServer = CSServer(
+                val tempServer = CSServerModel(
                     name = name.value,
                     http = connectionMethod.value,
                     domain = ipDomain.value,
@@ -154,24 +152,7 @@ class ConnectionFormViewModel @Inject constructor(
                 )
 
                 val apiClient = CrowdSecApiClient(tempServer)
-                val request = Request.Builder()
-                    .url(apiClient.retrofit.baseUrl().newBuilder().addPathSegments("api/v1/status").build())
-                    .build()
-
-                val response = apiClient.retrofit.callFactory().newCall(request).execute()
-
-                if (!response.isSuccessful) {
-                    withContext(Dispatchers.Main) {
-                        connectionErrorAlert = true
-                        connectionErrorMessage = when (response.code) {
-                            401 -> "Invalid credentials. Please verify your username, password, or token."
-                            else -> "Server error: code ${response.code}"
-                        }
-                        connecting = false
-                        updateEnabledStates(true)
-                    }
-                    return@withContext false
-                }
+                apiClient.checkApiStatus()
 
                 serverRepository.createServer(
                     name = name.value,
@@ -190,10 +171,23 @@ class ConnectionFormViewModel @Inject constructor(
                     updateEnabledStates(true)
                 }
                 true
-            } catch (e: Exception) {
+            } catch (e: HttpClientException) {
                 withContext(Dispatchers.Main) {
                     connectionErrorAlert = true
-                    connectionErrorMessage = "Could not connect to server: ${e.localizedMessage}"
+                    connectionErrorMessage = when (e) {
+                        is HttpClientException.Unauthorized -> context.getString(R.string.connection_error_invalid_credentials)
+                        is HttpClientException.HttpErrorWithMessage -> e.message
+                        is HttpClientException.HttpError -> context.getString(R.string.connection_error_server, e.statusCode)
+                        else -> context.getString(R.string.connection_error_no_response)
+                    }
+                    connecting = false
+                    updateEnabledStates(true)
+                }
+                false
+            } catch (_: Exception) {
+                withContext(Dispatchers.Main) {
+                    connectionErrorAlert = true
+                    connectionErrorMessage = context.getString(R.string.connection_error_no_response)
                     connecting = false
                     updateEnabledStates(true)
                 }

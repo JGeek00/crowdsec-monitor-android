@@ -24,4 +24,7 @@
     <string name="invalid_values">Invalid values</string>
     <string name="connection_error">Connection error</string>
     <string name="selected">Selected</string>
+    <string name="connection_error_no_response">Could not connect to the server. Please check the connection settings (IP/domain, port, path) and make sure the server is reachable.</string>
+    <string name="connection_error_invalid_credentials">Authentication failed. The credentials provided are incorrect. Please verify your username, password, or access token.</string>
+    <string name="connection_error_server">The server returned an unexpected error (code %d). Please check the server status and try again.</string>
 </resources>

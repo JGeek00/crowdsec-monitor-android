@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.data.models.Enums
+import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.viewmodel.ConnectionFormViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)

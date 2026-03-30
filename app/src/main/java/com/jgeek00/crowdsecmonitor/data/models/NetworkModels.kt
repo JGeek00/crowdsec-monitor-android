@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.data.api
+package com.jgeek00.crowdsecmonitor.data.models
 
 import kotlinx.serialization.Serializable
 

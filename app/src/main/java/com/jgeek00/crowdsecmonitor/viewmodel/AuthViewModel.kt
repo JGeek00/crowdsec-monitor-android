@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.data.api.CrowdSecApiClient
-import com.jgeek00.crowdsecmonitor.data.models.CSServer
+import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.data.repository.ServerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,10 +19,10 @@ class AuthViewModel @Inject constructor(
     var isLoading by mutableStateOf(true)
         private set
 
-    var currentServer by mutableStateOf<CSServer?>(null)
+    var currentServer by mutableStateOf<CSServerModel?>(null)
         private set
 
-    var servers by mutableStateOf<List<CSServer>>(emptyList())
+    var servers by mutableStateOf<List<CSServerModel>>(emptyList())
         private set
 
     var apiClient by mutableStateOf<CrowdSecApiClient?>(null)
@@ -63,7 +63,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun deleteServer(server: CSServer) {
+    fun deleteServer(server: CSServerModel) {
         viewModelScope.launch {
             try {
                 errorMessage = null
@@ -74,7 +74,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun changeCurrentServer(server: CSServer) {
+    fun changeCurrentServer(server: CSServerModel) {
         if (server.id == currentServer?.id) return
 
         currentServer = server
@@ -84,7 +84,7 @@ class AuthViewModel @Inject constructor(
         // ServerStatusViewModel.reset()
     }
 
-    fun setDefaultServer(server: CSServer) {
+    fun setDefaultServer(server: CSServerModel) {
         viewModelScope.launch {
             try {
                 errorMessage = null
