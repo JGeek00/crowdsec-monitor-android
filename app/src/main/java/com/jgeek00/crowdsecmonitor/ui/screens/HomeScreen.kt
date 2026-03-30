@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.jgeek00.crowdsecmonitor.ui.components.CreateServerSheet
+import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerSheet
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 

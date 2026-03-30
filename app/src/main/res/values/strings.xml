@@ -27,4 +27,17 @@
     <string name="connection_error_no_response">Could not connect to the server. Please check the connection settings (IP/domain, port, path) and make sure the server is reachable.</string>
     <string name="connection_error_invalid_credentials">Authentication failed. The credentials provided are incorrect. Please verify your username, password, or access token.</string>
     <string name="connection_error_server">The server returned an unexpected error (code %d). Please check the server status and try again.</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
+    <string name="theme_section">Theme</string>
+    <string name="theme_system_default">System default</string>
+    <string name="theme_light">Light theme</string>
+    <string name="theme_dark">Dark theme</string>
+    <string name="configuration_section">Configuration</string>
+    <string name="app_configuration">App configuration</string>
+    <string name="server_configuration">Server configuration</string>
+    <string name="about_section">About</string>
+    <string name="app_version">App version</string>
+    <string name="app_configuration_detail">Here you will be able to configure general app options.</string>
+    <string name="server_configuration_detail">Here you will be able to configure server options.</string>
 </resources>

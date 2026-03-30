@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,9 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.jgeek00.crowdsecmonitor.ui.AppDestinations
-import com.jgeek00.crowdsecmonitor.ui.screens.HomeScreen
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.jgeek00.crowdsecmonitor.constants.Enums
+import com.jgeek00.crowdsecmonitor.ui.navigation.AppNavGraph
+import com.jgeek00.crowdsecmonitor.ui.navigation.Route
+import com.jgeek00.crowdsecmonitor.ui.navigation.topLevelRoutes
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
+import com.jgeek00.crowdsecmonitor.utils.readThemeMode
+import com.jgeek00.crowdsecmonitor.utils.writeThemeMode
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,9 +41,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val sharedPreferences = getSharedPreferences(packageName, MODE_PRIVATE)
+        val initialThemeMode = sharedPreferences.readThemeMode()
+
         setContent {
-            CrowdSecMonitorTheme {
-                CrowdSecMonitorApp()
+            var themeMode by rememberSaveable { mutableStateOf(initialThemeMode) }
+            val darkTheme = when (themeMode) {
+                Enums.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                Enums.ThemeMode.LIGHT -> false
+                Enums.ThemeMode.DARK -> true
+            }
+
+            CrowdSecMonitorTheme(darkTheme = darkTheme) {
+                CrowdSecMonitorApp(
+                    themeMode = themeMode,
+                    onThemeModeChange = {
+                        themeMode = it
+                        sharedPreferences.writeThemeMode(it)
+                    }
+                )
             }
         }
     }
@@ -41,55 +68,61 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CrowdSecMonitorApp(
+    themeMode: Enums.ThemeMode,
+    onThemeModeChange: (Enums.ThemeMode) -> Unit,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+    val navController = rememberNavController()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStackEntry?.destination
 
-    val visibleDestinations = if (!authViewModel.hasServerConfigured) {
-        listOf(AppDestinations.HOME, AppDestinations.SETTINGS)
+    val visibleTopLevelRoutes = if (!authViewModel.hasServerConfigured) {
+        topLevelRoutes.filter { it.route is Route.Home || it.route is Route.SettingsGraph }
     } else {
-        AppDestinations.entries.toList()
-    }
-
-    if (currentDestination !in visibleDestinations) {
-        currentDestination = AppDestinations.HOME
+        topLevelRoutes
     }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            visibleDestinations.forEach {
+            visibleTopLevelRoutes.forEach { topLevel ->
                 item(
                     icon = {
-                        Icon(
-                            it.icon,
-                            contentDescription = it.label
-                        )
+                        Icon(topLevel.icon, contentDescription = topLevel.label)
                     },
-                    label = { Text(it.label) },
-                    selected = it == currentDestination,
-                    onClick = { currentDestination = it }
+                    label = { Text(topLevel.label) },
+                    selected = currentDestination?.hierarchy?.any {
+                        it.hasRoute(topLevel.route::class)
+                    } == true,
+                    onClick = {
+                        navController.navigate(topLevel.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
         }
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
                 if (authViewModel.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
-                    ScreenContent(currentDestination, authViewModel)
+                    AppNavGraph(
+                        navController = navController,
+                        themeMode = themeMode,
+                        onThemeModeChange = onThemeModeChange,
+                        authViewModel = authViewModel,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ScreenContent(destination: AppDestinations, authViewModel: AuthViewModel) {
-    when (destination) {
-        AppDestinations.HOME -> HomeScreen(authViewModel)
-        AppDestinations.ALERTS -> Text("Alerts Screen")
-        AppDestinations.DECISIONS -> Text("Decisions Screen")
-        AppDestinations.SETTINGS -> Text("Settings Screen")
     }
 }

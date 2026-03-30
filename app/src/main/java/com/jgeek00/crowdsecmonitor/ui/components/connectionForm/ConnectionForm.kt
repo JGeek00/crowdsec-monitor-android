@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.components
+package com.jgeek00.crowdsecmonitor.ui.components.connectionForm
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
+import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.ConnectionFormViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -64,7 +65,12 @@ fun ConnectionForm(
         }
 
         // Server Information Section
-        SectionTitle(stringResource(R.string.server_information), paddingTop = showHeader)
+        SectionHeader(
+            text = stringResource(R.string.server_information),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            paddingValues = if (showHeader) PaddingValues(top = 12.dp) else PaddingValues(0.dp)
+        )
         OutlinedTextField(
             value = viewModel.name.value,
             onValueChange = { viewModel.validateName(it) },
@@ -78,7 +84,12 @@ fun ConnectionForm(
         )
 
         // Server Route Section
-        SectionTitle(stringResource(R.string.server_route))
+        SectionHeader(
+            text = stringResource(R.string.server_route),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            paddingValues = PaddingValues(top = 12.dp)
+        )
         
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(text = stringResource(R.string.connection_method), style = MaterialTheme.typography.labelMedium)
@@ -141,7 +152,12 @@ fun ConnectionForm(
         )
 
         // Authentication Section
-        SectionTitle(stringResource(R.string.authentication))
+        SectionHeader(
+            text = stringResource(R.string.authentication),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            paddingValues = PaddingValues(top = 12.dp)
+        )
         
         var expanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
@@ -265,13 +281,3 @@ fun ConnectionForm(
     }
 }
 
-@Composable
-private fun SectionTitle(title: String, paddingTop: Boolean = true) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = if (paddingTop) Modifier.padding(top = 12.dp) else Modifier
-    )
-}

@@ -11,4 +11,10 @@ object Enums {
         BASIC("basic"),
         BEARER("bearer")
     }
+
+    enum class ThemeMode {
+        SYSTEM,
+        LIGHT,
+        DARK
+    }
 }

@@ -15,6 +15,7 @@ okhttp = "4.12.0"
 kotlinxSerialization = "1.7.3"
 room = "2.6.1"
 ksp = "2.1.0-1.0.29"
+navigationCompose = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,9 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 
 # Serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# Navigation
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
