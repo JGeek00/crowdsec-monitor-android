@@ -66,13 +66,15 @@ fun ConnectionForm(
         // Server Information Section
         SectionTitle(stringResource(R.string.server_information), paddingTop = showHeader)
         OutlinedTextField(
-            value = viewModel.name,
-            onValueChange = { viewModel.name = it },
+            value = viewModel.name.value,
+            onValueChange = { viewModel.validateName(it) },
             label = { Text(stringResource(R.string.name)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            isError = viewModel.name.error != null,
+            supportingText = viewModel.name.error?.let { { Text(it) } },
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-            enabled = !viewModel.connecting
+            enabled = viewModel.name.enabled
         )
 
         // Server Route Section
@@ -97,39 +99,45 @@ fun ConnectionForm(
         }
 
         OutlinedTextField(
-            value = viewModel.ipDomain,
-            onValueChange = { viewModel.ipDomain = it },
+            value = viewModel.ipDomain.value,
+            onValueChange = { viewModel.validateIpDomain(it) },
             label = { Text(stringResource(R.string.ip_address_or_domain)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            isError = viewModel.ipDomain.error != null,
+            supportingText = viewModel.ipDomain.error?.let { { Text(it) } },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Uri,
                 capitalization = KeyboardCapitalization.None
             ),
-            enabled = !viewModel.connecting
+            enabled = viewModel.ipDomain.enabled
         )
 
         OutlinedTextField(
-            value = viewModel.port,
-            onValueChange = { viewModel.port = it },
+            value = viewModel.port.value,
+            onValueChange = { viewModel.validatePort(it) },
             label = { Text(stringResource(R.string.port)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            isError = viewModel.port.error != null,
+            supportingText = viewModel.port.error?.let { { Text(it) } },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            enabled = !viewModel.connecting
+            enabled = viewModel.port.enabled
         )
 
         OutlinedTextField(
-            value = viewModel.path,
-            onValueChange = { viewModel.path = it },
+            value = viewModel.path.value,
+            onValueChange = { viewModel.validatePath(it) },
             label = { Text(stringResource(R.string.path)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            isError = viewModel.path.error != null,
+            supportingText = viewModel.path.error?.let { { Text(it) } },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Uri,
                 capitalization = KeyboardCapitalization.None
             ),
-            enabled = !viewModel.connecting
+            enabled = viewModel.path.enabled
         )
 
         // Authentication Section
@@ -184,39 +192,45 @@ fun ConnectionForm(
         when (viewModel.authMethod) {
             Enums.AuthMethod.BASIC -> {
                 OutlinedTextField(
-                    value = viewModel.basicUser,
-                    onValueChange = { viewModel.basicUser = it },
+                    value = viewModel.basicUser.value,
+                    onValueChange = { viewModel.validateBasicUser(it) },
                     label = { Text(stringResource(R.string.username)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
+                    isError = viewModel.basicUser.error != null,
+                    supportingText = viewModel.basicUser.error?.let { { Text(it) } },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.None),
-                    enabled = !viewModel.connecting
+                    enabled = viewModel.basicUser.enabled
                 )
                 OutlinedTextField(
-                    value = viewModel.basicPassword,
-                    onValueChange = { viewModel.basicPassword = it },
+                    value = viewModel.basicPassword.value,
+                    onValueChange = { viewModel.validateBasicPassword(it) },
                     label = { Text(stringResource(R.string.password)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
+                    isError = viewModel.basicPassword.error != null,
+                    supportingText = viewModel.basicPassword.error?.let { { Text(it) } },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         capitalization = KeyboardCapitalization.None
                     ),
-                    enabled = !viewModel.connecting
+                    enabled = viewModel.basicPassword.enabled
                 )
             }
             Enums.AuthMethod.BEARER -> {
                 OutlinedTextField(
-                    value = viewModel.bearerToken,
-                    onValueChange = { viewModel.bearerToken = it },
+                    value = viewModel.bearerToken.value,
+                    onValueChange = { viewModel.validateBearerToken(it) },
                     label = { Text(stringResource(R.string.token)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
+                    isError = viewModel.bearerToken.error != null,
+                    supportingText = viewModel.bearerToken.error?.let { { Text(it) } },
                     trailingIcon = {
                         IconButton(onClick = {
                             clipboardManager.getText()?.let {
-                                viewModel.bearerToken = it.text
+                                viewModel.validateBearerToken(it.text)
                             }
                         }) {
                             Icon(Icons.Default.Add, contentDescription = "Paste")
@@ -227,7 +241,7 @@ fun ConnectionForm(
                         keyboardType = KeyboardType.Password,
                         capitalization = KeyboardCapitalization.None
                     ),
-                    enabled = !viewModel.connecting
+                    enabled = viewModel.bearerToken.enabled
                 )
             }
             else -> {}
@@ -237,19 +251,6 @@ fun ConnectionForm(
     }
 
     // Alerts
-    if (viewModel.invalidValuesAlert) {
-        AlertDialog(
-            onDismissRequest = { viewModel.invalidValuesAlert = false },
-            title = { Text(stringResource(R.string.invalid_values)) },
-            text = { Text(viewModel.invalidValuesMessage) },
-            confirmButton = {
-                TextButton(onClick = { viewModel.invalidValuesAlert = false }) {
-                    Text(stringResource(R.string.close))
-                }
-            }
-        )
-    }
-
     if (viewModel.connectionErrorAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.connectionErrorAlert = false },

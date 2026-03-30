@@ -1,6 +1,7 @@
 package com.jgeek00.crowdsecmonitor.viewmodel
 
 import android.util.Patterns
+import java.util.regex.Pattern
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,7 @@ import com.jgeek00.crowdsecmonitor.data.api.CrowdSecApiClient
 import com.jgeek00.crowdsecmonitor.data.models.CSServer
 import com.jgeek00.crowdsecmonitor.data.models.Enums
 import com.jgeek00.crowdsecmonitor.data.repository.ServerRepository
+import com.jgeek00.crowdsecmonitor.utils.InputFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,117 +27,130 @@ data class ApiStatusResponse(
 class ConnectionFormViewModel @Inject constructor(
     private val serverRepository: ServerRepository
 ) : ViewModel() {
-    var name by mutableStateOf("")
+    val name = InputFieldState()
+    val ipDomain = InputFieldState()
+    val port = InputFieldState()
+    val path = InputFieldState()
+    val basicUser = InputFieldState()
+    val basicPassword = InputFieldState()
+    val bearerToken = InputFieldState()
+
     var connectionMethod by mutableStateOf(Enums.ConnectionMethod.HTTP)
-    var ipDomain by mutableStateOf("")
-    var port by mutableStateOf("")
-    var path by mutableStateOf("")
     var authMethod by mutableStateOf(Enums.AuthMethod.NONE)
-    var basicUser by mutableStateOf("")
-    var basicPassword by mutableStateOf("")
-    var bearerToken by mutableStateOf("")
 
     var connecting by mutableStateOf(false)
-
-    var invalidValuesAlert by mutableStateOf(false)
-    var invalidValuesMessage by mutableStateOf("")
+        private set
 
     var connectionErrorAlert by mutableStateOf(false)
     var connectionErrorMessage by mutableStateOf("")
 
-    val isFormValid: Boolean
-        get() = name.isNotBlank() && ipDomain.isNotBlank() && when (authMethod) {
-            Enums.AuthMethod.BASIC -> basicUser.isNotBlank() && basicPassword.isNotBlank()
-            Enums.AuthMethod.BEARER -> bearerToken.isNotBlank()
-            Enums.AuthMethod.NONE -> true
+    private fun updateEnabledStates(enabled: Boolean) {
+        name.enabled = enabled
+        ipDomain.enabled = enabled
+        port.enabled = enabled
+        path.enabled = enabled
+        basicUser.enabled = enabled
+        basicPassword.enabled = enabled
+        bearerToken.enabled = enabled
+    }
+
+    fun validateName(value: String) {
+        name.value = value
+        name.error = if (value.isBlank()) "Name field is required" else null
+    }
+
+    fun validateIpDomain(value: String) {
+        ipDomain.value = value
+        val ipPattern = Pattern.compile(
+            "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        )
+        val isIp = ipPattern.matcher(value).matches()
+        val isDomain = Patterns.DOMAIN_NAME.matcher(value).matches()
+        ipDomain.error = when {
+            value.isBlank() -> "IP/Domain field is required"
+            !isIp && !isDomain -> "IP/Domain value is not valid"
+            else -> null
         }
+    }
 
-    fun checkValues(): Boolean {
-        invalidValuesAlert = false
-        invalidValuesMessage = ""
-
-        if (name.isBlank()) {
-            invalidValuesAlert = true
-            invalidValuesMessage = "Name field is required"
-            return false
+    fun validatePort(value: String) {
+        port.value = value
+        if (value.isBlank()) {
+            port.error = null
+            return
         }
-
-        if (ipDomain.isBlank()) {
-            invalidValuesAlert = true
-            invalidValuesMessage = "IP/Domain field is required"
-            return false
+        val portNumber = value.toIntOrNull()
+        port.error = when (portNumber) {
+            null -> "Port must be a valid number"
+            !in 1..65535 -> "Port must be between 1 and 65535"
+            else -> null
         }
+    }
 
-        val isIp = Patterns.IP_ADDRESS.matcher(ipDomain).matches()
-        val isDomain = Patterns.DOMAIN_NAME.matcher(ipDomain).matches()
-        if (!isIp && !isDomain) {
-            invalidValuesAlert = true
-            invalidValuesMessage = "IP/Domain value is not valid"
-            return false
+    fun validatePath(value: String) {
+        path.value = value
+        path.error = null // No specific validation for path currently
+    }
+
+    fun validateBasicUser(value: String) {
+        basicUser.value = value
+        basicUser.error = if (value.isBlank() && authMethod == Enums.AuthMethod.BASIC) {
+            "Username is required"
+        } else null
+    }
+
+    fun validateBasicPassword(value: String) {
+        basicPassword.value = value
+        basicPassword.error = if (value.isBlank() && authMethod == Enums.AuthMethod.BASIC) {
+            "Password is required"
+        } else null
+    }
+
+    fun validateBearerToken(value: String) {
+        bearerToken.value = value
+        bearerToken.error = if (value.isBlank() && authMethod == Enums.AuthMethod.BEARER) {
+            "Token is required"
+        } else null
+    }
+
+    fun validateAll(): Boolean {
+        validateName(name.value)
+        validateIpDomain(ipDomain.value)
+        validatePort(port.value)
+        if (authMethod == Enums.AuthMethod.BASIC) {
+            validateBasicUser(basicUser.value)
+            validateBasicPassword(basicPassword.value)
+        } else if (authMethod == Enums.AuthMethod.BEARER) {
+            validateBearerToken(bearerToken.value)
         }
-
-        if (port.isNotBlank()) {
-            val portNumber = port.toIntOrNull()
-            if (portNumber == null) {
-                invalidValuesAlert = true
-                invalidValuesMessage = "Port must be a valid number"
-                return false
-            }
-            if (portNumber <= 0 || portNumber > 65535) {
-                invalidValuesAlert = true
-                invalidValuesMessage = "Port must be between 1 and 65535"
-                return false
-            }
-        }
-
-        when (authMethod) {
-            Enums.AuthMethod.BASIC -> {
-                if (basicUser.isBlank()) {
-                    invalidValuesAlert = true
-                    invalidValuesMessage = "Username is required for basic authentication"
-                    return false
-                }
-                if (basicPassword.isBlank()) {
-                    invalidValuesAlert = true
-                    invalidValuesMessage = "Password is required for basic authentication"
-                    return false
-                }
-            }
-            Enums.AuthMethod.BEARER -> {
-                if (bearerToken.isBlank()) {
-                    invalidValuesAlert = true
-                    invalidValuesMessage = "Token is required for Bearer authentication"
-                    return false
-                }
-            }
-            Enums.AuthMethod.NONE -> {}
-        }
-
-        return true
+        
+        return name.error == null && ipDomain.error == null && port.error == null &&
+               basicUser.error == null && basicPassword.error == null && bearerToken.error == null
     }
 
     suspend fun connect(): Boolean {
-        if (!checkValues()) return false
+        if (!validateAll()) return false
 
         connecting = true
+        updateEnabledStates(false)
         connectionErrorAlert = false
         connectionErrorMessage = ""
 
         return withContext(Dispatchers.IO) {
             try {
-                val portValue = port.ifBlank { null }?.toIntOrNull()
-                val pathValue = path.ifBlank { null }
+                val portValue = port.value.ifBlank { null }?.toIntOrNull()
+                val pathValue = path.value.ifBlank { null }
                 
                 val tempServer = CSServer(
-                    name = name,
+                    name = name.value,
                     http = connectionMethod.value,
-                    domain = ipDomain,
+                    domain = ipDomain.value,
                     port = portValue,
                     path = pathValue,
                     authMethod = authMethod.value,
-                    basicUser = basicUser.ifBlank { null },
-                    basicPassword = basicPassword.ifBlank { null },
-                    bearerToken = bearerToken.ifBlank { null }
+                    basicUser = basicUser.value.ifBlank { null },
+                    basicPassword = basicPassword.value.ifBlank { null },
+                    bearerToken = bearerToken.value.ifBlank { null }
                 )
 
                 val apiClient = CrowdSecApiClient(tempServer)
@@ -153,24 +168,26 @@ class ConnectionFormViewModel @Inject constructor(
                             else -> "Server error: code ${response.code}"
                         }
                         connecting = false
+                        updateEnabledStates(true)
                     }
                     return@withContext false
                 }
 
                 serverRepository.createServer(
-                    name = name,
+                    name = name.value,
                     connectionMethod = connectionMethod.value,
-                    ipDomain = ipDomain,
+                    ipDomain = ipDomain.value,
                     port = portValue,
                     path = pathValue,
                     authMethod = authMethod.value,
-                    basicUser = basicUser.ifBlank { null },
-                    basicPassword = basicPassword.ifBlank { null },
-                    bearerToken = bearerToken.ifBlank { null }
+                    basicUser = basicUser.value.ifBlank { null },
+                    basicPassword = basicPassword.value.ifBlank { null },
+                    bearerToken = bearerToken.value.ifBlank { null }
                 )
 
                 withContext(Dispatchers.Main) {
                     connecting = false
+                    updateEnabledStates(true)
                 }
                 true
             } catch (e: Exception) {
@@ -178,6 +195,7 @@ class ConnectionFormViewModel @Inject constructor(
                     connectionErrorAlert = true
                     connectionErrorMessage = "Could not connect to server: ${e.localizedMessage}"
                     connecting = false
+                    updateEnabledStates(true)
                 }
                 false
             }
@@ -185,17 +203,19 @@ class ConnectionFormViewModel @Inject constructor(
     }
 
     fun reset() {
-        name = ""
+        name.reset()
+        ipDomain.reset()
+        port.reset()
+        path.reset()
+        basicUser.reset()
+        basicPassword.reset()
+        bearerToken.reset()
+
         connectionMethod = Enums.ConnectionMethod.HTTP
-        ipDomain = ""
-        port = ""
-        path = ""
         authMethod = Enums.AuthMethod.NONE
-        basicUser = ""
-        basicPassword = ""
-        bearerToken = ""
+
         connecting = false
-        invalidValuesAlert = false
+        updateEnabledStates(true)
         connectionErrorAlert = false
     }
 }
