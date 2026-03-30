@@ -40,4 +40,18 @@
     <string name="app_version">App version</string>
     <string name="app_configuration_detail">Here you will be able to configure general app options.</string>
     <string name="server_configuration_detail">Here you will be able to configure server options.</string>
+    <string name="servers_section">Servers</string>
+    <string name="add_server">Add server</string>
+    <string name="delete_server">Delete server</string>
+    <string name="delete_server_confirm">Are you sure you want to delete this server? This action cannot be undone.</string>
+    <string name="delete_server_error">An error occurred while deleting the server. This could mean that the database is corrupted. Please try again. If the problem persists, reinstall the application.</string>
+    <string name="default_server">Default server</string>
+    <string name="set_as_default_server">Set as default server</string>
+    <string name="set_default_server_error">An error occurred while setting the default server. Please try again. If the problem persists, reinstall the application.</string>
+    <string name="new_default_server_msg">%s is now the default server</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="no_servers_configured">No servers configured</string>
 </resources>

@@ -28,11 +28,21 @@ class AuthViewModel @Inject constructor(
     var apiClient by mutableStateOf<CrowdSecApiClient?>(null)
         private set
 
-    var errorMessage by mutableStateOf<String?>(null)
+    var deleteServerError by mutableStateOf(false)
+        private set
+
+    var setDefaultServerError by mutableStateOf(false)
+        private set
+
+    var newDefaultServerSet by mutableStateOf<String?>(null)
         private set
 
     val hasServerConfigured: Boolean
         get() = currentServer != null && apiClient != null
+
+    fun clearDeleteServerError() { deleteServerError = false }
+    fun clearSetDefaultServerError() { setDefaultServerError = false }
+    fun clearNewDefaultServerSet() { newDefaultServerSet = null }
 
     init {
         initialize()
@@ -66,11 +76,17 @@ class AuthViewModel @Inject constructor(
     fun deleteServer(server: CSServerModel) {
         viewModelScope.launch {
             try {
-                errorMessage = null
+                deleteServerError = false
                 serverRepository.deleteServer(server)
-            } catch (e: Exception) {
-                errorMessage = "Error al borrar el servidor: ${e.message}"
+            } catch (_: Exception) {
+                deleteServerError = true
             }
+        }
+    }
+
+    private fun deleteServerSilently(server: CSServerModel) {
+        viewModelScope.launch {
+            runCatching { serverRepository.deleteServer(server) }
         }
     }
 
@@ -79,27 +95,28 @@ class AuthViewModel @Inject constructor(
 
         currentServer = server
         apiClient = CrowdSecApiClient(server)
-        
-        // TODO: Resetear otros ViewModels cuando existan
-        // ServerStatusViewModel.reset()
+
+        // TODO: Resetear los ViewModels dependientes cuando existan
+        //  (ServerStatusViewModel, DashboardViewModel, AlertsListViewModel…)
     }
 
     fun setDefaultServer(server: CSServerModel) {
         viewModelScope.launch {
             try {
-                errorMessage = null
+                setDefaultServerError = false
                 serverRepository.setDefaultServer(server.id)
-            } catch (e: Exception) {
-                errorMessage = "Error al establecer servidor predeterminado: ${e.message}"
+                newDefaultServerSet = server.name
+            } catch (_: Exception) {
+                setDefaultServerError = true
             }
         }
     }
 
     fun handleUnauthorized() {
-        currentServer?.let { deleteServer(it) }
+        currentServer?.let { deleteServerSilently(it) }
     }
 
     fun logout() {
-        currentServer?.let { deleteServer(it) }
+        currentServer?.let { deleteServerSilently(it) }
     }
 }

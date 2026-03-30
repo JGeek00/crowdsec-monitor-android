@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,7 +30,8 @@ import androidx.navigation.compose.rememberNavController
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.navigation.AppNavGraph
 import com.jgeek00.crowdsecmonitor.ui.navigation.Route
-import com.jgeek00.crowdsecmonitor.ui.navigation.topLevelRoutes
+import com.jgeek00.crowdsecmonitor.ui.navigation.topLevelRoutesNoServer
+import com.jgeek00.crowdsecmonitor.ui.navigation.topLevelRoutesWithServer
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.utils.readThemeMode
 import com.jgeek00.crowdsecmonitor.utils.writeThemeMode
@@ -76,19 +78,32 @@ fun CrowdSecMonitorApp(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
 
-    val visibleTopLevelRoutes = if (!authViewModel.hasServerConfigured) {
-        topLevelRoutes.filter { it.route is Route.Home || it.route is Route.SettingsGraph }
+    val visibleTopLevelRoutes = if (authViewModel.hasServerConfigured) {
+        topLevelRoutesWithServer
     } else {
-        topLevelRoutes
+        topLevelRoutesNoServer
+    }
+
+    // Redirige automáticamente cuando el tab activo deja de ser visible
+    // (p.ej.: Home al configurar un servidor, Dashboard al eliminarlo)
+    LaunchedEffect(authViewModel.hasServerConfigured) {
+        if (authViewModel.isLoading) return@LaunchedEffect
+        val isCurrentTabVisible = visibleTopLevelRoutes.any { tab ->
+            currentDestination?.hierarchy?.any { it.hasRoute(tab.route::class) } == true
+        }
+        if (!isCurrentTabVisible) {
+            navController.navigate(visibleTopLevelRoutes.first().route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
     }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             visibleTopLevelRoutes.forEach { topLevel ->
                 item(
-                    icon = {
-                        Icon(topLevel.icon, contentDescription = topLevel.label)
-                    },
+                    icon = { Icon(topLevel.icon, contentDescription = topLevel.label) },
                     label = { Text(topLevel.label) },
                     selected = currentDestination?.hierarchy?.any {
                         it.hasRoute(topLevel.route::class)
@@ -116,6 +131,7 @@ fun CrowdSecMonitorApp(
                 } else {
                     AppNavGraph(
                         navController = navController,
+                        startDestination = if (authViewModel.hasServerConfigured) Route.Dashboard else Route.Home,
                         themeMode = themeMode,
                         onThemeModeChange = onThemeModeChange,
                         authViewModel = authViewModel,
