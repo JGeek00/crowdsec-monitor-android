@@ -78,4 +78,21 @@
     <string name="lapi_online_message">The CrowdSec LAPI is online and the API is pulling data from it correctly.</string>
     <string name="lapi_offline_title">CrowdSec LAPI is offline</string>
     <string name="lapi_offline_message">The CrowdSec LAPI is offline or the API is having trouble connecting to it. Some data may not be up to date or available.</string>
+    <string name="filters">Filters</string>
+    <string name="no_alerts_title">No alerts</string>
+    <string name="no_alerts_description">Change the filtering criteria to see more alerts</string>
+    <string name="delete_alert">Delete alert</string>
+    <string name="delete_alert_confirm">Are you sure you want to delete this alert? This action cannot be undone.</string>
+    <string name="delete_alert_error_title">Error deleting alert</string>
+    <string name="delete_alert_error_msg">An error occurred when trying to delete the alert. Please try again.</string>
+    <string name="select_alert">Select an alert</string>
+    <string name="scenario">Scenario</string>
+    <string name="unknown">Unknown</string>
+    <string name="scenarios">Scenarios</string>
+    <string name="ip_owners">IP owners</string>
+    <string name="countries">Countries</string>
+    <string name="targets">Targets</string>
+    <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
+    <string name="n_selected">%d selected</string>
 </resources>

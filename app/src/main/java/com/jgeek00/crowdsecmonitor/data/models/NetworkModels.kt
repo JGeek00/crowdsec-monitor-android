@@ -18,6 +18,9 @@ data class ApiErrorResponse(
         get() = message ?: errors?.firstOrNull()
 }
 
+@Serializable
+class EmptyResponse
+
 sealed class LoadingResult<out T> {
     data object Loading : LoadingResult<Nothing>()
     data class Success<T>(val value: T) : LoadingResult<T>()

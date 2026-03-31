@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.jgeek00.crowdsecmonitor.constants.Enums
+import com.jgeek00.crowdsecmonitor.ui.screens.alerts.AlertsListScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.DashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.SettingsScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.FullListDashboardScreen
@@ -121,9 +122,7 @@ fun AppNavGraph(
 
         navigation<Route.AlertsGraph>(startDestination = Route.Alerts) {
             composable<Route.Alerts> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Alerts Screen")
-                }
+                AlertsListScreen()
             }
         }
 
