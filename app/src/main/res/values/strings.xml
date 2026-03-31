@@ -61,4 +61,20 @@
     <string name="offline">Offline</string>
     <string name="new_version_available">New version available</string>
     <string name="not_available">N/A</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="alerts_last_24h">Alerts last 24 hours</string>
+    <string name="active_decisions">Active decisions</string>
+    <string name="alerts">Alerts</string>
+    <string name="decisions">Decisions</string>
+    <string name="top_countries">Top countries</string>
+    <string name="top_ip_owners">Top IP owners</string>
+    <string name="top_scenarios">Top scenarios</string>
+    <string name="top_targets">Top targets</string>
+    <string name="view_all">View all</string>
+    <string name="loading">Loading…</string>
+    <string name="error_fetching_data">An error occurred when fetching the data</string>
+    <string name="lapi_online_title">CrowdSec LAPI is online</string>
+    <string name="lapi_online_message">The CrowdSec LAPI is online and the API is pulling data from it correctly.</string>
+    <string name="lapi_offline_title">CrowdSec LAPI is offline</string>
+    <string name="lapi_offline_message">The CrowdSec LAPI is offline or the API is having trouble connecting to it. Some data may not be up to date or available.</string>
 </resources>

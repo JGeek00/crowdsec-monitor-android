@@ -3,6 +3,7 @@ package com.jgeek00.crowdsecmonitor.ui.screens.settings
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -13,10 +14,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,27 +36,24 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.utils.buildServerUrl
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ServerListItem(
     server: CSServerModel,
     isCurrentServer: Boolean,
     onSelect: () -> Unit,
     onSetDefault: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    shapes: ListItemShapes,
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     Box {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = server.name,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            },
+        SegmentedListItem(
+            onClick = onSelect,
+            selected = isCurrentServer,
+            shapes = shapes,
             supportingContent = {
                 Text(
                     text = buildServerUrl(server),
@@ -84,7 +84,15 @@ fun ServerListItem(
                     onClick = onSelect,
                     onLongClick = { showDropdownMenu = true }
                 )
-        )
+                .padding(bottom = 2.dp)
+        ) {
+            Text(
+                text = server.name,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
         DropdownMenu(
             expanded = showDropdownMenu,

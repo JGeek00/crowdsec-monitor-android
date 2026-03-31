@@ -1,6 +1,5 @@
 package com.jgeek00.crowdsecmonitor.ui.components
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,14 +17,13 @@ fun SectionHeader(
     style: TextStyle = MaterialTheme.typography.titleSmall,
     fontWeight: FontWeight = FontWeight.SemiBold,
     color: Color = MaterialTheme.colorScheme.primary,
-    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+    smallTopPadding: Boolean = false
 ) {
     Text(
         text = text,
         style = style,
         fontWeight = fontWeight,
         color = color,
-        modifier = modifier.padding(paddingValues)
+        modifier = modifier.padding(top = if (smallTopPadding) 12.dp else 24.dp, bottom = 12.dp)
     )
 }
-

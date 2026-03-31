@@ -17,4 +17,16 @@ object Enums {
         LIGHT,
         DARK
     }
+
+    enum class DashboardBoxSummaryType {
+        ALERTS,
+        DECISIONS
+    }
+
+    enum class DashboardItemType {
+        COUNTRY,
+        IP_OWNER,
+        SCENARIO,
+        TARGET
+    }
 }

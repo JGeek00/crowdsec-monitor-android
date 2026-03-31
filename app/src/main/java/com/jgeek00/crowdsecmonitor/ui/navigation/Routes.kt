@@ -14,6 +14,7 @@ sealed interface Route {
     @Serializable data object Dashboard : Route
     @Serializable data object Alerts : Route
     @Serializable data object Decisions : Route
+    @Serializable data class FullListDashboard(val itemType: String) : Route
 
     // Settings nested graph
     @Serializable data object SettingsGraph : Route

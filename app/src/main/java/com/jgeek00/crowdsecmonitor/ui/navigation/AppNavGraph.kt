@@ -18,10 +18,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.screens.DashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.HomeScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.SettingsScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.FullListDashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
@@ -102,7 +104,19 @@ fun AppNavGraph(
         }
 
         composable<Route.Dashboard> {
-            DashboardScreen(authViewModel)
+            DashboardScreen(
+                onNavigateToFullList = { type ->
+                    navController.navigate(Route.FullListDashboard(type.name))
+                }
+            )
+        }
+
+        composable<Route.FullListDashboard> { backStackEntry ->
+            val route = backStackEntry.toRoute<Route.FullListDashboard>()
+            FullListDashboardScreen(
+                itemType = Enums.DashboardItemType.valueOf(route.itemType),
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable<Route.Alerts> {

@@ -14,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val serverRepository: ServerRepository
+    private val serverRepository: ServerRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     var isLoading by mutableStateOf(true)
         private set
@@ -61,15 +62,18 @@ class AuthViewModel @Inject constructor(
 
     private fun checkInstance() {
         val server = servers.find { it.defaultServer == true } ?: servers.firstOrNull()
-        
+
         if (server != null) {
             if (currentServer?.id != server.id || apiClient == null) {
                 currentServer = server
-                apiClient = CrowdSecApiClient(server)
+                val client = CrowdSecApiClient(server)
+                apiClient = client
+                sessionManager.apiClient = client
             }
         } else {
             currentServer = null
             apiClient = null
+            sessionManager.apiClient = null
         }
     }
 
@@ -94,7 +98,9 @@ class AuthViewModel @Inject constructor(
         if (server.id == currentServer?.id) return
 
         currentServer = server
-        apiClient = CrowdSecApiClient(server)
+        val client = CrowdSecApiClient(server)
+        apiClient = client
+        sessionManager.apiClient = client
 
         // TODO: Resetear los ViewModels dependientes cuando existan
         //  (ServerStatusViewModel, DashboardViewModel, AlertsListViewModel…)

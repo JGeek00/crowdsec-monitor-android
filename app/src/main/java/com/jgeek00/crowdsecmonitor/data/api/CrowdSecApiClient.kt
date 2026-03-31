@@ -1,5 +1,6 @@
 package com.jgeek00.crowdsecmonitor.data.api
 
+import com.jgeek00.crowdsecmonitor.data.api.statistics.StatisticsApiClient
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponse
 import com.jgeek00.crowdsecmonitor.data.models.HttpClientException

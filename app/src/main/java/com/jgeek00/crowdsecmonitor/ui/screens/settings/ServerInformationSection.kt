@@ -14,16 +14,17 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.URLs
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
+import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServerStatusViewModel
@@ -33,61 +34,65 @@ fun ServerInformationSection(
     authViewModel: AuthViewModel = hiltViewModel(),
     serverStatusViewModel: ServerStatusViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val apiClient = authViewModel.apiClient
+    @Composable
+    fun getStatusSubtitle(): String {
+        return when (val s = serverStatusViewModel.status) {
+            is LoadingResult.Loading -> {
+                stringResource(R.string.loading)
+            }
 
-    LaunchedEffect(apiClient) {
-        if (apiClient != null) {
-            serverStatusViewModel.fetchStatus(apiClient)
-        } else {
-            serverStatusViewModel.reset()
+            is LoadingResult.Success -> {
+                if (s.value.csLapi.lapiConnected) {
+                    stringResource(R.string.online)
+                } else {
+                    stringResource(R.string.offline)
+                }
+            }
+
+            is LoadingResult.Failure -> {
+                "N/A"
+            }
         }
     }
+
+    @Composable
+    fun getVersionSubtitle(): String {
+        return when (val s = serverStatusViewModel.status) {
+            is LoadingResult.Loading -> {
+                stringResource(R.string.loading)
+            }
+
+            is LoadingResult.Success -> {
+                s.value.csMonitorApi.version
+            }
+
+            is LoadingResult.Failure -> {
+                "N/A"
+            }
+        }
+    }
+
+    val context = LocalContext.current
 
     if (!authViewModel.hasServerConfigured) return
 
     SectionHeader(stringResource(R.string.information_section))
 
-    ListItem(
-        headlineContent = { Text(stringResource(R.string.lapi_status)) },
-        trailingContent = {
-            when (val s = serverStatusViewModel.status) {
-                is LoadingResult.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                }
-                is LoadingResult.Success -> {
-                    if (s.data.csLapi.lapiConnected) {
-                        StatusOnline()
-                    } else {
-                        StatusOffline()
-                    }
-                }
-                is LoadingResult.Failure -> {
-                    StatusOffline()
-                }
-            }
-        }
+    DataListTile(
+        tileIndex = 0,
+        groupTiles = 2,
+        title = stringResource(R.string.lapi_status),
+        subtitle = getStatusSubtitle()
     )
 
-    ListItem(
-        headlineContent = { Text(stringResource(R.string.api_version)) },
-        trailingContent = {
-            when (val s = serverStatusViewModel.status) {
-                is LoadingResult.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                }
-                is LoadingResult.Success -> {
-                    Text(text = s.data.csMonitorApi.version)
-                }
-                is LoadingResult.Failure -> {
-                    Text(text = stringResource(R.string.not_available))
-                }
-            }
-        }
+    DataListTile(
+        tileIndex = 1,
+        groupTiles = 2,
+        title = stringResource(R.string.api_version),
+        subtitle = getVersionSubtitle(),
     )
 
-    val newVersion = (serverStatusViewModel.status as? LoadingResult.Success)
-        ?.data?.csMonitorApi?.newVersionAvailable
+    val newVersion = serverStatusViewModel.status.data?.csMonitorApi?.newVersionAvailable
 
     if (newVersion != null) {
         ListItem(
@@ -107,7 +112,7 @@ fun ServerInformationSection(
                     text = stringResource(R.string.new_version_available),
                     color = Color(0xFF4CAF50),
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold
                     )
                 )
             },
@@ -116,51 +121,10 @@ fun ServerInformationSection(
                     text = newVersion,
                     color = Color(0xFF4CAF50),
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold
                     )
                 )
             }
         )
     }
 }
-
-@Composable
-private fun StatusOnline() {
-    androidx.compose.foundation.layout.Row(
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Check,
-            contentDescription = null,
-            tint = Color(0xFF4CAF50),
-            modifier = Modifier.size(18.dp)
-        )
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(6.dp))
-        Text(
-            text = stringResource(R.string.online),
-            color = Color(0xFF4CAF50),
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
-
-@Composable
-private fun StatusOffline() {
-    androidx.compose.foundation.layout.Row(
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(18.dp)
-        )
-        androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(6.dp))
-        Text(
-            text = stringResource(R.string.offline),
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
-

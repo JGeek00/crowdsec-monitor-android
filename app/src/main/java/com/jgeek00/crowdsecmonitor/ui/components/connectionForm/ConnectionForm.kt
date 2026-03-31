@@ -69,7 +69,7 @@ fun ConnectionForm(
             text = stringResource(R.string.server_information),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            paddingValues = if (showHeader) PaddingValues(top = 12.dp) else PaddingValues(0.dp)
+            smallTopPadding = true
         )
         OutlinedTextField(
             value = viewModel.name.value,
@@ -88,7 +88,6 @@ fun ConnectionForm(
             text = stringResource(R.string.server_route),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            paddingValues = PaddingValues(top = 12.dp)
         )
         
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -156,7 +155,6 @@ fun ConnectionForm(
             text = stringResource(R.string.authentication),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            paddingValues = PaddingValues(top = 12.dp)
         )
         
         var expanded by remember { mutableStateOf(false) }

@@ -20,8 +20,14 @@ data class ApiErrorResponse(
 
 sealed class LoadingResult<out T> {
     data object Loading : LoadingResult<Nothing>()
-    data class Success<T>(val data: T) : LoadingResult<T>()
-    data class Failure(val error: Throwable) : LoadingResult<Nothing>()
+    data class Success<T>(val value: T) : LoadingResult<T>()
+    data class Failure(val throwable: Throwable) : LoadingResult<Nothing>()
+
+    val isLoading: Boolean get() = this is Loading
+
+    val data: T? get() = (this as? Success)?.value
+
+    val error: Throwable? get() = (this as? Failure)?.throwable
 }
 
 sealed class HttpClientException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {

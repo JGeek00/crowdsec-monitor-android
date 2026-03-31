@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jgeek00.crowdsecmonitor.data.api.CrowdSecApiClient
+import androidx.compose.runtime.snapshotFlow
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,16 +13,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ServerStatusViewModel @Inject constructor() : ViewModel() {
+class ServerStatusViewModel @Inject constructor(
+    private val sessionManager: SessionManager
+) : ViewModel() {
 
     var status by mutableStateOf<LoadingResult<ApiStatusResponse>>(LoadingResult.Loading)
         private set
 
-    fun reset() {
-        status = LoadingResult.Loading
+    init {
+        viewModelScope.launch {
+            snapshotFlow { sessionManager.apiClient }.collect { client ->
+                if (client != null) fetchStatus() else status = LoadingResult.Loading
+            }
+        }
     }
 
-    fun fetchStatus(apiClient: CrowdSecApiClient) {
+    fun fetchStatus() {
+        val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
             status = LoadingResult.Loading
             try {
@@ -34,4 +41,3 @@ class ServerStatusViewModel @Inject constructor() : ViewModel() {
         }
     }
 }
-

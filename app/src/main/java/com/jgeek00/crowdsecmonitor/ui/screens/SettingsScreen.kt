@@ -1,9 +1,7 @@
 package com.jgeek00.crowdsecmonitor.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,12 +10,14 @@ import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
-import com.jgeek00.crowdsecmonitor.ui.components.NavigationListItem
+import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 
 private data class ThemeOption(
@@ -74,6 +74,7 @@ fun SettingsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SettingsContent(
     themeMode: Enums.ThemeMode,
@@ -93,49 +94,57 @@ private fun SettingsContent(
     LazyColumn(
         modifier = modifier
             .padding(innerPadding)
+            .padding(horizontal = 16.dp)
             .fillMaxSize(),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
-        item { SectionHeader(stringResource(R.string.theme_section)) }
+        item { SectionHeader(stringResource(R.string.theme_section), smallTopPadding = true) }
 
         items(themeOptions) { option ->
-            ListItem(
+            val index = themeOptions.indexOf(option)
+            SegmentedListItem(
+                checked = themeMode == option.mode,
+                onCheckedChange = { onThemeModeChange(option.mode) },
+                shapes = ListItemDefaults.segmentedShapes(index = index, count = themeOptions.size),
                 leadingContent = { Icon(option.icon, contentDescription = null) },
-                headlineContent = { Text(stringResource(option.labelRes)) },
                 trailingContent = {
                     RadioButton(
                         selected = themeMode == option.mode,
                         onClick = { onThemeModeChange(option.mode) }
                     )
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onThemeModeChange(option.mode) }
+                content = { Text(stringResource(option.labelRes)) },
+                modifier = Modifier.padding(bottom = 2.dp)
             )
         }
 
         item { SectionHeader(stringResource(R.string.configuration_section)) }
 
         item {
-            NavigationListItem(
-                title = stringResource(R.string.app_configuration),
-                onClick = onNavigateToAppConfiguration
-            )
+            SegmentedListItem(
+                onClick = onNavigateToAppConfiguration,
+                shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
+                modifier = Modifier.padding(bottom = 2.dp)
+            ) {
+                Text(stringResource(R.string.app_configuration))
+            }
         }
 
         item {
-            NavigationListItem(
-                title = stringResource(R.string.server_configuration),
-                onClick = onNavigateToServerConfiguration
-            )
+            SegmentedListItem(
+                onClick = onNavigateToServerConfiguration,
+                shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
+            ) {
+                Text(stringResource(R.string.server_configuration))
+            }
         }
 
         item { SectionHeader(stringResource(R.string.about_section)) }
 
         item {
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.app_version)) },
-                supportingContent = { Text(appVersion) }
+            DataListTile(
+                title = stringResource(R.string.app_version),
+                subtitle = appVersion
             )
         }
     }
