@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,16 +27,13 @@ import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 
-private val rootRouteClasses = setOf(
-    Route.Home::class,
-    Route.Dashboard::class,
-    Route.Alerts::class,
-    Route.Decisions::class,
-    Route.Settings::class
-)
-
-private fun NavDestination.isRootRoute(): Boolean =
-    rootRouteClasses.any { hasRoute(it) }
+private fun NavDestination.topLevelAncestorRoute(): String? {
+    var dest: NavDestination = this
+    while (dest.parent?.parent != null) {
+        dest = dest.parent!!
+    }
+    return dest.route
+}
 
 private const val ANIM_DURATION = 350
 private const val FADE_DURATION = 250
@@ -59,7 +55,7 @@ fun AppNavGraph(
         modifier = modifier,
 
         enterTransition = {
-            if (initialState.destination.isRootRoute() && targetState.destination.isRootRoute()) {
+            if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
                 fadeIn(tween(FADE_DURATION))
             } else {
                 slideInHorizontally(
@@ -69,7 +65,7 @@ fun AppNavGraph(
             }
         },
         exitTransition = {
-            if (initialState.destination.isRootRoute() && targetState.destination.isRootRoute()) {
+            if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
                 fadeOut(tween(FADE_DURATION))
             } else {
                 slideOutHorizontally(
@@ -79,7 +75,7 @@ fun AppNavGraph(
             }
         },
         popEnterTransition = {
-            if (initialState.destination.isRootRoute() && targetState.destination.isRootRoute()) {
+            if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
                 fadeIn(tween(FADE_DURATION))
             } else {
                 slideInHorizontally(
@@ -89,7 +85,7 @@ fun AppNavGraph(
             }
         },
         popExitTransition = {
-            if (initialState.destination.isRootRoute() && targetState.destination.isRootRoute()) {
+            if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
                 fadeOut(tween(FADE_DURATION))
             } else {
                 slideOutHorizontally(
@@ -103,31 +99,37 @@ fun AppNavGraph(
             HomeScreen(authViewModel)
         }
 
-        composable<Route.Dashboard> {
-            DashboardScreen(
-                onNavigateToFullList = { type ->
-                    navController.navigate(Route.FullListDashboard(type.name))
-                }
-            )
-        }
+        navigation<Route.DashboardGraph>(startDestination = Route.Dashboard) {
+            composable<Route.Dashboard> {
+                DashboardScreen(
+                    onNavigateToFullList = { type ->
+                        navController.navigate(Route.FullListDashboard(type.name))
+                    }
+                )
+            }
 
-        composable<Route.FullListDashboard> { backStackEntry ->
-            val route = backStackEntry.toRoute<Route.FullListDashboard>()
-            FullListDashboardScreen(
-                itemType = Enums.DashboardItemType.valueOf(route.itemType),
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable<Route.Alerts> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Alerts Screen")
+            composable<Route.FullListDashboard> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.FullListDashboard>()
+                FullListDashboardScreen(
+                    itemType = Enums.DashboardItemType.valueOf(route.itemType),
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
 
-        composable<Route.Decisions> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Decisions Screen")
+        navigation<Route.AlertsGraph>(startDestination = Route.Alerts) {
+            composable<Route.Alerts> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Alerts Screen")
+                }
+            }
+        }
+
+        navigation<Route.DecisionsGraph>(startDestination = Route.Decisions) {
+            composable<Route.Decisions> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Decisions Screen")
+                }
             }
         }
 

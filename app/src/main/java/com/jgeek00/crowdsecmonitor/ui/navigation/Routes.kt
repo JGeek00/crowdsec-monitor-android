@@ -11,10 +11,19 @@ import kotlinx.serialization.Serializable
 
 sealed interface Route {
     @Serializable data object Home : Route
+
+    // Dashboard nested graph
+    @Serializable data object DashboardGraph : Route
     @Serializable data object Dashboard : Route
-    @Serializable data object Alerts : Route
-    @Serializable data object Decisions : Route
     @Serializable data class FullListDashboard(val itemType: String) : Route
+
+    // Alerts nested graph
+    @Serializable data object AlertsGraph : Route
+    @Serializable data object Alerts : Route
+
+    // Decisions nested graph
+    @Serializable data object DecisionsGraph : Route
+    @Serializable data object Decisions : Route
 
     // Settings nested graph
     @Serializable data object SettingsGraph : Route
@@ -35,8 +44,8 @@ val topLevelRoutesNoServer = listOf(
 )
 
 val topLevelRoutesWithServer = listOf(
-    TopLevelRoute(Route.Dashboard, "Dashboard", Icons.Default.Dashboard),
-    TopLevelRoute(Route.Alerts, "Alerts", Icons.Default.Notifications),
-    TopLevelRoute(Route.Decisions, "Decisions", Icons.Default.Warning),
+    TopLevelRoute(Route.DashboardGraph, "Dashboard", Icons.Default.Dashboard),
+    TopLevelRoute(Route.AlertsGraph, "Alerts", Icons.Default.Notifications),
+    TopLevelRoute(Route.DecisionsGraph, "Decisions", Icons.Default.Warning),
     TopLevelRoute(Route.SettingsGraph, "Settings", Icons.Default.Settings),
 )

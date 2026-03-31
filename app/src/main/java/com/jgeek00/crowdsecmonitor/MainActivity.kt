@@ -84,8 +84,7 @@ fun CrowdSecMonitorApp(
         topLevelRoutesNoServer
     }
 
-    // Redirige automáticamente cuando el tab activo deja de ser visible
-    // (p.ej.: Home al configurar un servidor, Dashboard al eliminarlo)
+    // Redirects automatically when tab is no longer visible (when a server is added or deleted)
     LaunchedEffect(authViewModel.hasServerConfigured) {
         if (authViewModel.isLoading) return@LaunchedEffect
         val isCurrentTabVisible = visibleTopLevelRoutes.any { tab ->
@@ -131,7 +130,7 @@ fun CrowdSecMonitorApp(
                 } else {
                     AppNavGraph(
                         navController = navController,
-                        startDestination = if (authViewModel.hasServerConfigured) Route.Dashboard else Route.Home,
+                        startDestination = if (authViewModel.hasServerConfigured) Route.DashboardGraph else Route.Home,
                         themeMode = themeMode,
                         onThemeModeChange = onThemeModeChange,
                         authViewModel = authViewModel,
