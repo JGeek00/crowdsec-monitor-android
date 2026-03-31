@@ -29,4 +29,10 @@ object Enums {
         SCENARIO,
         TARGET
     }
+
+    enum class SectionHeaderPaddingTop {
+        NONE,
+        SMALL,
+        NORMAL,
+    }
 }

@@ -43,7 +43,7 @@ private const val SLIDE_RATIO = 0.10f
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    startDestination: Route = Route.Home,
+    startDestination: Route = Route.HomeGraph,
     themeMode: Enums.ThemeMode,
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
     authViewModel: AuthViewModel,
@@ -95,8 +95,10 @@ fun AppNavGraph(
             }
         }
     ) {
-        composable<Route.Home> {
-            HomeScreen(authViewModel)
+        navigation<Route.HomeGraph>(startDestination = Route.Home) {
+            composable<Route.Home> {
+                HomeScreen(authViewModel)
+            }
         }
 
         navigation<Route.DashboardGraph>(startDestination = Route.Dashboard) {

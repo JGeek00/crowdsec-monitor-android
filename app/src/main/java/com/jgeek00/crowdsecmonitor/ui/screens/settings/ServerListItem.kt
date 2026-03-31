@@ -1,7 +1,5 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.settings
 
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,50 +47,45 @@ fun ServerListItem(
     var showDropdownMenu by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
-    Box {
-        SegmentedListItem(
-            onClick = onSelect,
-            selected = isCurrentServer,
-            shapes = shapes,
-            supportingContent = {
-                Text(
-                    text = buildServerUrl(server),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            leadingContent = {
-                Icon(
-                    imageVector = Icons.Rounded.Dns,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            trailingContent = if (isCurrentServer) {
-                {
-                    Icon(
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            } else null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .combinedClickable(
-                    onClick = onSelect,
-                    onLongClick = { showDropdownMenu = true }
-                )
-                .padding(bottom = 2.dp)
-        ) {
+    SegmentedListItem(
+        onClick = onSelect,
+        onLongClick = { showDropdownMenu = true },
+        selected = isCurrentServer,
+        shapes = shapes,
+        supportingContent = {
             Text(
-                text = server.name,
-                fontWeight = FontWeight.Medium,
+                text = buildServerUrl(server),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        }
+        },
+        leadingContent = {
+            Icon(
+                imageVector = Icons.Rounded.Dns,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        trailingContent = if (isCurrentServer) {
+            {
+                Icon(
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        } else null,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 2.dp)
+    ) {
+        Text(
+            text = server.name,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
 
         DropdownMenu(
             expanded = showDropdownMenu,
@@ -141,6 +134,7 @@ fun ServerListItem(
             )
         }
     }
+
 
     if (showDeleteConfirmation) {
         AlertDialog(

@@ -1,15 +1,19 @@
 package com.jgeek00.crowdsecmonitor.ui.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Dashboard
+import androidx.compose.material.icons.rounded.FrontHand
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.jgeek00.crowdsecmonitor.R
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
+    // Home nested graph
+    @Serializable data object HomeGraph : Route
     @Serializable data object Home : Route
 
     // Dashboard nested graph
@@ -34,18 +38,18 @@ sealed interface Route {
 
 data class TopLevelRoute(
     val route: Route,
-    val label: String,
+    @StringRes val label: Int,
     val icon: ImageVector
 )
 
 val topLevelRoutesNoServer = listOf(
-    TopLevelRoute(Route.Home, "Home", Icons.Default.Home),
-    TopLevelRoute(Route.SettingsGraph, "Settings", Icons.Default.Settings),
+    TopLevelRoute(Route.HomeGraph, R.string.home, Icons.Rounded.Home),
+    TopLevelRoute(Route.SettingsGraph, R.string.settings, Icons.Rounded.Settings),
 )
 
 val topLevelRoutesWithServer = listOf(
-    TopLevelRoute(Route.DashboardGraph, "Dashboard", Icons.Default.Dashboard),
-    TopLevelRoute(Route.AlertsGraph, "Alerts", Icons.Default.Notifications),
-    TopLevelRoute(Route.DecisionsGraph, "Decisions", Icons.Default.Warning),
-    TopLevelRoute(Route.SettingsGraph, "Settings", Icons.Default.Settings),
+    TopLevelRoute(Route.DashboardGraph, R.string.dashboard, Icons.Rounded.Dashboard),
+    TopLevelRoute(Route.AlertsGraph, R.string.alerts, Icons.Rounded.Warning),
+    TopLevelRoute(Route.DecisionsGraph, R.string.decisions, Icons.Rounded.FrontHand),
+    TopLevelRoute(Route.SettingsGraph, R.string.settings, Icons.Rounded.Settings),
 )

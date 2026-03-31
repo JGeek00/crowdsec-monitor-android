@@ -44,6 +44,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerSheet
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
@@ -98,7 +99,7 @@ fun ServerConfigurationScreen(
                 .padding(horizontal = 16.dp)
         ) {
             item {
-                SectionHeader(stringResource(R.string.servers_section), smallTopPadding = true)
+                SectionHeader(stringResource(R.string.servers_section), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
             }
             if (authViewModel.servers.isNotEmpty()) {
                 items(authViewModel.servers, key = { it.id }) { server ->

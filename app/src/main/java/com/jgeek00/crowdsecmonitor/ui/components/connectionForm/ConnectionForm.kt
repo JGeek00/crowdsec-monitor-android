@@ -69,7 +69,7 @@ fun ConnectionForm(
             text = stringResource(R.string.server_information),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            smallTopPadding = true
+            topPadding = Enums.SectionHeaderPaddingTop.NONE
         )
         OutlinedTextField(
             value = viewModel.name.value,

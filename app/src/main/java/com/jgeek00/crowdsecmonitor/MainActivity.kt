@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -87,8 +88,9 @@ fun CrowdSecMonitorApp(
     // Redirects automatically when tab is no longer visible (when a server is added or deleted)
     LaunchedEffect(authViewModel.hasServerConfigured) {
         if (authViewModel.isLoading) return@LaunchedEffect
+        if (currentDestination == null) return@LaunchedEffect  // NavHost not ready yet (initial startup)
         val isCurrentTabVisible = visibleTopLevelRoutes.any { tab ->
-            currentDestination?.hierarchy?.any { it.hasRoute(tab.route::class) } == true
+            currentDestination.hierarchy.any { it.hasRoute(tab.route::class) }
         }
         if (!isCurrentTabVisible) {
             navController.navigate(visibleTopLevelRoutes.first().route) {
@@ -102,8 +104,8 @@ fun CrowdSecMonitorApp(
         navigationSuiteItems = {
             visibleTopLevelRoutes.forEach { topLevel ->
                 item(
-                    icon = { Icon(topLevel.icon, contentDescription = topLevel.label) },
-                    label = { Text(topLevel.label) },
+                    icon = { Icon(topLevel.icon, contentDescription = stringResource(topLevel.label)) },
+                    label = { Text(stringResource(topLevel.label)) },
                     selected = currentDestination?.hierarchy?.any {
                         it.hasRoute(topLevel.route::class)
                     } == true,
@@ -130,7 +132,7 @@ fun CrowdSecMonitorApp(
                 } else {
                     AppNavGraph(
                         navController = navController,
-                        startDestination = if (authViewModel.hasServerConfigured) Route.DashboardGraph else Route.Home,
+                        startDestination = if (authViewModel.hasServerConfigured) Route.DashboardGraph else Route.HomeGraph,
                         themeMode = themeMode,
                         onThemeModeChange = onThemeModeChange,
                         authViewModel = authViewModel,

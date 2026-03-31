@@ -98,7 +98,7 @@ private fun SettingsContent(
             .fillMaxSize(),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
-        item { SectionHeader(stringResource(R.string.theme_section), smallTopPadding = true) }
+        item { SectionHeader(stringResource(R.string.theme_section), topPadding = Enums.SectionHeaderPaddingTop.SMALL) }
 
         items(themeOptions) { option ->
             val index = themeOptions.indexOf(option)
