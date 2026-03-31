@@ -2,7 +2,6 @@ package com.jgeek00.crowdsecmonitor.ui.screens.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -90,54 +89,59 @@ fun ServerConfigurationScreen(
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            item {
+                SectionHeader(stringResource(R.string.servers_section))
+            }
             if (authViewModel.servers.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    item {
-                        SectionHeader(stringResource(R.string.servers_section))
-                    }
-                    items(authViewModel.servers, key = { it.id }) { server ->
-                        ServerListItem(
-                            server = server,
-                            isCurrentServer = server.id == authViewModel.currentServer?.id,
-                            onSelect = { authViewModel.changeCurrentServer(server) },
-                            onSetDefault = { authViewModel.setDefaultServer(server) },
-                            onDelete = { authViewModel.deleteServer(server) }
+                items(authViewModel.servers, key = { it.id }) { server ->
+                    ServerListItem(
+                        server = server,
+                        isCurrentServer = server.id == authViewModel.currentServer?.id,
+                        onSelect = { authViewModel.changeCurrentServer(server) },
+                        onSetDefault = { authViewModel.setDefaultServer(server) },
+                        onDelete = { authViewModel.deleteServer(server) }
+                    )
+                }
+            } else {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_servers_configured),
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
-            } else {
-                Box(
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.End,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.no_servers_configured),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    Button(onClick = { showCreateServerSheet = true }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = null,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.add_server))
+                    }
                 }
             }
-
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Button(onClick = { showCreateServerSheet = true }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.add_server))
+            if (authViewModel.hasServerConfigured) {
+                item {
+                    ServerInformationSection()
                 }
             }
         }

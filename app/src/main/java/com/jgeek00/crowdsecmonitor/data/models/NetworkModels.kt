@@ -18,6 +18,12 @@ data class ApiErrorResponse(
         get() = message ?: errors?.firstOrNull()
 }
 
+sealed class LoadingResult<out T> {
+    data object Loading : LoadingResult<Nothing>()
+    data class Success<T>(val data: T) : LoadingResult<T>()
+    data class Failure(val error: Throwable) : LoadingResult<Nothing>()
+}
+
 sealed class HttpClientException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {
     class InvalidResponse : HttpClientException("Invalid response from server")
     class Unauthorized : HttpClientException("Unauthorized access")

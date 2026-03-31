@@ -54,4 +54,11 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="no_servers_configured">No servers configured</string>
+    <string name="information_section">Information</string>
+    <string name="lapi_status">LAPI status</string>
+    <string name="api_version">API version</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="new_version_available">New version available</string>
+    <string name="not_available">N/A</string>
 </resources>
