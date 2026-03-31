@@ -7,7 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +23,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -29,7 +35,8 @@ import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 
 private data class ThemeOption(
     val mode: Enums.ThemeMode,
-    val labelRes: Int
+    val labelRes: Int,
+    val icon: ImageVector
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,9 +85,9 @@ private fun SettingsContent(
 ) {
     val appVersion = rememberAppVersionName()
     val themeOptions = listOf(
-        ThemeOption(Enums.ThemeMode.SYSTEM, R.string.theme_system_default),
-        ThemeOption(Enums.ThemeMode.LIGHT, R.string.theme_light),
-        ThemeOption(Enums.ThemeMode.DARK, R.string.theme_dark)
+        ThemeOption(Enums.ThemeMode.SYSTEM, R.string.theme_system_default, Icons.Rounded.Smartphone),
+        ThemeOption(Enums.ThemeMode.LIGHT, R.string.theme_light, Icons.Rounded.LightMode),
+        ThemeOption(Enums.ThemeMode.DARK, R.string.theme_dark, Icons.Rounded.DarkMode)
     )
 
     LazyColumn(
@@ -93,6 +100,7 @@ private fun SettingsContent(
 
         items(themeOptions) { option ->
             ListItem(
+                leadingContent = { Icon(option.icon, contentDescription = null) },
                 headlineContent = { Text(stringResource(option.labelRes)) },
                 trailingContent = {
                     RadioButton(
