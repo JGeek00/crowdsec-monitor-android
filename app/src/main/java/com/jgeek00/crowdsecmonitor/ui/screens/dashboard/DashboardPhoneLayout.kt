@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,7 +18,6 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.StatisticsResponse
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-import com.jgeek00.crowdsecmonitor.ui.screens.ViewAllRow
 
 @Composable
 fun DashboardContentPhone(
@@ -61,6 +57,7 @@ fun DashboardContentPhone(
         // Top countries
         if (data.topCountries.isNotEmpty()) {
             val total = data.topCountries.sumOf { it.amount }.coerceAtLeast(1)
+            val listLength = data.topCountries.size + 1
             item {
                 SectionHeader(
                     text = stringResource(R.string.top_countries),
@@ -68,21 +65,30 @@ fun DashboardContentPhone(
                 )
             }
             items(data.topCountries) { item ->
+                val index = data.topCountries.indexOf(item)
                 DashboardItem(
+                    index = index,
+                    listLength = listLength,
                     itemType = Enums.DashboardItemType.COUNTRY,
                     label = item.countryCode,
                     amount = item.amount,
                     percentage = item.amount.toDouble() / total,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
-            item { ViewAllRow(onClick = { onNavigateToFullList(Enums.DashboardItemType.COUNTRY) }) }
+            item {
+                ViewAllRow(
+                    onClick = { onNavigateToFullList(Enums.DashboardItemType.COUNTRY) },
+                    listTotalAmount = listLength,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
 
         // Top IP owners
         if (data.topIpOwners.isNotEmpty()) {
             val total = data.topIpOwners.sumOf { it.amount }.coerceAtLeast(1)
+            val listLength = data.topIpOwners.size + 1
             item {
                 SectionHeader(
                     text = stringResource(R.string.top_ip_owners),
@@ -90,21 +96,30 @@ fun DashboardContentPhone(
                 )
             }
             items(data.topIpOwners) { item ->
+                val index = data.topIpOwners.indexOf(item)
                 DashboardItem(
+                    index = index,
+                    listLength = listLength,
                     itemType = Enums.DashboardItemType.IP_OWNER,
                     label = item.ipOwner,
                     amount = item.amount,
                     percentage = item.amount.toDouble() / total,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
-            item { ViewAllRow(onClick = { onNavigateToFullList(Enums.DashboardItemType.IP_OWNER) }) }
+            item {
+                ViewAllRow(
+                    onClick = { onNavigateToFullList(Enums.DashboardItemType.IP_OWNER) },
+                    listTotalAmount = listLength,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
 
         // Top scenarios
         if (data.topScenarios.isNotEmpty()) {
             val total = data.topScenarios.sumOf { it.amount }.coerceAtLeast(1)
+            val listLength = data.topScenarios.size + 1
             item {
                 SectionHeader(
                     text = stringResource(R.string.top_scenarios),
@@ -112,21 +127,30 @@ fun DashboardContentPhone(
                 )
             }
             items(data.topScenarios) { item ->
+                val index = data.topScenarios.indexOf(item)
                 DashboardItem(
+                    index = index,
+                    listLength = listLength,
                     itemType = Enums.DashboardItemType.SCENARIO,
                     label = item.scenario,
                     amount = item.amount,
                     percentage = item.amount.toDouble() / total,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
-            item { ViewAllRow(onClick = { onNavigateToFullList(Enums.DashboardItemType.SCENARIO) }) }
+            item {
+                ViewAllRow(
+                    onClick = { onNavigateToFullList(Enums.DashboardItemType.SCENARIO) },
+                    listTotalAmount = listLength,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
         }
 
         // Top targets
         if (data.topTargets.isNotEmpty()) {
             val total = data.topTargets.sumOf { it.amount }.coerceAtLeast(1)
+            val listLength = data.topTargets.size + 1
             item {
                 SectionHeader(
                     text = stringResource(R.string.top_targets),
@@ -134,16 +158,24 @@ fun DashboardContentPhone(
                 )
             }
             items(data.topTargets) { item ->
+                val index = data.topTargets.indexOf(item)
                 DashboardItem(
+                    index = index,
+                    listLength = listLength,
                     itemType = Enums.DashboardItemType.TARGET,
                     label = item.target,
                     amount = item.amount,
                     percentage = item.amount.toDouble() / total,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
-            item { ViewAllRow(onClick = { onNavigateToFullList(Enums.DashboardItemType.TARGET) }) }
+            item {
+                ViewAllRow(
+                    onClick = { onNavigateToFullList(Enums.DashboardItemType.TARGET) },
+                    listTotalAmount = listLength,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
 
         item { Spacer(modifier = Modifier.height(16.dp)) }

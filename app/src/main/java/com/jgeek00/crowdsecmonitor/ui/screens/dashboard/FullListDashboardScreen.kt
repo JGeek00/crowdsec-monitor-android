@@ -75,14 +75,13 @@ fun FullListDashboardScreen(
             ) {
                 itemsIndexed(items) { index, (label, amount) ->
                     DashboardItem(
+                        index = index,
+                        listLength = items.size,
                         itemType = itemType,
                         label = label,
                         amount = amount,
                         percentage = amount.toDouble() / total
                     )
-                    if (index < items.lastIndex) {
-                        HorizontalDivider()
-                    }
                 }
             }
         }

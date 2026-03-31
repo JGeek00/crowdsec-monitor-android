@@ -19,6 +19,7 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -177,20 +180,4 @@ fun DashboardScreen(
             }
         )
     }
-}
-
-
-
-
-@Composable
-fun ViewAllRow(onClick: () -> Unit) {
-    TextButton(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        Text(stringResource(R.string.view_all))
-    }
-    Spacer(modifier = Modifier.height(8.dp))
 }

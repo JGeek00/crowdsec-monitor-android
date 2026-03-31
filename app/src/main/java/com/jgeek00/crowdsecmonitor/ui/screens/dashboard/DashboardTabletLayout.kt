@@ -54,14 +54,16 @@ fun DashboardContentTablet(
                         modifier = Modifier.weight(1f)
                     ) {
                         data.topCountries.forEach { item ->
+                            val index = data.topCountries.indexOf(item)
                             DashboardItem(
+                                index = index,
+                                listLength = data.topCountries.size,
                                 itemType = Enums.DashboardItemType.COUNTRY,
                                 label = item.countryCode,
                                 amount = item.amount,
                                 percentage = item.amount.toDouble() / total,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
-                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         }
                     }
                 }
@@ -73,14 +75,16 @@ fun DashboardContentTablet(
                         modifier = Modifier.weight(1f)
                     ) {
                         data.topIpOwners.forEach { item ->
+                            val index = data.topIpOwners.indexOf(item)
                             DashboardItem(
+                                index = index,
+                                listLength = data.topIpOwners.size,
                                 itemType = Enums.DashboardItemType.IP_OWNER,
                                 label = item.ipOwner,
                                 amount = item.amount,
                                 percentage = item.amount.toDouble() / total,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
-                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         }
                     }
                 }
@@ -98,14 +102,16 @@ fun DashboardContentTablet(
                         modifier = Modifier.weight(1f)
                     ) {
                         data.topScenarios.forEach { item ->
+                            val index = data.topScenarios.indexOf(item)
                             DashboardItem(
+                                index = index,
+                                listLength = data.topScenarios.size,
                                 itemType = Enums.DashboardItemType.SCENARIO,
                                 label = item.scenario,
                                 amount = item.amount,
                                 percentage = item.amount.toDouble() / total,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
-                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         }
                     }
                 }
@@ -117,14 +123,16 @@ fun DashboardContentTablet(
                         modifier = Modifier.weight(1f)
                     ) {
                         data.topTargets.forEach { item ->
+                            val index = data.topTargets.indexOf(item)
                             DashboardItem(
+                                index = index,
+                                listLength = data.topTargets.size,
                                 itemType = Enums.DashboardItemType.TARGET,
                                 label = item.target,
                                 amount = item.amount,
                                 percentage = item.amount.toDouble() / total,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
-                            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                         }
                     }
                 }

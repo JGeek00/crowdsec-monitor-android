@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,13 +24,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.Index
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.components.toFlagEmoji
 import java.util.Locale
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DashboardItem(
+    index: Int,
+    listLength: Int,
     itemType: Enums.DashboardItemType,
     label: String,
     amount: Int,
@@ -35,53 +42,13 @@ fun DashboardItem(
     color: Color? = null,
     modifier: Modifier = Modifier
 ) {
-    ListItem(
-        modifier = modifier,
+    SegmentedListItem(
+        onClick = {},
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = listLength),
+        modifier = modifier.padding(bottom = if (index == listLength - 1) 0.dp else 2.dp),
         leadingContent = if (color != null) {
             { ColorDot(color) }
         } else null,
-        headlineContent = {
-            when (itemType) {
-                Enums.DashboardItemType.COUNTRY -> {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(label.toFlagEmoji())
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = Locale("", label.uppercase()).getDisplayCountry(Locale.getDefault()).ifBlank { label.uppercase() },
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-                Enums.DashboardItemType.IP_OWNER -> {
-                    Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
-                Enums.DashboardItemType.SCENARIO -> {
-                    val parts = label.split("/")
-                    val type = parts.getOrNull(0)?.trim() ?: label
-                    val name = parts.getOrNull(1)?.trim() ?: ""
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = type,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(Color.Gray)
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(text = name, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
-                }
-                Enums.DashboardItemType.TARGET -> {
-                    Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
-            }
-        },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "$amount")
@@ -93,7 +60,48 @@ fun DashboardItem(
                 )
             }
         }
-    )
+    ) {
+        when (itemType) {
+            Enums.DashboardItemType.COUNTRY -> {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(label.toFlagEmoji())
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = Locale("", label.uppercase()).getDisplayCountry(Locale.getDefault()).ifBlank { label.uppercase() },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            Enums.DashboardItemType.IP_OWNER -> {
+                Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            Enums.DashboardItemType.SCENARIO -> {
+                val parts = label.split("/")
+                val type = parts.getOrNull(0)?.trim() ?: label
+                val name = parts.getOrNull(1)?.trim() ?: ""
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = type,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color.Gray)
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(text = name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            }
+            Enums.DashboardItemType.TARGET -> {
+                Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+        }
+    }
 }
 
 @Composable
