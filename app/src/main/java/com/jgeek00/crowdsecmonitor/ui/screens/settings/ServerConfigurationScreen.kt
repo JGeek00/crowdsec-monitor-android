@@ -47,6 +47,8 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerSheet
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerInformationSection
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerListItem
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 
@@ -110,7 +112,10 @@ fun ServerConfigurationScreen(
                         onSelect = { authViewModel.changeCurrentServer(server) },
                         onSetDefault = { authViewModel.setDefaultServer(server) },
                         onDelete = { authViewModel.deleteServer(server) },
-                        shapes = ListItemDefaults.segmentedShapes(index = index, count = authViewModel.servers.size)
+                        shapes = ListItemDefaults.segmentedShapes(
+                            index = index,
+                            count = authViewModel.servers.size
+                        )
                     )
                 }
             } else {

@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.dashboard
+package com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

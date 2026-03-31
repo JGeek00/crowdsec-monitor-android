@@ -1,13 +1,21 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.dashboard
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -16,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -24,14 +33,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
-import com.jgeek00.crowdsecmonitor.viewmodel.DashboardViewModel
+import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components.DashboardItem
+import com.jgeek00.crowdsecmonitor.viewmodel.FullListDashboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FullListDashboardScreen(
     itemType: Enums.DashboardItemType,
     onBack: () -> Unit,
-    dashboardViewModel: DashboardViewModel = hiltViewModel()
+    viewModel: FullListDashboardViewModel = hiltViewModel<FullListDashboardViewModel, FullListDashboardViewModel.Factory>(
+        creationCallback = { factory -> factory.create(itemType) }
+    )
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -44,47 +56,90 @@ fun FullListDashboardScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             LargeTopAppBar(
                 title = { Text(title) },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.back))
+                        Icon(
+                            Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                ),
             )
         }
     ) { innerPadding ->
-        val data = (dashboardViewModel.state as? LoadingResult.Success)?.value
-
-        if (data != null) {
-            val items: List<Pair<String, Int>> = when (itemType) {
-                Enums.DashboardItemType.COUNTRY -> data.topCountries.map { it.countryCode to it.amount }
-                Enums.DashboardItemType.IP_OWNER -> data.topIpOwners.map { it.ipOwner to it.amount }
-                Enums.DashboardItemType.SCENARIO -> data.topScenarios.map { it.scenario to it.amount }
-                Enums.DashboardItemType.TARGET -> data.topTargets.map { it.target to it.amount }
+        when (val state = viewModel.state) {
+            is LoadingResult.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-            val total = items.sumOf { it.second }.coerceAtLeast(1)
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-            ) {
-                itemsIndexed(items) { index, (label, amount) ->
-                    DashboardItem(
-                        index = index,
-                        listLength = items.size,
-                        itemType = itemType,
-                        label = label,
-                        amount = amount,
-                        percentage = amount.toDouble() / total
-                    )
+            is LoadingResult.Success -> {
+                val data = state.value
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    itemsIndexed(data) { index, item ->
+                        DashboardItem(
+                            index = index,
+                            listLength = data.size,
+                            itemType = itemType,
+                            label = item.item,
+                            amount = item.value,
+                            percentage = item.percentage,
+                            color = item.color
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
+
+            is LoadingResult.Failure -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.Error,
+                            contentDescription = null,
+                            modifier = Modifier.size(56.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = stringResource(R.string.error_fetching_data),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        IconButton(onClick = { viewModel.fetchData() }) {
+                            Icon(Icons.Rounded.Refresh, contentDescription = null)
+                        }
+                    }
                 }
             }
         }
     }
 }
-

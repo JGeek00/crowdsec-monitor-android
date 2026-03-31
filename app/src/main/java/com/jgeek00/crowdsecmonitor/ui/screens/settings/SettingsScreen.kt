@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens
+package com.jgeek00.crowdsecmonitor.ui.screens.settings
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize

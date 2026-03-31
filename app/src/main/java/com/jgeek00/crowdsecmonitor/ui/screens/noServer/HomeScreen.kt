@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens
+package com.jgeek00.crowdsecmonitor.ui.screens.noServer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,7 @@ import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 
 @Composable
-fun HomeScreen(authViewModel: AuthViewModel) {
+fun NoServerScreen(authViewModel: AuthViewModel) {
     if (!authViewModel.hasServerConfigured) {
         NoServerConfiguredContent()
     } else {
