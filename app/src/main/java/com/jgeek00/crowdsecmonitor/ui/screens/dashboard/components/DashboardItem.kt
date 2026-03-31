@@ -1,5 +1,7 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,12 +44,18 @@ fun DashboardItem(
     amount: Int,
     percentage: Double,
     color: Color? = null,
+    isHighlighted: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val groupedShape = Shape(
-        groupSize = listLength,
-        index = index
+    val groupedShape = Shape(groupSize = listLength, index = index)
+
+    val rowBackground by animateColorAsState(
+        targetValue = if (isHighlighted) MaterialTheme.colorScheme.primaryContainer
+                      else MaterialTheme.colorScheme.background,
+        animationSpec = tween(durationMillis = 120),
+        label = "itemHighlight"
     )
+
     Card(
         modifier = modifier.padding(bottom = if (index == listLength - 1) 0.dp else 2.dp),
         shape = groupedShape
@@ -56,7 +65,7 @@ fun DashboardItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
+                .background(rowBackground)
                 .padding(16.dp)
         ) {
             Row(

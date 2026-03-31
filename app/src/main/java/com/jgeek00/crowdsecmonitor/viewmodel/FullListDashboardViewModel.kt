@@ -31,6 +31,24 @@ class FullListDashboardViewModel @AssistedInject constructor(
     var state by mutableStateOf<LoadingResult<List<DashboardItemDataForView>>>(LoadingResult.Loading)
         private set
 
+    val chartData: List<DashboardItemDataForView>
+        get() {
+            val data = (state as? LoadingResult.Success)?.value ?: return emptyList()
+            if (data.size <= chartColors.size) return data
+
+            val result = data.take(chartColors.size).toMutableList()
+            val others = data.drop(chartColors.size)
+            result.add(
+                DashboardItemDataForView(
+                    item = "Others",
+                    value = others.sumOf { it.value },
+                    percentage = others.sumOf { it.percentage },
+                    color = Color.Gray
+                )
+            )
+            return result
+        }
+
     init {
         fetchData()
     }
