@@ -12,20 +12,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 
 /**
  * Scaffold with a [LargeTopAppBar] that collapses on scroll combined with a [PullToRefreshBox].
  *
- * The pull-to-refresh gesture is intentionally blocked while the app bar is not fully expanded
- * (i.e. collapsedFraction > 0), so the indicator only activates once the app bar has
- * completely unfolded.
+ * The pull-to-refresh gesture only activates once the app bar is fully expanded.
+ * This is achieved by placing [nestedScroll] with the scroll behavior connection on the first
+ * element **inside** [PullToRefreshBox] rather than on the [Scaffold]. That makes the scroll
+ * behavior connection inner relative to [PullToRefreshBox]'s own connection, so in
+ * `onPostScroll` (dispatched inner → outer) the app bar expansion consumes the available
+ * overscroll delta before [PullToRefreshBox] ever sees it.
  *
  * @param title Title composable forwarded to [LargeTopAppBar].
  * @param isRefreshing Whether the pull-to-refresh indicator should be shown.
@@ -51,37 +50,8 @@ fun LargeTopAppBarWithRefresh(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    // Guard placed INSIDE PullToRefreshBox so that in onPostScroll (dispatched inner→outer)
-    // it runs BEFORE PullToRefreshBox's own connection.
-    //
-    // When the user overscrolls downward at the top while the AppBar is still collapsed:
-    //  - the guard intercepts the leftover delta, expands the AppBar directly, and
-    //    consumes the offset so PullToRefreshBox never sees it → no premature refresh.
-    // When the AppBar is fully expanded (collapsedFraction == 0):
-    //  - the guard returns Zero → PullToRefreshBox receives the delta → refresh activates.
-    // Regular upward/downward scrolling through list content is unaffected because the
-    // LazyColumn consumes those deltas before they reach onPostScroll.
-    val pullToRefreshGuard = remember(scrollBehavior) {
-        object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                if (available.y <= 0f || scrollBehavior.state.collapsedFraction <= 0f) {
-                    return Offset.Zero
-                }
-                // Expand the AppBar directly and absorb the delta so that the
-                // PullToRefreshBox connection (which runs right after this) sees nothing.
-                scrollBehavior.state.heightOffset =
-                    minOf(0f, scrollBehavior.state.heightOffset + available.y)
-                return Offset(0f, available.y)
-            }
-        }
-    }
-
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         containerColor = containerColor,
         topBar = {
             LargeTopAppBar(
@@ -102,10 +72,15 @@ fun LargeTopAppBarWithRefresh(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // The guard Box must be a direct child of PullToRefreshBox so that its
-            // nestedScroll node sits inside the PullToRefresh node in the layout tree,
-            // guaranteeing that onPostScroll fires here before reaching PullToRefreshBox.
-            Box(modifier = Modifier.fillMaxSize().nestedScroll(pullToRefreshGuard)) {
+            // nestedScroll goes here — inside PullToRefreshBox — so that in onPostScroll
+            // the scroll behavior connection (inner) processes before PullToRefreshBox's
+            // connection (outer). The app bar expands first; only when it is fully expanded
+            // does PullToRefreshBox receive a non-zero delta and trigger the refresh.
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+            ) {
                 content()
             }
         }
