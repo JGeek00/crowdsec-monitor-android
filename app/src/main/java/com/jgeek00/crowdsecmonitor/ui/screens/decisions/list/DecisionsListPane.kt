@@ -25,16 +25,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,11 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
+import com.jgeek00.crowdsecmonitor.ui.components.LargeTopAppBarWithRefresh
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.NoDecisions
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.filters.DecisionsFiltersSheet
@@ -60,43 +56,33 @@ fun DecisionsListPane(
     viewModel: DecisionsListViewModel,
     onNavigateToDetails: (Int) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val listState = rememberLazyListState()
     var showFiltersSheet by remember { mutableStateOf(false) }
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        topBar = {
-            LargeTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                ),
-                scrollBehavior = scrollBehavior,
-                title = { Text(stringResource(R.string.decisions)) },
-                actions = {
-                    if (viewModel.state is LoadingResult.Success) {
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-                            tooltip = { PlainTooltip { Text(stringResource(R.string.filters)) } },
-                            state = rememberTooltipState()
-                        ) {
-                            IconButton(onClick = {
-                                viewModel.resetFiltersPanelToAppliedOnes()
-                                showFiltersSheet = true
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Rounded.FilterList,
-                                    contentDescription = stringResource(R.string.filters)
-                                )
-                            }
-                        }
+    LargeTopAppBarWithRefresh(
+        title = { Text(stringResource(R.string.decisions)) },
+        isRefreshing = viewModel.isRefreshing,
+        onRefresh = { viewModel.refreshDecisions() },
+        actions = {
+            if (viewModel.state is LoadingResult.Success) {
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                    tooltip = { PlainTooltip { Text(stringResource(R.string.filters)) } },
+                    state = rememberTooltipState()
+                ) {
+                    IconButton(onClick = {
+                        viewModel.resetFiltersPanelToAppliedOnes()
+                        showFiltersSheet = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.FilterList,
+                            contentDescription = stringResource(R.string.filters)
+                        )
                     }
                 }
-            )
+            }
         }
-    ) { innerPadding ->
+    ) {
         AnimatedContent(
             targetState = viewModel.state,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
@@ -106,9 +92,7 @@ fun DecisionsListPane(
             when (state) {
                 is LoadingResult.Loading -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator()
@@ -117,65 +101,55 @@ fun DecisionsListPane(
 
                 is LoadingResult.Success -> {
                     val data = state.value
-                    PullToRefreshBox(
-                        isRefreshing = viewModel.isRefreshing,
-                        onRefresh = { viewModel.refreshDecisions() },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        if (data.items.isEmpty()) {
-                            NoDecisions(
-                                showingOnlyActive = viewModel.filters.onlyActive == true
-                            )
-                        } else {
-                            LazyColumn(
-                                state = listState,
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                items(data.items, key = { it.id }) { decision ->
-                                    val index = data.items.indexOf(decision)
-                                    DecisionListItem(
-                                        index = index,
-                                        totalListAmount = data.items.size,
-                                        decision = decision,
-                                        viewModel = viewModel,
-                                        onNavigateToDetails = { onNavigateToDetails(decision.id) }
-                                    )
-                                    LaunchedEffect(decision.id) {
-                                        if (decision == data.items.last()) {
-                                            viewModel.fetchMore()
-                                        }
+                    if (data.items.isEmpty()) {
+                        NoDecisions(
+                            showingOnlyActive = viewModel.filters.onlyActive == true
+                        )
+                    } else {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            items(data.items, key = { it.id }) { decision ->
+                                val index = data.items.indexOf(decision)
+                                DecisionListItem(
+                                    index = index,
+                                    totalListAmount = data.items.size,
+                                    decision = decision,
+                                    viewModel = viewModel,
+                                    onNavigateToDetails = { onNavigateToDetails(decision.id) }
+                                )
+                                LaunchedEffect(decision.id) {
+                                    if (decision == data.items.last()) {
+                                        viewModel.fetchMore()
                                     }
                                 }
-                                if (viewModel.isLoadingMore) {
-                                    item {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 16.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.size(28.dp),
-                                                strokeWidth = 3.dp
-                                            )
-                                        }
-                                    }
-                                }
-                                item { Spacer(modifier = Modifier.height(16.dp)) }
                             }
+                            if (viewModel.isLoadingMore) {
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(28.dp),
+                                            strokeWidth = 3.dp
+                                        )
+                                    }
+                                }
+                            }
+                            item { Spacer(modifier = Modifier.height(16.dp)) }
                         }
                     }
                 }
 
                 is LoadingResult.Failure -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(

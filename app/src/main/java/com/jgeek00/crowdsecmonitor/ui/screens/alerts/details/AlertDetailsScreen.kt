@@ -117,22 +117,6 @@ fun AlertDetailsScreen(
                         }
                     }
                 },
-                actions = {
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            TooltipAnchorPosition.Below
-                        ),
-                        tooltip = { PlainTooltip { Text(stringResource(R.string.refresh)) } },
-                        state = rememberTooltipState()
-                    ) {
-                        IconButton(onClick = { viewModel.refresh(alertId) }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Refresh,
-                                contentDescription = stringResource(R.string.refresh)
-                            )
-                        }
-                    }
-                }
             )
         }
     ) { innerPadding ->
