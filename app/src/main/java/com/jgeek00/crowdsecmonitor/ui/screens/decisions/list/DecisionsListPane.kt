@@ -1,6 +1,5 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.alerts
+package com.jgeek00.crowdsecmonitor.ui.screens.decisions.list
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,119 +34,30 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTooltipState
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.layout.AnimatedPane
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
-import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.AlertListItem
-import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.filters.AlertsFiltersSheet
-import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-@Composable
-fun AlertsListScreen(
-    viewModel: AlertsListViewModel = hiltViewModel()
-) {
-    val navigator = rememberListDetailPaneScaffoldNavigator<Int>()
-    val scope = rememberCoroutineScope()
-
-    // Mirrors navigator.currentDestination?.contentKey but delays clearing to null
-    // so the detail content stays visible during the back-navigation exit animation,
-    // preventing the placeholder from flashing before the transition finishes.
-    val currentAlertId = navigator.currentDestination?.contentKey
-    var activeAlertId by remember { mutableStateOf<Int?>(null) }
-    LaunchedEffect(currentAlertId) {
-        if (currentAlertId != null) {
-            activeAlertId = currentAlertId
-        } else {
-            delay(350)
-            activeAlertId = null
-        }
-    }
-
-    // Single-pane: back button should be visible for as long as the detail content
-    // is visible (i.e. including the 350ms exit-animation window). Using
-    // navigator.canNavigateBack() would hide the button immediately on back-press,
-    // before the animation finishes.
-    val isSinglePane = navigator.scaffoldDirective.maxHorizontalPartitions == 1
-
-    BackHandler(navigator.canNavigateBack()) {
-        scope.launch { navigator.navigateBack() }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.initialFetchAlerts()
-    }
-
-    ListDetailPaneScaffold(
-        directive = navigator.scaffoldDirective,
-        value = navigator.scaffoldValue,
-        listPane = {
-            AnimatedPane {
-                AlertsListPane(
-                    viewModel = viewModel,
-                    onNavigateToDetails = { alertId ->
-                        scope.launch {
-                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, alertId)
-                        }
-                    }
-                )
-            }
-        },
-        detailPane = {
-            AnimatedPane {
-                AlertDetailPane(
-                    alertId = activeAlertId,
-                    showBackButton = isSinglePane && activeAlertId != null,
-                    onNavigateBack = { scope.launch { navigator.navigateBack() } }
-                )
-            }
-        }
-    )
-
-    if (viewModel.deletingAlertProcess) {
-        Dialog(
-            onDismissRequest = {},
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) {
-            Card {
-                Box(
-                    modifier = Modifier.padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-        }
-    }
-}
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.NoDecisions
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.filters.DecisionsFiltersSheet
+import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AlertsListPane(
-    viewModel: AlertsListViewModel,
+fun DecisionsListPane(
+    viewModel: DecisionsListViewModel,
     onNavigateToDetails: (Int) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -165,7 +74,7 @@ private fun AlertsListPane(
                     scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                 ),
                 scrollBehavior = scrollBehavior,
-                title = { Text(stringResource(R.string.alerts)) },
+                title = { Text(stringResource(R.string.decisions)) },
                 actions = {
                     if (viewModel.state is LoadingResult.Success) {
                         TooltipBox(
@@ -192,7 +101,7 @@ private fun AlertsListPane(
             targetState = viewModel.state,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             contentKey = { it::class },
-            label = "AlertsListState"
+            label = "DecisionsListState"
         ) { state ->
             when (state) {
                 is LoadingResult.Loading -> {
@@ -210,37 +119,15 @@ private fun AlertsListPane(
                     val data = state.value
                     PullToRefreshBox(
                         isRefreshing = viewModel.isRefreshing,
-                        onRefresh = { viewModel.refreshAlerts() },
+                        onRefresh = { viewModel.refreshDecisions() },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
                         if (data.items.isEmpty()) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.FilterList,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(56.dp),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.no_alerts_title),
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.no_alerts_description),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
+                            NoDecisions(
+                                showingOnlyActive = viewModel.filters.onlyActive == true
+                            )
                         } else {
                             LazyColumn(
                                 state = listState,
@@ -248,17 +135,17 @@ private fun AlertsListPane(
                                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                                 verticalArrangement = Arrangement.spacedBy(2.dp)
                             ) {
-                                items(data.items, key = { it.id }) { alert ->
-                                    val index = data.items.indexOf(alert)
-                                    AlertListItem(
+                                items(data.items, key = { it.id }) { decision ->
+                                    val index = data.items.indexOf(decision)
+                                    DecisionListItem(
                                         index = index,
                                         totalListAmount = data.items.size,
-                                        alert = alert,
+                                        decision = decision,
                                         viewModel = viewModel,
-                                        onNavigateToDetails = { onNavigateToDetails(alert.id) }
+                                        onNavigateToDetails = { onNavigateToDetails(decision.id) }
                                     )
-                                    LaunchedEffect(alert.id) {
-                                        if (alert == data.items.last()) {
+                                    LaunchedEffect(decision.id) {
+                                        if (decision == data.items.last()) {
                                             viewModel.fetchMore()
                                         }
                                     }
@@ -305,7 +192,7 @@ private fun AlertsListPane(
                                 text = stringResource(R.string.error_fetching_data),
                                 style = MaterialTheme.typography.bodyLarge
                             )
-                            IconButton(onClick = { viewModel.initialFetchAlerts() }) {
+                            IconButton(onClick = { viewModel.initialFetchDecisions() }) {
                                 Icon(Icons.Rounded.Refresh, contentDescription = null)
                             }
                         }
@@ -316,52 +203,9 @@ private fun AlertsListPane(
     }
 
     if (showFiltersSheet) {
-        AlertsFiltersSheet(
+        DecisionsFiltersSheet(
             viewModel = viewModel,
             onDismiss = { showFiltersSheet = false }
         )
-    }
-}
-
-@Composable
-private fun AlertDetailPane(
-    alertId: Int?,
-    showBackButton: Boolean,
-    onNavigateBack: () -> Unit
-) {
-    if (alertId != null) {
-        AlertDetailsScreen(
-            alertId = alertId,
-            showBackButton = showBackButton,
-            onNavigateBack = onNavigateBack
-        )
-    } else {
-        Scaffold(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.FilterList,
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = stringResource(R.string.select_alert),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.filters
+package com.jgeek00.crowdsecmonitor.ui.screens.alerts.list.filters
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize

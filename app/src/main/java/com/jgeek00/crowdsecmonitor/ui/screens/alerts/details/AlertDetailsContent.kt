@@ -1,13 +1,8 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.alerts
+package com.jgeek00.crowdsecmonitor.ui.screens.alerts.details
 
 import android.content.Context
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,28 +16,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
-import androidx.compose.material.icons.rounded.Error
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,157 +34,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.constants.URLs
-import com.jgeek00.crowdsecmonitor.data.models.AlertDetailsDecision
 import com.jgeek00.crowdsecmonitor.data.models.AlertDetailsResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
-import com.jgeek00.crowdsecmonitor.extensions.toFormattedDate
+import com.jgeek00.crowdsecmonitor.data.models.toDecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.event.EventItem
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
 import com.jgeek00.crowdsecmonitor.utils.reverseGeocode
-import com.jgeek00.crowdsecmonitor.viewmodel.AlertDetailsViewModel
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AlertDetailsScreen(
-    alertId: Int,
-    showBackButton: Boolean = false,
-    onNavigateBack: () -> Unit = {}
-) {
-    val viewModel: AlertDetailsViewModel = hiltViewModel(key = alertId.toString())
-    val context = LocalContext.current
-
-    LaunchedEffect(alertId) {
-        viewModel.initialize(alertId)
-    }
-
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                ),
-                title = {
-                    Text(text = stringResource(R.string.alert_title, alertId))
-                },
-                navigationIcon = {
-                    if (showBackButton) {
-                        TooltipBox(
-                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                                TooltipAnchorPosition.Below
-                            ),
-                            tooltip = { PlainTooltip { Text(stringResource(R.string.back)) } },
-                            state = rememberTooltipState()
-                        ) {
-                            IconButton(onClick = onNavigateBack) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                    contentDescription = stringResource(R.string.back)
-                                )
-                            }
-                        }
-                    }
-                },
-                actions = {
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            TooltipAnchorPosition.Below
-                        ),
-                        tooltip = { PlainTooltip { Text(stringResource(R.string.refresh)) } },
-                        state = rememberTooltipState()
-                    ) {
-                        IconButton(onClick = { viewModel.refresh(alertId) }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Refresh,
-                                contentDescription = stringResource(R.string.refresh)
-                            )
-                        }
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        AnimatedContent(
-            targetState = viewModel.state,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-            contentKey = { it::class },
-            label = "AlertDetailsState"
-        ) { state ->
-            when (state) {
-                is LoadingResult.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                is LoadingResult.Success -> {
-                    AlertDetailsContent(
-                        data = state.value,
-                        innerPadding = innerPadding,
-                        isRefreshing = viewModel.isRefreshing,
-                        onRefresh = { viewModel.refresh(alertId) },
-                        context = context
-                    )
-                }
-
-                is LoadingResult.Failure -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Error,
-                                contentDescription = null,
-                                modifier = Modifier.size(56.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = stringResource(R.string.error_fetching_data),
-                                style = MaterialTheme.typography.bodyLarge,
-                                textAlign = TextAlign.Center
-                            )
-                            IconButton(onClick = { viewModel.refresh(alertId) }) {
-                                Icon(Icons.Rounded.Refresh, contentDescription = null)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AlertDetailsContent(
+fun AlertDetailsContent(
     data: AlertDetailsResponse,
     innerPadding: PaddingValues,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    onNavigateToDecision: ((Int) -> Unit)?,
     context: Context
 ) {
     var geocodedLocation by remember { mutableStateOf<LoadingResult<String>>(LoadingResult.Loading) }
@@ -409,10 +265,13 @@ private fun AlertDetailsContent(
                     SectionHeader(text = stringResource(R.string.decisions))
                 }
                 items(data.decisions, key = { it.id }) { decision ->
-                    DecisionItem(
-                        decision = decision,
-                        index = data.decisions.indexOf(decision),
-                        total = data.decisions.size
+                    val idx = data.decisions.indexOf(decision)
+                    DecisionListItem(
+                        index = idx,
+                        totalListAmount = data.decisions.size,
+                        decision = decision.toDecisionsListResponseItem(),
+                        viewModel = null,
+                        onNavigateToDetails = { onNavigateToDecision?.invoke(decision.id) }
                     )
                 }
             }
@@ -435,22 +294,3 @@ private fun AlertDetailsContent(
         }
     }
 }
-
-@Composable
-private fun DecisionItem(
-    decision: AlertDetailsDecision,
-    index: Int,
-    total: Int
-) {
-    DataListTile(
-        tileIndex = index,
-        groupTiles = total,
-        title = "${decision.type} · ${decision.value}",
-        subtitle = "${decision.scenario}  •  ${stringResource(R.string.expires)} ${decision.expiration.toFormattedDate()}"
-    )
-}
-
-
-
-
-

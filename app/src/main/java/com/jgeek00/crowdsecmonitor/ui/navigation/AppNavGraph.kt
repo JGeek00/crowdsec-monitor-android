@@ -6,11 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
@@ -19,7 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.jgeek00.crowdsecmonitor.constants.Enums
-import com.jgeek00.crowdsecmonitor.ui.screens.alerts.AlertsListScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.alerts.list.AlertsListScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.list.DecisionsListScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.DashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.SettingsScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.FullListDashboardScreen
@@ -128,9 +125,7 @@ fun AppNavGraph(
 
         navigation<Route.DecisionsGraph>(startDestination = Route.Decisions) {
             composable<Route.Decisions> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Decisions Screen")
-                }
+                DecisionsListScreen()
             }
         }
 

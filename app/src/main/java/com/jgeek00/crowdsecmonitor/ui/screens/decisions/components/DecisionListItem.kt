@@ -1,6 +1,5 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.alerts.components
+package com.jgeek00.crowdsecmonitor.ui.screens.decisions.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.HourglassEmpty
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,23 +31,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.data.models.AlertsListResponseAlert
-import com.jgeek00.crowdsecmonitor.extensions.toFormattedDate
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
-import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AlertListItem(
+fun DecisionListItem(
     index: Int,
     totalListAmount: Int,
-    alert: AlertsListResponseAlert,
-    viewModel: AlertsListViewModel? = null,
+    decision: DecisionsListResponseItem,
+    viewModel: DecisionsListViewModel? = null,
     onNavigateToDetails: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
-    var showDeleteConfirm by remember { mutableStateOf(false) }
-    var showDeleteError by remember { mutableStateOf(false) }
+    var showExpireConfirm by remember { mutableStateOf(false) }
+    var showExpireError by remember { mutableStateOf(false) }
+
+    val scenarioLabel = remember(decision.scenario) {
+        val parts = decision.scenario.split("/")
+        if (parts.size >= 2) parts.last() else decision.scenario
+    }
 
     SegmentedListItem(
         onClick = onNavigateToDetails,
@@ -56,8 +59,7 @@ fun AlertListItem(
         shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -67,37 +69,38 @@ fun AlertListItem(
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.delete_alert)) },
+                        text = { Text(stringResource(R.string.expire_decision)) },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Rounded.Delete,
+                                imageVector = Icons.Rounded.HourglassEmpty,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.error
                             )
                         },
                         onClick = {
                             menuExpanded = false
-                            showDeleteConfirm = true
+                            showExpireConfirm = true
                         }
                     )
                 }
             }
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = alert.scenario,
+                    text = scenarioLabel,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!alert.source.cn.isNullOrBlank()) {
-                        CountryFlag(countryCode = alert.source.cn, onlyFlag = true)
+                    if (!decision.source.cn.isNullOrBlank()) {
+                        CountryFlag(countryCode = decision.source.cn, onlyFlag = true)
                         Spacer(modifier = Modifier.width(6.dp))
                     }
                     Text(
-                        text = alert.source.ip ?: alert.source.value,
+                        text = decision.source.ip ?: decision.source.value,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -105,53 +108,55 @@ fun AlertListItem(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = alert.crowdsecCreatedAt.toFormattedDate(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+
+            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                DecisionTypeChip(decisionType = decision.type)
+                DecisionTimer(expiration = decision.expiration)
+            }
         }
     }
 
-    if (viewModel != null && showDeleteConfirm) {
+    if (viewModel != null && showExpireConfirm) {
         AlertDialog(
-            onDismissRequest = { showDeleteConfirm = false },
-            title = { Text(stringResource(R.string.delete_alert)) },
-            text = { Text(stringResource(R.string.delete_alert_confirm)) },
+            onDismissRequest = { showExpireConfirm = false },
+            title = { Text(stringResource(R.string.expire_decision)) },
+            text = { Text(stringResource(R.string.expire_decision_confirm)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        showDeleteConfirm = false
-                        viewModel.deleteAlert(alert.id) { success ->
-                            if (!success) showDeleteError = true
+                        showExpireConfirm = false
+                        viewModel.expireDecision(decision.id) { success ->
+                            if (!success) showExpireError = true
                         }
                     }
                 ) {
                     Text(
-                        text = stringResource(R.string.delete),
+                        text = stringResource(R.string.expire_decision),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) {
+                TextButton(onClick = { showExpireConfirm = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
         )
     }
 
-    if (viewModel != null && showDeleteError) {
+    if (viewModel != null && showExpireError) {
         AlertDialog(
-            onDismissRequest = { showDeleteError = false },
-            title = { Text(stringResource(R.string.delete_alert_error_title)) },
-            text = { Text(stringResource(R.string.delete_alert_error_msg)) },
+            onDismissRequest = { showExpireError = false },
+            title = { Text(stringResource(R.string.expire_decision_error_title)) },
+            text = { Text(stringResource(R.string.expire_decision_error_msg)) },
             confirmButton = {
-                TextButton(onClick = { showDeleteError = false }) {
+                TextButton(onClick = { showExpireError = false }) {
                     Text(stringResource(R.string.ok))
                 }
             }
         )
     }
 }
+

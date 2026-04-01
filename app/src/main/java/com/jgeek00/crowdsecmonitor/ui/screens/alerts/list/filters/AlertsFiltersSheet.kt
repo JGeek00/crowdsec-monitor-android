@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.filters
+package com.jgeek00.crowdsecmonitor.ui.screens.alerts.list.filters
 
 import android.graphics.Color
 import androidx.activity.compose.BackHandler

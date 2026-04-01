@@ -110,4 +110,26 @@
     <string name="refresh">Refresh</string>
     <string name="expires">Expires</string>
     <string name="user_agent_not_available">User agent not available</string>
+
+    <!-- Decisions -->
+    <string name="decision_title">Decision #%d</string>
+    <string name="general_information">General information</string>
+    <string name="remaining_time">Remaining time</string>
+    <string name="alert">Alert</string>
+    <string name="select_decision">Select a decision</string>
+    <string name="no_active_decisions_title">No active decisions</string>
+    <string name="no_active_decisions_description">Disable show only active decisions on filters to see all decisions</string>
+    <string name="no_decisions_title">No decisions</string>
+    <string name="no_decisions_description">Change the filtering criteria to see more decisions</string>
+    <string name="expire_decision">Expire decision</string>
+    <string name="expire_decision_confirm">Are you sure you want to expire this decision now? This action cannot be undone.</string>
+    <string name="expire_decision_error_title">Error expiring decision</string>
+    <string name="expire_decision_error_msg">An error occurred while expiring the decision. Please try again.</string>
+    <string name="expired">Expired</string>
+    <string name="only_active">Only active</string>
+    <string name="create_decision">Create decision</string>
+    <string name="ban">Ban</string>
+    <string name="captcha">Captcha</string>
+    <string name="expiration">Expiration</string>
+    <string name="type">Type</string>
 </resources>

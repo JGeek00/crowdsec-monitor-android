@@ -17,6 +17,14 @@ fun String.toFormattedDate(style: FormatStyle = FormatStyle.MEDIUM): String {
     }
 }
 
+fun String.toInstant(): java.time.Instant? {
+    return try {
+        java.time.Instant.parse(this)
+    } catch (_: Exception) {
+        null
+    }
+}
+
 fun String.toFormattedDateTime(style: FormatStyle = FormatStyle.MEDIUM): String {
     return try {
         val instant = Instant.parse(this)

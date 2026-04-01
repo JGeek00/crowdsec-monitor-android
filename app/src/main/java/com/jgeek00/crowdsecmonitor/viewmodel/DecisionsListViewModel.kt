@@ -6,34 +6,39 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.constants.Defaults
-import com.jgeek00.crowdsecmonitor.data.models.AlertsListResponse
-import com.jgeek00.crowdsecmonitor.data.models.AlertsRequest
-import com.jgeek00.crowdsecmonitor.data.models.AlertsRequestFilters
-import com.jgeek00.crowdsecmonitor.data.models.AlertsRequestPagination
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponse
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequest
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequestFilters
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequestPagination
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private val defaultRequest = AlertsRequest(
-    filters = AlertsRequestFilters(
-        countries = emptyList(),
-        scenarios = emptyList(),
-        ipOwners = emptyList(),
-        targets = emptyList()
+private val defaultRequest = DecisionsRequest(
+    filters = DecisionsRequestFilters(
+        onlyActive = Defaults.SHOW_DEFAULT_ACTIVE_DECISIONS
     ),
-    pagination = AlertsRequestPagination(
+    pagination = DecisionsRequestPagination(
         offset = 0,
-        limit = Defaults.ALERTS_AMOUNT_BATCH
+        limit = Defaults.DECISIONS_AMOUNT_BATCH
     )
 )
 
 @HiltViewModel
-class AlertsListViewModel @Inject constructor(
+class DecisionsListViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    var state by mutableStateOf<LoadingResult<AlertsListResponse>>(LoadingResult.Loading)
+    init {
+        viewModelScope.launch {
+            sessionManager.decisionsRefreshEvent.collect {
+                refreshDecisionsInternal()
+            }
+        }
+    }
+
+    var state by mutableStateOf<LoadingResult<DecisionsListResponse>>(LoadingResult.Loading)
         private set
 
     var isRefreshing by mutableStateOf(false)
@@ -42,10 +47,7 @@ class AlertsListViewModel @Inject constructor(
     var isLoadingMore by mutableStateOf(false)
         private set
 
-    var deletingAlertProcess by mutableStateOf(false)
-        private set
-
-    var selectedAlert by mutableStateOf<Int?>(null)
+    var expiringDecisionProcess by mutableStateOf(false)
         private set
 
     var requestParams by mutableStateOf(defaultRequest)
@@ -58,13 +60,12 @@ class AlertsListViewModel @Inject constructor(
         state = LoadingResult.Loading
         requestParams = defaultRequest
         filters = defaultRequest.filters
-        selectedAlert = null
-        deletingAlertProcess = false
+        expiringDecisionProcess = false
         isRefreshing = false
         isLoadingMore = false
     }
 
-    private suspend fun fetchAlerts(showLoading: Boolean = false, params: AlertsRequest? = null) {
+    private suspend fun fetchDecisions(showLoading: Boolean = false, params: DecisionsRequest? = null) {
         val apiClient = sessionManager.apiClient ?: return
 
         if (showLoading) {
@@ -72,26 +73,26 @@ class AlertsListViewModel @Inject constructor(
         }
 
         try {
-            val result = apiClient.alerts.fetchAlerts(params ?: requestParams)
+            val result = apiClient.decisions.fetchDecisions(params ?: requestParams)
             state = LoadingResult.Success(result.body)
         } catch (e: Exception) {
             state = LoadingResult.Failure(e)
         }
     }
 
-    fun initialFetchAlerts() {
+    fun initialFetchDecisions() {
         if (state.data != null) return
         viewModelScope.launch {
-            fetchAlerts(showLoading = true)
+            fetchDecisions(showLoading = true)
         }
     }
 
-    fun refreshAlerts() {
+    fun refreshDecisions() {
         viewModelScope.launch {
             isRefreshing = true
             val req = requestParams.copy(pagination = defaultRequest.pagination)
             requestParams = req
-            fetchAlerts(params = req)
+            fetchDecisions(params = req)
             isRefreshing = false
         }
     }
@@ -103,7 +104,7 @@ class AlertsListViewModel @Inject constructor(
         )
         requestParams = req
         viewModelScope.launch {
-            fetchAlerts(showLoading = true, params = req)
+            fetchDecisions(showLoading = true, params = req)
         }
     }
 
@@ -111,10 +112,10 @@ class AlertsListViewModel @Inject constructor(
         val apiClient = sessionManager.apiClient ?: return
         val data = state.data ?: return
 
-        if ((data.pagination.page * Defaults.ALERTS_AMOUNT_BATCH) >= data.pagination.total) return
+        if ((data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH) >= data.pagination.total) return
 
         val previousItems = data.items
-        val newOffset = data.pagination.page * Defaults.ALERTS_AMOUNT_BATCH
+        val newOffset = data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH
         requestParams = requestParams.copy(
             pagination = requestParams.pagination.copy(offset = newOffset)
         )
@@ -122,11 +123,11 @@ class AlertsListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 isLoadingMore = true
-                val result = apiClient.alerts.fetchAlerts(requestParams)
+                val result = apiClient.decisions.fetchDecisions(requestParams)
                 val existingIds = previousItems.map { it.id }.toHashSet()
                 val uniqueNewItems = result.body.items.filter { it.id !in existingIds }
                 val mergedItems = previousItems + uniqueNewItems
-                val newResponse = AlertsListResponse(
+                val newResponse = DecisionsListResponse(
                     filtering = result.body.filtering,
                     items = mergedItems,
                     pagination = result.body.pagination
@@ -140,7 +141,7 @@ class AlertsListViewModel @Inject constructor(
         }
     }
 
-    fun updateFilters(newFilters: AlertsRequestFilters) {
+    fun updateFilters(newFilters: DecisionsRequestFilters) {
         filters = newFilters
     }
 
@@ -148,7 +149,7 @@ class AlertsListViewModel @Inject constructor(
         filters = defaultRequest.filters
         requestParams = requestParams.copy(filters = defaultRequest.filters)
         viewModelScope.launch {
-            fetchAlerts(showLoading = true, params = defaultRequest)
+            fetchDecisions(showLoading = true, params = defaultRequest)
         }
     }
 
@@ -156,37 +157,26 @@ class AlertsListViewModel @Inject constructor(
         filters = requestParams.filters
     }
 
-    fun selectAlert(alertId: Int?) {
-        selectedAlert = alertId
-    }
-
-    fun deleteAlert(alertId: Int, onResult: (Boolean) -> Unit) {
+    fun expireDecision(decisionId: Int, onResult: (Boolean) -> Unit) {
         val apiClient = sessionManager.apiClient ?: run { onResult(false); return }
         viewModelScope.launch {
-            deletingAlertProcess = true
+            expiringDecisionProcess = true
             try {
-                apiClient.alerts.deleteAlert(alertId)
-                if (selectedAlert == alertId) {
-                    selectedAlert = null
-                }
-
-                // Refresh alerts and decisions in parallel
-                refreshAlertsInternal()
-                sessionManager.triggerDecisionsRefresh()
-
-                deletingAlertProcess = false
+                apiClient.decisions.deleteDecision(decisionId)
+                refreshDecisionsInternal()
+                expiringDecisionProcess = false
                 onResult(true)
             } catch (_: Exception) {
-                deletingAlertProcess = false
+                expiringDecisionProcess = false
                 onResult(false)
             }
         }
     }
 
-    private suspend fun refreshAlertsInternal() {
+    private suspend fun refreshDecisionsInternal() {
         val req = requestParams.copy(pagination = defaultRequest.pagination)
         requestParams = req
-        fetchAlerts(params = req)
+        fetchDecisions(params = req)
     }
 }
 
