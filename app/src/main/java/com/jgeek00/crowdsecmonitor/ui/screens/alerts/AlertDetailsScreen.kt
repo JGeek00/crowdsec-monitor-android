@@ -1,7 +1,7 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.alerts
 
 import android.content.Context
-import android.content.Intent
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -265,8 +265,10 @@ private fun AlertDetailsContent(
 
                 SegmentedListItem(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, hubUrl.toUri())
-                        context.startActivity(intent)
+                        CustomTabsIntent.Builder()
+                            .setShowTitle(true)
+                            .build()
+                            .launchUrl(context, hubUrl.toUri())
                     },
                     shapes = ListItemDefaults.segmentedShapes(index = idx, count = scenarioGroupSize),
                     modifier = Modifier.padding(bottom = if (0 < scenarioGroupSize - 1) 2.dp else 0.dp)

@@ -58,7 +58,6 @@ fun AlertListItem(
         onClick = onNavigateToDetails,
         onLongClick = { menuExpanded = true },
         shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
-        modifier = Modifier.padding(bottom = if (index < totalListAmount - 1) 2.dp else 0.dp)
     ) {
         Row(
             modifier = Modifier

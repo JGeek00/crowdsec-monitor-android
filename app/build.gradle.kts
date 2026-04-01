@@ -88,6 +88,9 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
 
+    // Browser (Custom Tabs)
+    implementation(libs.androidx.browser)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
