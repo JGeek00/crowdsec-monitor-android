@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 import uk.co.bocajsolutions.cardshape.Shape
 import uk.co.bocajsolutions.cardshape.ShapeStyle
@@ -93,21 +94,14 @@ fun DecisionListItem(
         }
     }
     else {
-        Card(
-            shape = Shape(groupSize = totalListAmount, index = index, style = ShapeStyle.Medium),
-            modifier = Modifier.padding(bottom = if (index == totalListAmount - 1) 0.dp else 2.dp)
+        RoundedCornersListTile(
+            index = index,
+            totalItems = totalListAmount,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp),
-            ) {
-                Content(
-                    decision = decision,
-                    scenarioLabel = scenarioLabel
-                )
-            }
+            Content(
+                decision,
+                scenarioLabel = scenarioLabel
+            )
         }
     }
 
