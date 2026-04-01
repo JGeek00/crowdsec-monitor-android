@@ -63,6 +63,7 @@ import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.AlertListItem
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.filters.AlertsFiltersSheet
 import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -72,6 +73,26 @@ fun AlertsListScreen(
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Int>()
     val scope = rememberCoroutineScope()
+
+    // Mirrors navigator.currentDestination?.contentKey but delays clearing to null
+    // so the detail content stays visible during the back-navigation exit animation,
+    // preventing the placeholder from flashing before the transition finishes.
+    val currentAlertId = navigator.currentDestination?.contentKey
+    var activeAlertId by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(currentAlertId) {
+        if (currentAlertId != null) {
+            activeAlertId = currentAlertId
+        } else {
+            delay(350)
+            activeAlertId = null
+        }
+    }
+
+    // Single-pane: back button should be visible for as long as the detail content
+    // is visible (i.e. including the 350ms exit-animation window). Using
+    // navigator.canNavigateBack() would hide the button immediately on back-press,
+    // before the animation finishes.
+    val isSinglePane = navigator.scaffoldDirective.maxHorizontalPartitions == 1
 
     BackHandler(navigator.canNavigateBack()) {
         scope.launch { navigator.navigateBack() }
@@ -98,8 +119,11 @@ fun AlertsListScreen(
         },
         detailPane = {
             AnimatedPane {
-                val alertId = navigator.currentDestination?.contentKey
-                AlertDetailPane(alertId = alertId)
+                AlertDetailPane(
+                    alertId = activeAlertId,
+                    showBackButton = isSinglePane && activeAlertId != null,
+                    onNavigateBack = { scope.launch { navigator.navigateBack() } }
+                )
             }
         }
     )
@@ -300,24 +324,27 @@ private fun AlertsListPane(
 }
 
 @Composable
-private fun AlertDetailPane(alertId: Int?) {
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
-        ) {
-            if (alertId != null) {
-                // TODO: Replace with AlertDetailsScreen(alertId = alertId)
-                Text(
-                    text = "Alert #$alertId",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
+private fun AlertDetailPane(
+    alertId: Int?,
+    showBackButton: Boolean,
+    onNavigateBack: () -> Unit
+) {
+    if (alertId != null) {
+        AlertDetailsScreen(
+            alertId = alertId,
+            showBackButton = showBackButton,
+            onNavigateBack = onNavigateBack
+        )
+    } else {
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)

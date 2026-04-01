@@ -19,9 +19,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.constants.Enums
 
 @Composable
 fun StyledListContainer(
+    listLength: Int,
     sectionTitle: String,
     onViewAll: () -> Unit,
     modifier: Modifier = Modifier,
@@ -34,28 +36,17 @@ fun StyledListContainer(
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp, bottom = 16.dp)
             )
             content()
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-            Row(
+            ViewAllRow(
+                onClick = onViewAll,
+                listTotalAmount = listLength,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onViewAll)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.view_all),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+                    .padding(horizontal = 16.dp)
+            )
         }
     }
 }

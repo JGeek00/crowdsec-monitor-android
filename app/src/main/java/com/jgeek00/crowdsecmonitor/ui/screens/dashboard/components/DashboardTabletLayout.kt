@@ -48,7 +48,9 @@ fun DashboardContentTablet(
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 if (data.topCountries.isNotEmpty()) {
                     val total = data.topCountries.sumOf { it.amount }.coerceAtLeast(1)
+                    val listLength = data.topTargets.size + 1
                     StyledListContainer(
+                        listLength = listLength,
                         sectionTitle = stringResource(R.string.top_countries),
                         onViewAll = { onNavigateToFullList(Enums.DashboardItemType.COUNTRY) },
                         modifier = Modifier.weight(1f)
@@ -57,7 +59,7 @@ fun DashboardContentTablet(
                             val index = data.topCountries.indexOf(item)
                             DashboardItem(
                                 index = index,
-                                listLength = data.topCountries.size,
+                                listLength = listLength,
                                 itemType = Enums.DashboardItemType.COUNTRY,
                                 label = item.countryCode,
                                 amount = item.amount,
@@ -69,7 +71,9 @@ fun DashboardContentTablet(
                 }
                 if (data.topIpOwners.isNotEmpty()) {
                     val total = data.topIpOwners.sumOf { it.amount }.coerceAtLeast(1)
+                    val listLength = data.topTargets.size + 1
                     StyledListContainer(
+                        listLength = listLength,
                         sectionTitle = stringResource(R.string.top_ip_owners),
                         onViewAll = { onNavigateToFullList(Enums.DashboardItemType.IP_OWNER) },
                         modifier = Modifier.weight(1f)
@@ -78,7 +82,7 @@ fun DashboardContentTablet(
                             val index = data.topIpOwners.indexOf(item)
                             DashboardItem(
                                 index = index,
-                                listLength = data.topIpOwners.size,
+                                listLength = listLength,
                                 itemType = Enums.DashboardItemType.IP_OWNER,
                                 label = item.ipOwner,
                                 amount = item.amount,
@@ -96,7 +100,9 @@ fun DashboardContentTablet(
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                 if (data.topScenarios.isNotEmpty()) {
                     val total = data.topScenarios.sumOf { it.amount }.coerceAtLeast(1)
+                    val listLength = data.topTargets.size + 1
                     StyledListContainer(
+                        listLength = listLength,
                         sectionTitle = stringResource(R.string.top_scenarios),
                         onViewAll = { onNavigateToFullList(Enums.DashboardItemType.SCENARIO) },
                         modifier = Modifier.weight(1f)
@@ -105,7 +111,7 @@ fun DashboardContentTablet(
                             val index = data.topScenarios.indexOf(item)
                             DashboardItem(
                                 index = index,
-                                listLength = data.topScenarios.size,
+                                listLength = listLength,
                                 itemType = Enums.DashboardItemType.SCENARIO,
                                 label = item.scenario,
                                 amount = item.amount,
@@ -117,7 +123,9 @@ fun DashboardContentTablet(
                 }
                 if (data.topTargets.isNotEmpty()) {
                     val total = data.topTargets.sumOf { it.amount }.coerceAtLeast(1)
+                    val listLength = data.topTargets.size + 1
                     StyledListContainer(
+                        listLength = listLength,
                         sectionTitle = stringResource(R.string.top_targets),
                         onViewAll = { onNavigateToFullList(Enums.DashboardItemType.TARGET) },
                         modifier = Modifier.weight(1f)
@@ -126,7 +134,7 @@ fun DashboardContentTablet(
                             val index = data.topTargets.indexOf(item)
                             DashboardItem(
                                 index = index,
-                                listLength = data.topTargets.size,
+                                listLength = listLength,
                                 itemType = Enums.DashboardItemType.TARGET,
                                 label = item.target,
                                 amount = item.amount,

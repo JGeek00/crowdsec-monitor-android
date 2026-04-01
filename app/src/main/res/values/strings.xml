@@ -95,4 +95,19 @@
     <string name="apply">Apply</string>
     <string name="reset">Reset</string>
     <string name="n_selected">%d selected</string>
+    <string name="alert_title">Alert #%d</string>
+    <string name="message">Message</string>
+    <string name="version">Version</string>
+    <string name="capacity">Capacity</string>
+    <string name="leakspeed">Leakspeed</string>
+    <string name="origin">Origin</string>
+    <string name="ip_address">IP address</string>
+    <string name="country">Country</string>
+    <string name="location">Location</string>
+    <string name="ip_owner">IP owner</string>
+    <string name="events">Events</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="refresh">Refresh</string>
+    <string name="expires">Expires</string>
+    <string name="user_agent_not_available">User agent not available</string>
 </resources>
