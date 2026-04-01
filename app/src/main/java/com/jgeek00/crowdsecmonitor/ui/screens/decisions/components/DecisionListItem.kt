@@ -1,15 +1,19 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.decisions.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.HourglassEmpty
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -34,6 +38,8 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
+import uk.co.bocajsolutions.cardshape.Shape
+import uk.co.bocajsolutions.cardshape.ShapeStyle
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -42,7 +48,7 @@ fun DecisionListItem(
     totalListAmount: Int,
     decision: DecisionsListResponseItem,
     viewModel: DecisionsListViewModel? = null,
-    onNavigateToDetails: () -> Unit
+    onNavigateToDetails: (() -> Unit)?
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     var showExpireConfirm by remember { mutableStateOf(false) }
@@ -53,15 +59,11 @@ fun DecisionListItem(
         if (parts.size >= 2) parts.last() else decision.scenario
     }
 
-    SegmentedListItem(
-        onClick = onNavigateToDetails,
-        onLongClick = if (viewModel != null) { { menuExpanded = true } } else null,
-        shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    if (onNavigateToDetails != null) {
+        SegmentedListItem(
+            onClick = onNavigateToDetails,
+            onLongClick = { if (viewModel != null) { menuExpanded = true } else null },
+            shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
         ) {
             if (viewModel != null) {
                 DropdownMenu(
@@ -84,36 +86,27 @@ fun DecisionListItem(
                     )
                 }
             }
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = scenarioLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+            Content(
+                decision = decision,
+                scenarioLabel = scenarioLabel
+            )
+        }
+    }
+    else {
+        Card(
+            shape = Shape(groupSize = totalListAmount, index = index, style = ShapeStyle.Medium),
+            modifier = Modifier.padding(bottom = if (index == totalListAmount - 1) 0.dp else 2.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp),
+            ) {
+                Content(
+                    decision = decision,
+                    scenarioLabel = scenarioLabel
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!decision.source.cn.isNullOrBlank()) {
-                        CountryFlag(countryCode = decision.source.cn, onlyFlag = true)
-                        Spacer(modifier = Modifier.width(6.dp))
-                    }
-                    Text(
-                        text = decision.source.ip ?: decision.source.value,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                DecisionTypeChip(decisionType = decision.type)
-                DecisionTimer(expiration = decision.expiration)
             }
         }
     }
@@ -160,3 +153,45 @@ fun DecisionListItem(
     }
 }
 
+@Composable
+private fun Content(
+    decision: DecisionsListResponseItem,
+    scenarioLabel: String,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = scenarioLabel,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (!decision.source.cn.isNullOrBlank()) {
+                    CountryFlag(countryCode = decision.source.cn, onlyFlag = true)
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+                Text(
+                    text = decision.source.ip ?: decision.source.value,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            DecisionTypeChip(decisionType = decision.type)
+            DecisionTimer(expiration = decision.expiration)
+        }
+    }
+}

@@ -271,7 +271,9 @@ fun AlertDetailsContent(
                         totalListAmount = data.decisions.size,
                         decision = decision.toDecisionsListResponseItem(),
                         viewModel = null,
-                        onNavigateToDetails = { onNavigateToDecision?.invoke(decision.id) }
+                        onNavigateToDetails = if (onNavigateToDecision != null) {
+                            { onNavigateToDecision.invoke(decision.id) }
+                        } else null
                     )
                 }
             }

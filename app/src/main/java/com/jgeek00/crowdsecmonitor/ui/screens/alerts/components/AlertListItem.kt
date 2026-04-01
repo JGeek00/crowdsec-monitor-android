@@ -1,16 +1,20 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.alerts.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -36,6 +40,8 @@ import com.jgeek00.crowdsecmonitor.data.models.AlertsListResponseAlert
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDate
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
+import uk.co.bocajsolutions.cardshape.Shape
+import uk.co.bocajsolutions.cardshape.ShapeStyle
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -44,23 +50,19 @@ fun AlertListItem(
     totalListAmount: Int,
     alert: AlertsListResponseAlert,
     viewModel: AlertsListViewModel? = null,
-    onNavigateToDetails: () -> Unit
+    onNavigateToDetails: (() -> Unit)?
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showDeleteError by remember { mutableStateOf(false) }
 
-    SegmentedListItem(
-        onClick = onNavigateToDetails,
-        onLongClick = if (viewModel != null) { { menuExpanded = true } } else null,
-        shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    if (onNavigateToDetails != null) {
+        SegmentedListItem(
+            onClick = onNavigateToDetails,
+            onLongClick = if (viewModel != null) { { menuExpanded = true } } else null,
+            shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
         ) {
+            Content(alert)
             if (viewModel != null) {
                 DropdownMenu(
                     expanded = menuExpanded,
@@ -82,35 +84,21 @@ fun AlertListItem(
                     )
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = alert.scenario,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!alert.source.cn.isNullOrBlank()) {
-                        CountryFlag(countryCode = alert.source.cn, onlyFlag = true)
-                        Spacer(modifier = Modifier.width(6.dp))
-                    }
-                    Text(
-                        text = alert.source.ip ?: alert.source.value,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+        }
+    }
+    else {
+        Card(
+            shape = Shape(groupSize = totalListAmount, index = index, style = ShapeStyle.Medium),
+            modifier = Modifier.padding(bottom = if (index == totalListAmount - 1) 0.dp else 2.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp),
+            ) {
+                Content(alert)
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = alert.crowdsecCreatedAt.toFormattedDate(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 
@@ -152,6 +140,49 @@ fun AlertListItem(
                     Text(stringResource(R.string.ok))
                 }
             }
+        )
+    }
+}
+
+@Composable
+private fun Content(
+    alert: AlertsListResponseAlert,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = alert.scenario,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (!alert.source.cn.isNullOrBlank()) {
+                    CountryFlag(countryCode = alert.source.cn, onlyFlag = true)
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+                Text(
+                    text = alert.source.ip ?: alert.source.value,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = alert.crowdsecCreatedAt.toFormattedDate(),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
