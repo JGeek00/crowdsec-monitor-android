@@ -61,7 +61,7 @@
     <string name="online">Online</string>
     <string name="offline">Offline</string>
     <string name="new_version_available">New version available</string>
-    <string name="not_available">N/A</string>
+    <string name="not_available" translatable="false">N/A</string>
     <string name="dashboard">Dashboard</string>
     <string name="alerts_last_24h">Alerts last 24 hours</string>
     <string name="active_decisions">Active decisions</string>
@@ -126,8 +126,8 @@
     <string name="expired">Expired</string>
     <string name="only_active">Only active</string>
     <string name="create_decision">Create decision</string>
-    <string name="ban">Ban</string>
-    <string name="captcha">Captcha</string>
+    <string name="ban" translatable="false">Ban</string>
+    <string name="captcha" translatable="false">Captcha</string>
     <string name="expiration">Expiration</string>
     <string name="type">Type</string>
     <string name="country_not_available">Country not available</string>
