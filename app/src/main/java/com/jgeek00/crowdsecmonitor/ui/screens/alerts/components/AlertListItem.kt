@@ -1,20 +1,16 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.alerts.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -31,18 +27,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.AlertsListResponseAlert
-import com.jgeek00.crowdsecmonitor.extensions.toFormattedDate
+import com.jgeek00.crowdsecmonitor.extensions.toFormattedTime
+import com.jgeek00.crowdsecmonitor.extensions.toRelativeDay
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
-import uk.co.bocajsolutions.cardshape.Shape
-import uk.co.bocajsolutions.cardshape.ShapeStyle
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -142,41 +139,50 @@ fun AlertListItem(
 private fun Content(
     alert: AlertsListResponseAlert,
 ) {
+    val context = LocalContext.current
+    val scenarioSplit = alert.scenario.split("/")
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = alert.scenario,
-                style = MaterialTheme.typography.bodyLarge,
+                text = scenarioSplit[0],
                 fontWeight = FontWeight.Medium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (!alert.source.cn.isNullOrBlank()) {
-                    CountryFlag(countryCode = alert.source.cn, onlyFlag = true)
-                    Spacer(modifier = Modifier.width(6.dp))
-                }
-                Text(
-                    text = alert.source.ip ?: alert.source.value,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+            Text(
+                text = scenarioSplit[1],
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (!alert.source.cn.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                CountryFlag(countryCode = alert.source.cn, fontSize = 12)
             }
         }
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = alert.crowdsecCreatedAt.toFormattedDate(),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = alert.crowdsecCreatedAt.toRelativeDay(context),
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = alert.crowdsecCreatedAt.toFormattedTime(),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
 }

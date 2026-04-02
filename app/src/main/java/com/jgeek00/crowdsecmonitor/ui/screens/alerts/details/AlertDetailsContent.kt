@@ -236,12 +236,12 @@ fun AlertDetailsContent(
                                 )
                                 is LoadingResult.Success -> Text(
                                     text = (geocodedLocation as LoadingResult.Success<String>).value,
-                                    style = MaterialTheme.typography.bodySmall,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 is LoadingResult.Failure -> Text(
                                     text = stringResource(R.string.not_available),
-                                    style = MaterialTheme.typography.bodySmall,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }

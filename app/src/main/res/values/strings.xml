@@ -110,8 +110,6 @@
     <string name="refresh">Refresh</string>
     <string name="expires">Expires</string>
     <string name="user_agent_not_available">User agent not available</string>
-
-    <!-- Decisions -->
     <string name="decision_title">Decision #%d</string>
     <string name="general_information">General information</string>
     <string name="remaining_time">Remaining time</string>
@@ -132,4 +130,7 @@
     <string name="captcha">Captcha</string>
     <string name="expiration">Expiration</string>
     <string name="type">Type</string>
+    <string name="country_not_available">Country not available</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

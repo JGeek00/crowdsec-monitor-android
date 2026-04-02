@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
@@ -160,30 +162,37 @@ private fun Content(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = scenarioLabel,
-                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (!decision.source.cn.isNullOrBlank()) {
-                    CountryFlag(countryCode = decision.source.cn, onlyFlag = true)
-                    Spacer(modifier = Modifier.width(6.dp))
-                }
+            Text(
+                text = decision.source.ip ?: decision.source.value,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Medium,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            if (!decision.source.cn.isNullOrBlank()) {
+                CountryFlag(countryCode = decision.source.cn, fontSize = 12)
+            }
+            else {
                 Text(
-                    text = decision.source.ip ?: decision.source.value,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    stringResource(R.string.country_not_available),
+                    fontSize = 12.sp
                 )
             }
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             DecisionTypeChip(decisionType = decision.type)
             DecisionTimer(expiration = decision.expiration)
         }

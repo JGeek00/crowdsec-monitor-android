@@ -9,13 +9,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import java.util.Locale
 
 
 @Composable
 fun CountryFlag(
     countryCode: String,
-    onlyFlag: Boolean = false
+    onlyFlag: Boolean = false,
+    fontSize: Int = 14
 ) {
     val flag = remember(countryCode) { countryCode.toFlagEmoji() }
     val name = remember(countryCode) {
@@ -24,10 +26,10 @@ fun CountryFlag(
     }
 
     Row(verticalAlignment = Alignment.Companion.CenterVertically) {
-        Text(text = flag)
+        Text(text = flag, fontSize = fontSize.sp)
         if (!onlyFlag) {
             Spacer(modifier = Modifier.Companion.width(8.dp))
-            Text(text = name)
+            Text(text = name, fontSize = fontSize.sp)
         }
     }
 }
