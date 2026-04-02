@@ -38,6 +38,9 @@ import com.jgeek00.crowdsecmonitor.data.models.AlertsListResponseAlert
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedTime
 import com.jgeek00.crowdsecmonitor.extensions.toRelativeDay
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
 
@@ -63,25 +66,18 @@ fun AlertListItem(
         ) {
             Content(alert)
             if (viewModel != null) {
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.delete_alert)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            showDeleteConfirm = true
-                        }
-                    )
-                }
+                OptionsMenuBottomSheet(
+                    options = listOf(
+                        OptionsMenuBottomSheetItem(
+                            title = stringResource(R.string.delete_alert),
+                            icon = Icons.Rounded.Delete,
+                            onClick = { showDeleteConfirm = true },
+                            role = OptionsMenuBottomSheetItemRole.DESTRUCTIVE,
+                        )
+                    ),
+                    showMenu = menuExpanded,
+                    onDismiss = { menuExpanded = false }
+                )
             }
         }
     }

@@ -12,9 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun ListItemContent(
@@ -22,6 +22,7 @@ fun ListItemContent(
     subHeadlineText: String? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
+    color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -43,7 +44,7 @@ fun ListItemContent(
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = color,
                 )
                 if (subHeadlineText != null) {
                     Spacer(modifier = Modifier.height(2.dp))
@@ -51,7 +52,7 @@ fun ListItemContent(
                         text = subHeadlineText,
                         fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = color,
                     )
                 }
             }

@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.utils.buildServerUrl
 
@@ -69,52 +72,32 @@ fun ServerListItem(
             },
         )
 
-        DropdownMenu(
-            expanded = showDropdownMenu,
-            onDismissRequest = { showDropdownMenu = false }
-        ) {
-            if (server.defaultServer == true) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.default_server)) },
-                    leadingIcon = {
-                        Icon(Icons.Rounded.Star, contentDescription = null)
-                    },
-                    onClick = {},
-                    enabled = false
-                )
-            } else {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.set_as_default_server)) },
-                    leadingIcon = {
-                        Icon(Icons.Rounded.Star, contentDescription = null)
-                    },
-                    onClick = {
-                        showDropdownMenu = false
-                        onSetDefault()
-                    }
-                )
-            }
-            HorizontalDivider()
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = stringResource(R.string.delete_server),
-                        color = MaterialTheme.colorScheme.error
+        OptionsMenuBottomSheet(
+            options = listOf(
+                if (server.defaultServer == true) {
+                    OptionsMenuBottomSheetItem(
+                        title = stringResource(R.string.default_server),
+                        icon = Icons.Rounded.Star,
+                        onClick = { showDropdownMenu = false },
+                        disabled = true
+                    )
+                } else {
+                    OptionsMenuBottomSheetItem(
+                        title = stringResource(R.string.set_as_default_server),
+                        icon = Icons.Rounded.Star,
+                        onClick =  {onSetDefault() },
                     )
                 },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                },
-                onClick = {
-                    showDropdownMenu = false
-                    showDeleteConfirmation = true
-                }
-            )
-        }
+                OptionsMenuBottomSheetItem(
+                    title = stringResource(R.string.delete_server),
+                    icon = Icons.Rounded.Delete,
+                    onClick = { showDeleteConfirmation = true },
+                    role = OptionsMenuBottomSheetItemRole.DESTRUCTIVE,
+                )
+            ),
+            showMenu = showDropdownMenu,
+            onDismiss = { showDropdownMenu = false }
+        )
     }
 
 

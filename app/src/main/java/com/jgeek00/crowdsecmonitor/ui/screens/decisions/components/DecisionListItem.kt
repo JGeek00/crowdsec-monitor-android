@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.HistoryToggleOff
 import androidx.compose.material.icons.rounded.HourglassEmpty
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -39,6 +40,9 @@ import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 import uk.co.bocajsolutions.cardshape.Shape
@@ -70,25 +74,18 @@ fun DecisionListItem(
             onLongClick = { if (viewModel != null) { menuExpanded = true } else null },
         ) {
             if (viewModel != null) {
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.expire_decision)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.HourglassEmpty,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            showExpireConfirm = true
-                        }
-                    )
-                }
+                OptionsMenuBottomSheet(
+                    options = listOf(
+                        OptionsMenuBottomSheetItem(
+                            title = stringResource(R.string.expire_decision),
+                            icon = Icons.Rounded.HistoryToggleOff,
+                            onClick = { showExpireConfirm = true },
+                            role = OptionsMenuBottomSheetItemRole.DESTRUCTIVE,
+                        )
+                    ),
+                    showMenu = menuExpanded,
+                    onDismiss = { menuExpanded = false }
+                )
             }
             Content(
                 decision = decision,
