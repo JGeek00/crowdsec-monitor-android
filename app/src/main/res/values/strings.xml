@@ -198,4 +198,10 @@
     <string name="created">Created</string>
     <string name="allowlist_not_found">Allowlist not found</string>
     <string name="no_allowlist_items_title">No IP addresses</string>
+    <string name="fill_required_fields">Fill all required fields</string>
+    <string name="fill_required_fields_msg">You must fill all the required fields to add the blocklist</string>
+    <string name="url_not_valid">URL value not valid</string>
+    <string name="url_not_valid_msg">The value entered in the URL field is not valid, please enter a valid URL</string>
+    <string name="error_adding_blocklist">An error occurred when adding the blocklist, please try again</string>
+    <string name="blocklist_data">Blocklist data</string>
 </resources>

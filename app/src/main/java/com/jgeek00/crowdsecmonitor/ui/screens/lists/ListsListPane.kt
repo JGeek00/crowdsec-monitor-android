@@ -19,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
@@ -36,8 +35,11 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.graphics.lerp
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums.ListType
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.allowlists.AllowlistsListPane
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.AddBlocklistFormScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.BlocklistsListPane
 import com.jgeek00.crowdsecmonitor.viewmodel.AllowlistsListViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
@@ -68,8 +71,11 @@ fun ListsListPane(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    var showAddBlocklistForm by remember { mutableStateOf(false) }
+
     // Snackbar notifications for blocklists
     val deletedMsg = stringResource(R.string.blocklist_deleted)
+    val addedMsg = stringResource(R.string.blocklist_added)
     val errorEnableMsg = stringResource(R.string.error_enable_blocklist)
     val errorDisableMsg = stringResource(R.string.error_disable_blocklist)
     val errorDeleteMsg = stringResource(R.string.error_delete_blocklist)
@@ -99,6 +105,18 @@ fun ListsListPane(
         }
     }
 
+    if (showAddBlocklistForm) {
+        AddBlocklistFormScreen(
+            onClose = { blocklistAdded ->
+                showAddBlocklistForm = false
+                if (blocklistAdded) {
+                    blocklistsViewModel.refresh()
+                    scope.launch { snackbarHostState.showSnackbar(addedMsg) }
+                }
+            }
+        )
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -118,7 +136,7 @@ fun ListsListPane(
                                 tooltip = { PlainTooltip { Text(stringResource(R.string.add_blocklist)) } },
                                 state = rememberTooltipState()
                             ) {
-                                IconButton(onClick = { /* TODO: open add blocklist form */ }) {
+                            IconButton(onClick = { showAddBlocklistForm = true }) {
                                     Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.add_blocklist))
                                 }
                             }
