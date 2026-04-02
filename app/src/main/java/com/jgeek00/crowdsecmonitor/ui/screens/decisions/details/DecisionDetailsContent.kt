@@ -20,9 +20,7 @@ import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -46,7 +44,7 @@ import com.jgeek00.crowdsecmonitor.data.models.DecisionItemResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.toAlertsListResponseAlert
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.AlertListItem
@@ -95,157 +93,177 @@ fun DecisionDetailsContent(
                 .fillMaxSize()
                 .nestedScroll(nestedScrollConnection)
         ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            item {
-                SectionHeader(
-                    text = stringResource(R.string.general_information),
-                    topPadding = Enums.SectionHeaderPaddingTop.NONE
-                )
-            }
-            item {
-                DataListTile(
-                    tileIndex = 0,
-                    groupTiles = 3,
-                    title = stringResource(R.string.type),
-                    trailingContent = { DecisionTypeChip(decisionType = data.type) }
-                )
-
-                RoundedCornersListTile(
-                    index = 1,
-                    totalItems =  3,
-                    onClick = {
-                        CustomTabsIntent.Builder()
-                            .setShowTitle(true)
-                            .build()
-                            .launchUrl(context, hubUrl.toUri())
-                    },
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                item {
+                    SectionHeader(
+                        text = stringResource(R.string.general_information),
+                        topPadding = Enums.SectionHeaderPaddingTop.NONE
+                    )
+                }
+                item {
+                    RoundedCornersListTile(
+                        index = 0,
+                        totalItems = 3,
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            if (scenarioName.isNotBlank()) {
-                                Text(
-                                    text = scenarioAuthor,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(
-                                    text = scenarioName,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            } else {
-                                Text(
-                                    text = data.scenario,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
-                                )
+                        ListItemContent(
+                            headlineText = stringResource(R.string.type),
+                            trailingContent = { DecisionTypeChip(decisionType = data.type) }
+                        )
+                    }
+
+                    RoundedCornersListTile(
+                        index = 1,
+                        totalItems = 3,
+                        onClick = {
+                            CustomTabsIntent.Builder()
+                                .setShowTitle(true)
+                                .build()
+                                .launchUrl(context, hubUrl.toUri())
+                        },
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                if (scenarioName.isNotBlank()) {
+                                    Text(
+                                        text = scenarioAuthor,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = scenarioName,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                } else {
+                                    Text(
+                                        text = data.scenario,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
+                                contentDescription = stringResource(R.string.open_in_browser),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                            contentDescription = stringResource(R.string.open_in_browser),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+
+                    RoundedCornersListTile(
+                        index = 2,
+                        totalItems = 3,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.remaining_time),
+                            trailingContent = { DecisionTimer(expiration = data.expiration) }
                         )
                     }
                 }
 
-                DataListTile(
-                    tileIndex = 2,
-                    groupTiles = 3,
-                    title = stringResource(R.string.remaining_time),
-                    trailingContent = { DecisionTimer(expiration = data.expiration) }
-                )
-            }
+                item { SectionHeader(text = stringResource(R.string.origin)) }
+                item {
+                    val originGroupSize = buildList {
+                        add(Unit) // ip address
+                        if (!data.source.asName.isNullOrBlank()) add(Unit)
+                        if (!data.source.cn.isNullOrBlank()) add(Unit)
+                        if (data.source.latitude != null && data.source.longitude != null) add(Unit)
+                    }.size
+                    var idx = 0
 
-            item { SectionHeader(text = stringResource(R.string.origin)) }
-            item {
-                val originGroupSize = buildList {
-                    add(Unit) // ip address
-                    if (!data.source.asName.isNullOrBlank()) add(Unit)
-                    if (!data.source.cn.isNullOrBlank()) add(Unit)
-                    if (data.source.latitude != null && data.source.longitude != null) add(Unit)
-                }.size
-                var idx = 0
-
-                DataListTile(
-                    tileIndex = idx,
-                    groupTiles = originGroupSize,
-                    title = stringResource(R.string.ip_address),
-                    subtitle = data.source.ip ?: data.source.value
-                )
-                idx++
-
-                if (!data.source.asName.isNullOrBlank()) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = originGroupSize,
-                        title = stringResource(R.string.ip_owner),
-                        subtitle = data.source.asName
-                    )
+                    RoundedCornersListTile(
+                        index = idx,
+                        totalItems = originGroupSize,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.ip_address),
+                            subHeadlineText = data.source.ip ?: data.source.value
+                        )
+                    }
                     idx++
-                }
 
-                if (!data.source.cn.isNullOrBlank()) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = originGroupSize,
-                        title = stringResource(R.string.country),
-                        subtitleComponent = { CountryFlag(countryCode = data.source.cn) }
-                    )
-                    idx++
-                }
-
-                if (data.source.latitude != null && data.source.longitude != null) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = originGroupSize,
-                        title = stringResource(R.string.location),
-                        subtitleComponent = {
-                            when (geocodedLocation) {
-                                is LoadingResult.Loading -> CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp
-                                )
-                                is LoadingResult.Success -> Text(
-                                    text = (geocodedLocation as LoadingResult.Success<String>).value,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                is LoadingResult.Failure -> Text(
-                                    text = stringResource(R.string.not_available),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                    if (!data.source.asName.isNullOrBlank()) {
+                        RoundedCornersListTile(
+                            index = idx,
+                            totalItems = originGroupSize,
+                        ) {
+                            ListItemContent(
+                                headlineText = stringResource(R.string.ip_owner),
+                                subHeadlineText = data.source.asName
+                            )
                         }
+                        idx++
+                    }
+
+                    if (!data.source.cn.isNullOrBlank()) {
+                        RoundedCornersListTile(
+                            index = idx,
+                            totalItems = originGroupSize,
+                        ) {
+                            ListItemContent(
+                                headlineText = stringResource(R.string.country),
+                                subHeadlineComponent = { CountryFlag(countryCode = data.source.cn) }
+                            )
+                        }
+                        idx++
+                    }
+
+                    if (data.source.latitude != null && data.source.longitude != null) {
+                        RoundedCornersListTile(
+                            index = idx,
+                            totalItems = originGroupSize,
+                        ) {
+                            ListItemContent(
+                                headlineText = stringResource(R.string.location),
+                                subHeadlineComponent = {
+                                    when (geocodedLocation) {
+                                        is LoadingResult.Loading -> CircularProgressIndicator(
+                                            modifier = Modifier.size(16.dp),
+                                            strokeWidth = 2.dp
+                                        )
+
+                                        is LoadingResult.Success -> Text(
+                                            text = (geocodedLocation as LoadingResult.Success<String>).value,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+
+                                        is LoadingResult.Failure -> Text(
+                                            text = stringResource(R.string.not_available),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                item { SectionHeader(text = stringResource(R.string.alert)) }
+                item {
+                    AlertListItem(
+                        index = 0,
+                        totalListAmount = 1,
+                        alert = data.alert.toAlertsListResponseAlert(),
+                        viewModel = null,
+                        onNavigateToDetails = if (onNavigateToAlert != null) {
+                            { onNavigateToAlert.invoke(data.alertId) }
+                        } else null
                     )
                 }
-            }
 
-            item { SectionHeader(text = stringResource(R.string.alert)) }
-            item {
-                AlertListItem(
-                    index = 0,
-                    totalListAmount = 1,
-                    alert = data.alert.toAlertsListResponseAlert(),
-                    viewModel = null,
-                    onNavigateToDetails = if (onNavigateToAlert != null) {
-                        { onNavigateToAlert.invoke(data.alertId) }
-                    } else null
-                )
+                item { Spacer(modifier = Modifier.height(16.dp)) }
             }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-        }
         }
     }
 }

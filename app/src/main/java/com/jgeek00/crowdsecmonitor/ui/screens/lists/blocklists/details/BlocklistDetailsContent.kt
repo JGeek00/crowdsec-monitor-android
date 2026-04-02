@@ -18,9 +18,7 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -45,7 +43,7 @@ import com.jgeek00.crowdsecmonitor.data.models.BlocklistDataResponseData
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistType
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
 import com.jgeek00.crowdsecmonitor.extensions.toInstant
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import kotlin.math.abs
@@ -111,13 +109,17 @@ fun BlocklistDetailsContent(
             }
             item {
                 var tileIdx = 0
-                DataListTile(
-                    tileIndex = tileIdx++, groupTiles = infoCount,
-                    title = stringResource(R.string.name), subtitle = data.name
-                )
+                RoundedCornersListTile(
+                    index = tileIdx++, totalItems = infoCount,
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.name),
+                        subHeadlineText = data.name
+                    )
+                }
                 if (data.url != null) {
                     RoundedCornersListTile(
-                        index =  tileIdx,
+                        index =  tileIdx++,
                         totalItems = infoCount,
                         onClick = {
                             clipboardManager.setText(AnnotatedString(data.url))
@@ -141,60 +143,78 @@ fun BlocklistDetailsContent(
                         }
                     }
                 }
-                DataListTile(
-                    tileIndex = tileIdx++, groupTiles = infoCount,
-                    title = stringResource(R.string.amount_of_blocked_ips),
-                    subtitle = "%,d".format(data.countIps)
-                )
-                DataListTile(
-                    tileIndex = tileIdx++, groupTiles = infoCount,
-                    title = stringResource(R.string.managed_by),
-                    subtitle = when (data.type) {
-                        BlocklistType.API -> stringResource(R.string.monitor_api)
-                        BlocklistType.CROWDSEC -> stringResource(R.string.crowdsec)
-                    },
-                )
-                if (data.enabled != null) {
-                    DataListTile(
-                        tileIndex = tileIdx++, groupTiles = infoCount,
-                        title = stringResource(R.string.enabled),
-                        trailingContent = {
-                            Icon(
-                                imageVector = if (data.enabled) Icons.Rounded.CheckCircle else Icons.Rounded.Close,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = if (data.enabled) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
-                            )
+                RoundedCornersListTile(
+                    index = tileIdx++, totalItems = infoCount,
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.amount_of_blocked_ips),
+                        subHeadlineText = "%,d".format(data.countIps)
+                    )
+                }
+                RoundedCornersListTile(
+                    index = tileIdx++, totalItems = infoCount,
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.managed_by),
+                        subHeadlineText = when (data.type) {
+                            BlocklistType.API -> stringResource(R.string.monitor_api)
+                            BlocklistType.CROWDSEC -> stringResource(R.string.crowdsec)
                         }
                     )
+                }
+                if (data.enabled != null) {
+                    RoundedCornersListTile(
+                        index = tileIdx++, totalItems = infoCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.enabled),
+                            trailingContent = {
+                                Icon(
+                                    imageVector = if (data.enabled) Icons.Rounded.CheckCircle else Icons.Rounded.Close,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (data.enabled) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                    }
                 }
                 if (data.addedDate != null) {
-                    DataListTile(
-                        tileIndex = tileIdx++, groupTiles = infoCount,
-                        title = stringResource(R.string.added),
-                        subtitle = data.addedDate.toFormattedDateTime()
-                    )
+                    RoundedCornersListTile(
+                        index = tileIdx++, totalItems = infoCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.added),
+                            subHeadlineText = data.addedDate.toFormattedDateTime()
+                        )
+                    }
                 }
                 if (data.lastSuccessfulRefresh != null) {
-                    DataListTile(
-                        tileIndex = tileIdx++, groupTiles = infoCount,
-                        title = if (refreshWarning) stringResource(R.string.last_successful_refresh)
-                        else stringResource(R.string.last_refresh),
-                        subtitle = data.lastSuccessfulRefresh.toFormattedDateTime()
-                    )
+                    RoundedCornersListTile(
+                        index = tileIdx++, totalItems = infoCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = if (refreshWarning) stringResource(R.string.last_successful_refresh)
+                            else stringResource(R.string.last_refresh),
+                            subHeadlineText = data.lastSuccessfulRefresh.toFormattedDateTime()
+                        )
+                    }
                 }
                 if (refreshWarning && data.lastRefreshAttempt != null) {
-                    DataListTile(
-                        tileIndex = tileIdx, groupTiles = infoCount,
-                        title = stringResource(R.string.last_refresh_attempt),
-                        trailingContent = {
-                            Text(
-                                text = data.lastRefreshAttempt.toFormattedDateTime(),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    )
+                    RoundedCornersListTile(
+                        index = tileIdx, totalItems = infoCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.last_refresh_attempt),
+                            trailingContent = {
+                                Text(
+                                    text = data.lastRefreshAttempt.toFormattedDateTime(),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                    }
                 }
             }
             item { SectionHeader(text = stringResource(R.string.blocked_ips)) }
@@ -230,11 +250,12 @@ fun BlocklistDetailsContent(
             } else {
                 items(slicedIps, key = { it }) { ip ->
                     val index = slicedIps.indexOf(ip)
-                    DataListTile(
-                        tileIndex = index,
-                        groupTiles = slicedIps.size,
-                        title = ip
-                    )
+                    RoundedCornersListTile(
+                        index = index,
+                        totalItems = slicedIps.size,
+                    ) {
+                        ListItemContent(headlineText = ip)
+                    }
                     LaunchedEffect(ip) {
                         if (ip == slicedIps.last() && endIndex < data.blocklistIps.size) {
                             onIncrementIpsRound()

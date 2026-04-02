@@ -58,7 +58,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Defaults
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistDetailsViewModel
 import kotlin.math.min
 
@@ -297,11 +298,12 @@ fun BlocklistDetailsScreen(
                             ) {
                                 items(slicedIps, key = { it }) { ip ->
                                     val index = slicedIps.indexOf(ip)
-                                    DataListTile(
-                                        tileIndex = index,
-                                        groupTiles = slicedIps.size,
-                                        title = ip
-                                    )
+                                    RoundedCornersListTile(
+                                        index = index,
+                                        totalItems = slicedIps.size,
+                                    ) {
+                                        ListItemContent(headlineText = ip)
+                                    }
                                     LaunchedEffect(ip) {
                                         if (ip == slicedIps.last() && endIndex < filteredIps.size) {
                                             viewModel.incrementIpsRound()

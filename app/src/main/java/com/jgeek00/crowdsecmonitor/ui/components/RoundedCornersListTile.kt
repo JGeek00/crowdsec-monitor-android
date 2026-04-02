@@ -103,7 +103,7 @@ fun RoundedCornersListTile(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp),
+                    .padding(horizontal = 6.dp, vertical = 12.dp),
             ) {
                 content()
             }

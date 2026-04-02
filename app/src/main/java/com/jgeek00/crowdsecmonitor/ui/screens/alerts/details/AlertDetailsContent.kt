@@ -24,9 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -48,7 +46,7 @@ import com.jgeek00.crowdsecmonitor.data.models.AlertDetailsResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.toDecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.event.EventItem
@@ -177,29 +175,38 @@ fun AlertDetailsContent(
                 idx++
 
                 if (data.scenarioVersion.isNotBlank()) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = scenarioGroupSize,
-                        title = stringResource(R.string.version),
-                        subtitle = data.scenarioVersion
-                    )
+                    RoundedCornersListTile(
+                        index = idx,
+                        totalItems = scenarioGroupSize,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.version),
+                            subHeadlineText = data.scenarioVersion
+                        )
+                    }
                     idx++
                 }
 
-                DataListTile(
-                    tileIndex = idx,
-                    groupTiles = scenarioGroupSize,
-                    title = stringResource(R.string.capacity),
-                    subtitle = data.capacity.toString()
-                )
+                RoundedCornersListTile(
+                    index = idx,
+                    totalItems = scenarioGroupSize,
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.capacity),
+                        subHeadlineText = data.capacity.toString()
+                    )
+                }
                 idx++
 
-                DataListTile(
-                    tileIndex = idx,
-                    groupTiles = scenarioGroupSize,
-                    title = stringResource(R.string.leakspeed),
-                    subtitle = data.leakspeed
-                )
+                RoundedCornersListTile(
+                    index = idx,
+                    totalItems = scenarioGroupSize,
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.leakspeed),
+                        subHeadlineText = data.leakspeed
+                    )
+                }
             }
 
             item {
@@ -215,58 +222,70 @@ fun AlertDetailsContent(
 
                 var idx = 0
 
-                DataListTile(
-                    tileIndex = idx,
-                    groupTiles = originGroupSize,
-                    title = stringResource(R.string.ip_address),
-                    subtitle = data.source.value
-                )
+                RoundedCornersListTile(
+                    index = idx,
+                    totalItems = originGroupSize,
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.ip_address),
+                        subHeadlineText = data.source.value
+                    )
+                }
                 idx++
 
                 if (!data.source.cn.isNullOrBlank()) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = originGroupSize,
-                        title = stringResource(R.string.country),
-                        subtitleComponent = { CountryFlag(countryCode = data.source.cn) }
-                    )
+                    RoundedCornersListTile(
+                        index = idx,
+                        totalItems = originGroupSize,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.country),
+                            subHeadlineComponent = { CountryFlag(countryCode = data.source.cn) }
+                        )
+                    }
                     idx++
                 }
 
                 if (data.source.latitude != null && data.source.longitude != null) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = originGroupSize,
-                        title = stringResource(R.string.location),
-                        subtitleComponent = {
-                            when (geocodedLocation) {
-                                is LoadingResult.Loading -> CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp
-                                )
-                                is LoadingResult.Success -> Text(
-                                    text = (geocodedLocation as LoadingResult.Success<String>).value,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                is LoadingResult.Failure -> Text(
-                                    text = stringResource(R.string.not_available),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                    RoundedCornersListTile(
+                        index = idx,
+                        totalItems = originGroupSize,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.location),
+                            subHeadlineComponent = {
+                                when (geocodedLocation) {
+                                    is LoadingResult.Loading -> CircularProgressIndicator(
+                                        modifier = Modifier.size(16.dp),
+                                        strokeWidth = 2.dp
+                                    )
+                                    is LoadingResult.Success -> Text(
+                                        text = (geocodedLocation as LoadingResult.Success<String>).value,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    is LoadingResult.Failure -> Text(
+                                        text = stringResource(R.string.not_available),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                     idx++
                 }
 
                 if (!data.source.asName.isNullOrBlank()) {
-                    DataListTile(
-                        tileIndex = idx,
-                        groupTiles = originGroupSize,
-                        title = stringResource(R.string.ip_owner),
-                        subtitle = data.source.asName
-                    )
+                    RoundedCornersListTile(
+                        index = idx,
+                        totalItems = originGroupSize,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.ip_owner),
+                            subHeadlineText = data.source.asName
+                        )
+                    }
                 }
             }
 

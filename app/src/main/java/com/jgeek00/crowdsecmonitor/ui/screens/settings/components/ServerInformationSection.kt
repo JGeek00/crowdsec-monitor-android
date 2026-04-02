@@ -19,7 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.URLs
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServerStatusViewModel
@@ -73,19 +74,25 @@ fun ServerInformationSection(
 
     SectionHeader(stringResource(R.string.information_section))
 
-    DataListTile(
-        tileIndex = 0,
-        groupTiles = 2,
-        title = stringResource(R.string.lapi_status),
-        subtitle = getStatusSubtitle()
-    )
+    RoundedCornersListTile(
+        index = 0,
+        totalItems = 2,
+    ) {
+        ListItemContent(
+            headlineText = stringResource(R.string.lapi_status),
+            subHeadlineText = getStatusSubtitle()
+        )
+    }
 
-    DataListTile(
-        tileIndex = 1,
-        groupTiles = 2,
-        title = stringResource(R.string.api_version),
-        subtitle = getVersionSubtitle(),
-    )
+    RoundedCornersListTile(
+        index = 1,
+        totalItems = 2,
+    ) {
+        ListItemContent(
+            headlineText = stringResource(R.string.api_version),
+            subHeadlineText = getVersionSubtitle()
+        )
+    }
 
     val newVersion = serverStatusViewModel.status.data?.csMonitorApi?.newVersionAvailable
 

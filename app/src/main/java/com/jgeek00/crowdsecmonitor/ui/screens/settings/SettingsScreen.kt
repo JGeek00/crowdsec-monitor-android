@@ -13,12 +13,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -31,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
@@ -144,10 +139,15 @@ private fun SettingsContent(
         item { SectionHeader(stringResource(R.string.about_section)) }
 
         item {
-            DataListTile(
-                title = stringResource(R.string.app_version),
-                subtitle = appVersion
-            )
+            RoundedCornersListTile(
+                index = 0,
+                totalItems = 1,
+            ) {
+                ListItemContent(
+                    headlineText = stringResource(R.string.app_version),
+                    subHeadlineText = appVersion
+                )
+            }
         }
     }
 }

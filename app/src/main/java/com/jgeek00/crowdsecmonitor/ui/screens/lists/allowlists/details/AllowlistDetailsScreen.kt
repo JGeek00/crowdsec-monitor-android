@@ -44,7 +44,8 @@ import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.AllowlistsListResponseAllowlist
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
-import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.AllowlistsListViewModel
 
@@ -114,28 +115,40 @@ fun AllowlistDetailsScreen(
                 }
                 item {
                     var tileIdx = 0
-                    DataListTile(
-                        tileIndex = tileIdx++, groupTiles = infoTileCount,
-                        title = stringResource(R.string.name),
-                        subtitle = allowlist.name
-                    )
-                    if (allowlist.description.isNotEmpty()) {
-                        DataListTile(
-                            tileIndex = tileIdx++, groupTiles = infoTileCount,
-                            title = stringResource(R.string.description),
-                            subtitle = allowlist.description
+                    RoundedCornersListTile(
+                        index = tileIdx++, totalItems = infoTileCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.name),
+                            subHeadlineText = allowlist.name
                         )
                     }
-                    DataListTile(
-                        tileIndex = tileIdx++, groupTiles = infoTileCount,
-                        title = stringResource(R.string.amount_of_allowlisted_ips),
-                        subtitle = allowlist.items.size.toString()
-                    )
-                    DataListTile(
-                        tileIndex = tileIdx, groupTiles = infoTileCount,
-                        title = stringResource(R.string.updated),
-                        subtitle = allowlist.updatedAt.toFormattedDateTime()
-                    )
+                    if (allowlist.description.isNotEmpty()) {
+                        RoundedCornersListTile(
+                            index = tileIdx++, totalItems = infoTileCount,
+                        ) {
+                            ListItemContent(
+                                headlineText = stringResource(R.string.description),
+                                subHeadlineText = allowlist.description
+                            )
+                        }
+                    }
+                    RoundedCornersListTile(
+                        index = tileIdx++, totalItems = infoTileCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.amount_of_allowlisted_ips),
+                            subHeadlineText = allowlist.items.size.toString()
+                        )
+                    }
+                    RoundedCornersListTile(
+                        index = tileIdx, totalItems = infoTileCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.updated),
+                            subHeadlineText = allowlist.updatedAt.toFormattedDateTime()
+                        )
+                    }
                 }
 
                 item { SectionHeader(text = stringResource(R.string.allowlisted_ips)) }
@@ -169,50 +182,52 @@ fun AllowlistDetailsScreen(
                 } else {
                     items(allowlist.items, key = { it.value }) { item ->
                         val idx = allowlist.items.indexOf(item)
-                        DataListTile(
-                            tileIndex = idx,
-                            groupTiles = allowlist.items.size,
-                            title = item.value,
-                            subtitleComponent = {
-                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.AccessTime,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(14.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Text(
-                                            text = "${stringResource(R.string.created)}: ${item.createdAt.toFormattedDateTime()}",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                    if (item.expiration != null) {
+                        RoundedCornersListTile(
+                            index = idx,
+                            totalItems = allowlist.items.size,
+                        ) {
+                            ListItemContent(
+                                headlineText = item.value,
+                                subHeadlineComponent = {
+                                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             Icon(
-                                                imageVector = Icons.Rounded.EventBusy,
+                                                imageVector = Icons.Rounded.AccessTime,
                                                 contentDescription = null,
                                                 modifier = Modifier.size(14.dp),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                             Text(
-                                                text = "${stringResource(R.string.expiration)}: ${item.expiration.toFormattedDateTime()}",
+                                                text = "${stringResource(R.string.created)}: ${item.createdAt.toFormattedDateTime()}",
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
+                                        if (item.expiration != null) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Rounded.EventBusy,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(14.dp),
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = "${stringResource(R.string.expiration)}: ${item.expiration.toFormattedDateTime()}",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
                                     }
                                 }
-                            },
-                            trailingContent = null
-                        )
+                            )
+                        }
                     }
                 }
 

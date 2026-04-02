@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 fun ListItemContent(
     headlineText: String,
     subHeadlineText: String? = null,
+    subHeadlineComponent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     color: Color = MaterialTheme.colorScheme.onSurface,
@@ -54,6 +55,10 @@ fun ListItemContent(
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = color,
                     )
+                }
+                if (subHeadlineComponent != null) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    subHeadlineComponent()
                 }
             }
         }

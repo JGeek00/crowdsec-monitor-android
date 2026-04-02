@@ -193,4 +193,10 @@
     <string name="allowlist_not_found">Lista de permitidos no encontrada</string>
     <string name="no_allowlist_items_title">No hay direcciones IP</string>
     <string name="url_copied_to_clipboard">URL copiada al portapapeles</string>
+    <string name="fill_required_fields">Rellena todos los campos requeridos</string>
+    <string name="fill_required_fields_msg">Debes rellenar todos los campos requeridos para añadir la lista de bloqueo</string>
+    <string name="url_not_valid">Valor de URL no válido</string>
+    <string name="url_not_valid_msg">El valor introducido en el campo URL no es válido, por favor introduce una URL válida</string>
+    <string name="error_adding_blocklist">Error al añadir la lista de bloqueo, por favor prueba de nuevo</string>
+    <string name="blocklist_data">Datos de la lista de bloqueo</string>
 </resources>
