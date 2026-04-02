@@ -60,7 +60,7 @@ class BlocklistDetailsViewModel @Inject constructor(
         ipsRound++
     }
 
-    fun setSearchPresented(value: Boolean) {
+    fun updateSearchPresented(value: Boolean) {
         searchPresented = value
         if (!value) searchText = ""
     }

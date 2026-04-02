@@ -44,4 +44,9 @@ object Enums {
         SMALL,
         NORMAL,
     }
+
+    enum class ListType {
+        BLOCKLIST,
+        ALLOWLIST
+    }
 }

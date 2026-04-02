@@ -17,6 +17,7 @@ import androidx.navigation.toRoute
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.list.AlertsListScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.list.DecisionsListScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.ListsScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.DashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.SettingsScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.FullListDashboardScreen
@@ -126,6 +127,12 @@ fun AppNavGraph(
         navigation<Route.DecisionsGraph>(startDestination = Route.Decisions) {
             composable<Route.Decisions> {
                 DecisionsListScreen()
+            }
+        }
+
+        navigation<Route.ListsGraph>(startDestination = Route.Lists) {
+            composable<Route.Lists> {
+                ListsScreen()
             }
         }
 

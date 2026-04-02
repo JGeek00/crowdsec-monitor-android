@@ -145,4 +145,44 @@
     <string name="reason_is_required">Reason is required</string>
     <string name="error_creating_decision">An error occurred while creating the decision. Please try again.</string>
     <string name="create_a_decision">Create a decision</string>
+    <string name="lists">Lists</string>
+    <string name="blocklists">Blocklists</string>
+    <string name="allowlists">Allowlists</string>
+    <string name="select_a_list">Select a list</string>
+    <string name="select_a_list_description">Choose a list to see the list of IPs</string>
+    <string name="blocklist_details">Blocklist details</string>
+    <string name="no_blocklists_title">No blocklists</string>
+    <string name="no_blocklists_description">There are no blocklists configured</string>
+    <string name="add_blocklist">Add blocklist</string>
+    <string name="managed_by_monitor_api">Managed by Monitor API</string>
+    <string name="managed_by_crowdsec">Managed by CrowdSec</string>
+    <string name="blocklist_refresh_failed">Blocklist refresh failed</string>
+    <string name="delete_blocklist">Delete blocklist</string>
+    <string name="delete_blocklist_confirm">Are you sure you want to delete this blocklist? This action cannot be undone.</string>
+    <string name="enable_blocklist">Enable blocklist</string>
+    <string name="disable_blocklist">Disable blocklist</string>
+    <string name="blocklist_added">Blocklist added successfully</string>
+    <string name="blocklist_deleted">Blocklist deleted successfully</string>
+    <string name="error_enable_blocklist">The blocklist could not be enabled</string>
+    <string name="error_disable_blocklist">The blocklist could not be disabled</string>
+    <string name="error_delete_blocklist">The blocklist could not be deleted</string>
+    <string name="enabled">Enabled</string>
+    <string name="amount_of_blocked_ips">Amount of blocked IPs</string>
+    <string name="managed_by">Managed by</string>
+    <string name="added">Added</string>
+    <string name="last_refresh">Last refresh</string>
+    <string name="last_successful_refresh">Last successful refresh</string>
+    <string name="last_refresh_attempt">Last refresh attempt</string>
+    <string name="blocked_ips">Blocked IPs</string>
+    <string name="no_blocked_ips_title">No blocked IPs</string>
+    <string name="no_blocked_ips_description">This blocklist does not contain any blocked IP address</string>
+    <string name="search_ips">Search IPs</string>
+    <string name="enter_search_text">Type to search IPs</string>
+    <string name="no_results_for">No results for &quot;%s&quot;</string>
+    <string name="select_blocklist">Select a blocklist</string>
+    <string name="url" translatable="false">URL</string>
+    <string name="monitor_api" translatable="false">Monitor API</string>
+    <string name="crowdsec" translatable="false">CrowdSec</string>
+    <string name="information">Information</string>
+    <string name="blocked_ips_count">%d blocked IP addresses</string>
 </resources>

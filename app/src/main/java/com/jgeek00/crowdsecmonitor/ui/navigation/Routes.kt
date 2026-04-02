@@ -2,6 +2,7 @@ package com.jgeek00.crowdsecmonitor.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.FrontHand
 import androidx.compose.material.icons.rounded.Home
@@ -29,6 +30,10 @@ sealed interface Route {
     @Serializable data object DecisionsGraph : Route
     @Serializable data object Decisions : Route
 
+    // Lists nested graph
+    @Serializable data object ListsGraph : Route
+    @Serializable data object Lists : Route
+
     // Settings nested graph
     @Serializable data object SettingsGraph : Route
     @Serializable data object Settings : Route
@@ -51,5 +56,6 @@ val topLevelRoutesWithServer = listOf(
     TopLevelRoute(Route.DashboardGraph, R.string.dashboard, Icons.Rounded.Dashboard),
     TopLevelRoute(Route.AlertsGraph, R.string.alerts, Icons.Rounded.Warning),
     TopLevelRoute(Route.DecisionsGraph, R.string.decisions, Icons.Rounded.FrontHand),
+    TopLevelRoute(Route.ListsGraph, R.string.lists, Icons.AutoMirrored.Rounded.FormatListBulleted),
     TopLevelRoute(Route.SettingsGraph, R.string.settings, Icons.Rounded.Settings),
 )
