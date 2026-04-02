@@ -3,6 +3,7 @@ package com.jgeek00.crowdsecmonitor.ui.screens.alerts.details
 import android.content.Context
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material3.Card
@@ -59,6 +62,7 @@ fun AlertDetailsContent(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onNavigateToDecision: ((Int) -> Unit)?,
+    nestedScrollConnection: NestedScrollConnection,
     context: Context
 ) {
     var geocodedLocation by remember { mutableStateOf<LoadingResult<String>>(LoadingResult.Loading) }
@@ -81,6 +85,11 @@ fun AlertDetailsContent(
             .fillMaxSize()
             .padding(innerPadding)
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection)
+        ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
@@ -293,6 +302,7 @@ fun AlertDetailsContent(
             }
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
+        }
         }
     }
 }

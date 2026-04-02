@@ -42,6 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums.ListType
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.BlocklistsListPane
@@ -163,6 +165,7 @@ fun ListsListPane(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(top = 12.dp)
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
             ) {
                 AnimatedContent(

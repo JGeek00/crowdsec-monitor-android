@@ -28,8 +28,10 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -39,7 +41,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
@@ -59,7 +60,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistDetailsViewModel
 import kotlin.math.min
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BlocklistDetailsScreen(
     blocklistId: Int,
@@ -67,6 +68,7 @@ fun BlocklistDetailsScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val viewModel: BlocklistDetailsViewModel = hiltViewModel(key = blocklistId.toString())
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LaunchedEffect(blocklistId) {
         viewModel.initialize(blocklistId)
@@ -125,11 +127,12 @@ fun BlocklistDetailsScreen(
                 }
             } else {
                 Column {
-                    TopAppBar(
+                    LargeFlexibleTopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainer,
                             scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                         ),
+                        scrollBehavior = scrollBehavior,
                         title = {
                             Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         },
@@ -190,6 +193,7 @@ fun BlocklistDetailsScreen(
                             isRefreshing = viewModel.isRefreshing,
                             onRefresh = { viewModel.refresh(blocklistId) },
                             ipsRound = viewModel.ipsRound,
+                            nestedScrollConnection = scrollBehavior.nestedScrollConnection,
                             onIncrementIpsRound = { viewModel.incrementIpsRound() }
                         )
                     }

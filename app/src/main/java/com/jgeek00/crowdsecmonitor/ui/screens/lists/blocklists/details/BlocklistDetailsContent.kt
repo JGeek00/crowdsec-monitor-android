@@ -26,6 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
@@ -47,6 +49,7 @@ fun BlocklistDetailsContent(
     onRefresh: () -> Unit,
     ipsRound: Int,
     innerPadding: PaddingValues,
+    nestedScrollConnection: NestedScrollConnection,
     onIncrementIpsRound: () -> Unit
 ) {
     val refreshWarning = remember(data.lastRefreshAttempt, data.lastSuccessfulRefresh) {
@@ -76,6 +79,11 @@ fun BlocklistDetailsContent(
             .fillMaxSize()
             .padding(innerPadding)
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection)
+        ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
@@ -209,6 +217,7 @@ fun BlocklistDetailsContent(
                 }
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
+        }
         }
     }
 }

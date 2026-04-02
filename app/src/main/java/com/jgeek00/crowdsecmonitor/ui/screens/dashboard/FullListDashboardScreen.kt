@@ -20,9 +20,10 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,7 +51,7 @@ import com.jgeek00.crowdsecmonitor.utils.DashboardItemDataForView
 import com.jgeek00.crowdsecmonitor.viewmodel.FullListDashboardViewModel
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FullListDashboardScreen(
     itemType: Enums.DashboardItemType,
@@ -73,7 +74,7 @@ fun FullListDashboardScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
-            LargeTopAppBar(
+            LargeFlexibleTopAppBar(
                 title = { Text(title) },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
