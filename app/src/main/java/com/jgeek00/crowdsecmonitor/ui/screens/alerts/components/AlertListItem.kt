@@ -55,10 +55,11 @@ fun AlertListItem(
     var showDeleteError by remember { mutableStateOf(false) }
 
     if (onNavigateToDetails != null) {
-        SegmentedListItem(
+        RoundedCornersListTile(
+            index = index,
+            totalItems = totalListAmount,
             onClick = onNavigateToDetails,
             onLongClick = if (viewModel != null) { { menuExpanded = true } } else null,
-            shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
         ) {
             Content(alert)
             if (viewModel != null) {

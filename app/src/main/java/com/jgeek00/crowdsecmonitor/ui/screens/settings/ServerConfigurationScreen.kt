@@ -108,15 +108,13 @@ fun ServerConfigurationScreen(
                 items(authViewModel.servers, key = { it.id }) { server ->
                     val index = authViewModel.servers.indexOf(server)
                     ServerListItem(
+                        index = index,
+                        totalItems = authViewModel.servers.size,
                         server = server,
                         isCurrentServer = server.id == authViewModel.currentServer?.id,
                         onSelect = { authViewModel.changeCurrentServer(server) },
                         onSetDefault = { authViewModel.setDefaultServer(server) },
                         onDelete = { authViewModel.deleteServer(server) },
-                        shapes = ListItemDefaults.segmentedShapes(
-                            index = index,
-                            count = authViewModel.servers.size
-                        )
                     )
                 }
             } else {

@@ -47,6 +47,7 @@ import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.toAlertsListResponseAlert
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.AlertListItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionTimer
@@ -105,7 +106,6 @@ fun DecisionDetailsContent(
                 )
             }
             item {
-                // Type
                 DataListTile(
                     tileIndex = 0,
                     groupTiles = 3,
@@ -113,16 +113,15 @@ fun DecisionDetailsContent(
                     trailingContent = { DecisionTypeChip(decisionType = data.type) }
                 )
 
-                // Scenario (opens in browser)
-                SegmentedListItem(
+                RoundedCornersListTile(
+                    index = 1,
+                    totalItems =  3,
                     onClick = {
                         CustomTabsIntent.Builder()
                             .setShowTitle(true)
                             .build()
                             .launchUrl(context, hubUrl.toUri())
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 3),
-                    modifier = Modifier.padding(bottom = 2.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -159,7 +158,6 @@ fun DecisionDetailsContent(
                     }
                 }
 
-                // Remaining time
                 DataListTile(
                     tileIndex = 2,
                     groupTiles = 3,

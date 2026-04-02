@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.AlertDetailsEvent
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 
 private val HttpBlue = Color(0xFF2196F3)
 private val HttpStatusRed = Color(0xFFF44336)
@@ -72,12 +73,10 @@ fun EventItem(
     val asnOrg = meta.firstOrNull { it.key == "ASNOrg" }?.value?.firstOrNull()
     val logTypeValue = logType?.value?.firstOrNull()
 
-    SegmentedListItem(
+    RoundedCornersListTile(
+        index = index,
+        totalItems = total,
         onClick = { showFullDetails = true },
-        shapes = ListItemDefaults.segmentedShapes(index = index, count = total),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = if (index < total - 1) 2.dp else 0.dp)
     ) {
         Column(
             modifier = Modifier

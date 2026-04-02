@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 
 private data class ThemeOption(
@@ -103,38 +105,37 @@ private fun SettingsContent(
 
         items(themeOptions) { option ->
             val index = themeOptions.indexOf(option)
-            SegmentedListItem(
-                checked = themeMode == option.mode,
-                onCheckedChange = { onThemeModeChange(option.mode) },
-                shapes = ListItemDefaults.segmentedShapes(index = index, count = themeOptions.size),
-                leadingContent = { Icon(option.icon, contentDescription = null) },
-                trailingContent = {
-                    RadioButton(
-                        selected = themeMode == option.mode,
-                        onClick = { onThemeModeChange(option.mode) }
+            RoundedCornersListTile(
+                index = index,
+                totalItems = themeOptions.size,
+                selected = themeMode == option.mode,
+                onClick = { onThemeModeChange(option.mode) },
+                content = {
+                    ListItemContent(
+                        headlineText = stringResource(option.labelRes),
+                        leadingContent = { Icon(option.icon, contentDescription = null) },
                     )
                 },
-                content = { Text(stringResource(option.labelRes)) },
-                modifier = Modifier.padding(bottom = 2.dp)
             )
         }
 
         item { SectionHeader(stringResource(R.string.configuration_section)) }
 
         item {
-            SegmentedListItem(
+            RoundedCornersListTile(
+                index = 0,
+                totalItems = 2,
                 onClick = onNavigateToAppConfiguration,
-                shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
-                modifier = Modifier.padding(bottom = 2.dp)
             ) {
                 Text(stringResource(R.string.app_configuration))
             }
         }
 
         item {
-            SegmentedListItem(
+            RoundedCornersListTile(
+                index = 1,
+                totalItems = 2,
                 onClick = onNavigateToServerConfiguration,
-                shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
             ) {
                 Text(stringResource(R.string.server_configuration))
             }

@@ -63,10 +63,11 @@ fun DecisionListItem(
     }
 
     if (onNavigateToDetails != null) {
-        SegmentedListItem(
+        RoundedCornersListTile(
+            index = index,
+            totalItems = totalListAmount,
             onClick = onNavigateToDetails,
             onLongClick = { if (viewModel != null) { menuExpanded = true } else null },
-            shapes = ListItemDefaults.segmentedShapes(index = index, count = totalListAmount),
         ) {
             if (viewModel != null) {
                 DropdownMenu(

@@ -46,6 +46,7 @@ import com.jgeek00.crowdsecmonitor.data.models.BlocklistType
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
 import com.jgeek00.crowdsecmonitor.extensions.toInstant
 import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import kotlin.math.abs
 import kotlin.math.min
@@ -115,15 +116,15 @@ fun BlocklistDetailsContent(
                     title = stringResource(R.string.name), subtitle = data.name
                 )
                 if (data.url != null) {
-                    SegmentedListItem(
+                    RoundedCornersListTile(
+                        index =  tileIdx,
+                        totalItems = infoCount,
                         onClick = {
                             clipboardManager.setText(AnnotatedString(data.url))
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(urlCopiedMessage)
                             }
                         },
-                        shapes = ListItemDefaults.segmentedShapes(index = tileIdx, count = infoCount),
-                        modifier = Modifier.padding(bottom = 2.dp),
                     ) {
                         Column() {
                             Text(

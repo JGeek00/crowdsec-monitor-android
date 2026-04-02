@@ -49,6 +49,7 @@ import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.toDecisionsListResponseItem
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.ui.components.DataListTile
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.event.EventItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
@@ -128,15 +129,15 @@ fun AlertDetailsContent(
 
                 var idx = 0
 
-                SegmentedListItem(
+                RoundedCornersListTile(
+                    index = idx,
+                    totalItems = scenarioGroupSize,
                     onClick = {
                         CustomTabsIntent.Builder()
                             .setShowTitle(true)
                             .build()
                             .launchUrl(context, hubUrl.toUri())
                     },
-                    shapes = ListItemDefaults.segmentedShapes(index = idx, count = scenarioGroupSize),
-                    modifier = Modifier.padding(bottom = if (0 < scenarioGroupSize - 1) 2.dp else 0.dp)
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,

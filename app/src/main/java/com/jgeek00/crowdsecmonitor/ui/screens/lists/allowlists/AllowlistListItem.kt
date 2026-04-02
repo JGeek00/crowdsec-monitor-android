@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.AllowlistsListResponseAllowlist
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -35,9 +36,10 @@ fun AllowlistListItem(
     allowlist: AllowlistsListResponseAllowlist,
     onNavigateToDetails: () -> Unit
 ) {
-    SegmentedListItem(
+    RoundedCornersListTile(
+        index = index,
+        totalItems = totalItems,
         onClick = onNavigateToDetails,
-        shapes = ListItemDefaults.segmentedShapes(index = index, count = totalItems)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(

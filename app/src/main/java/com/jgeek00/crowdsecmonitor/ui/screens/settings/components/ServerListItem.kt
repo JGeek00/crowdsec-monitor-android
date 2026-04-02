@@ -32,59 +32,41 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.utils.buildServerUrl
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ServerListItem(
+    index: Int,
+    totalItems: Int,
     server: CSServerModel,
     isCurrentServer: Boolean,
     onSelect: () -> Unit,
     onSetDefault: () -> Unit,
     onDelete: () -> Unit,
-    shapes: ListItemShapes,
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
-    SegmentedListItem(
+    RoundedCornersListTile(
+        index = index,
+        totalItems = totalItems,
         onClick = onSelect,
         onLongClick = { showDropdownMenu = true },
         selected = isCurrentServer,
-        shapes = shapes,
-        supportingContent = {
-            Text(
-                text = buildServerUrl(server),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        leadingContent = {
-            Icon(
-                imageVector = Icons.Rounded.Dns,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        trailingContent = if (isCurrentServer) {
-            {
-                Icon(
-                    imageVector = Icons.Rounded.Check,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        } else null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 2.dp)
     ) {
-        Text(
-            text = server.name,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+        ListItemContent(
+            headlineText = server.name,
+            subHeadlineText = buildServerUrl(server),
+            leadingContent = {
+                Icon(
+                    imageVector = Icons.Rounded.Dns,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
         )
 
         DropdownMenu(

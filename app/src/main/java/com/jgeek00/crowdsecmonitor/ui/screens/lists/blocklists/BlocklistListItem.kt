@@ -40,6 +40,10 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistType
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistsListResponseItem
 import com.jgeek00.crowdsecmonitor.extensions.toInstant
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
 import kotlin.math.abs
 
@@ -62,12 +66,13 @@ fun BlocklistListItem(
         diffSeconds >= 3600L
     }
 
-    SegmentedListItem(
+    RoundedCornersListTile(
+        index = index,
+        totalItems = totalItems,
         onClick = onNavigateToDetails,
         onLongClick = if (blocklist.type == BlocklistType.API) {
             { menuExpanded = true }
         } else null,
-        shapes = ListItemDefaults.segmentedShapes(index = index, count = totalItems)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -132,39 +137,30 @@ fun BlocklistListItem(
         }
 
         if (blocklist.type == BlocklistType.API) {
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false }
-            ) {
-                if (blocklist.enabled != null) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                if (blocklist.enabled) stringResource(R.string.disable_blocklist)
-                                else stringResource(R.string.enable_blocklist)
-                            )
-                        },
+            OptionsMenuBottomSheet(
+                options = listOf(
+                    OptionsMenuBottomSheetItem(
+                        title = if (blocklist.enabled == true) stringResource(R.string.disable_blocklist) else stringResource(
+                            R.string.enable_blocklist
+                        ),
+                        icon = if (blocklist.enabled == true) Icons.Rounded.Cancel else Icons.Rounded.CheckCircle,
                         onClick = {
-                            menuExpanded = false
-                            viewModel.enableDisableBlocklist(blocklist.id, !blocklist.enabled)
+                            viewModel.enableDisableBlocklist(
+                                blocklist.id,
+                                blocklist.enabled != true
+                            )
                         }
+                    ),
+                    OptionsMenuBottomSheetItem(
+                        title = stringResource(R.string.delete_blocklist),
+                        icon = Icons.Rounded.Delete,
+                        onClick = { showDeleteConfirm = true },
+                        role = OptionsMenuBottomSheetItemRole.DESTRUCTIVE
                     )
-                }
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.delete_blocklist), color = MaterialTheme.colorScheme.error) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Delete,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        showDeleteConfirm = true
-                    }
-                )
-            }
+                ),
+                showMenu = menuExpanded,
+                onDismiss = { menuExpanded = false}
+            )
         }
     }
 

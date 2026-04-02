@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -33,11 +34,11 @@ fun FilterRow(
     enabled: Boolean,
     onClick: () -> Unit
 ) {
-    SegmentedListItem(
+    RoundedCornersListTile(
+        index = index,
+        totalItems = total,
         onClick = onClick,
         enabled = enabled,
-        shapes = ListItemDefaults.segmentedShapes(index = index, count = total),
-        modifier = Modifier.padding(bottom = if (index < total - 1) 2.dp else 0.dp)
     ) {
         Row(
             modifier = Modifier
