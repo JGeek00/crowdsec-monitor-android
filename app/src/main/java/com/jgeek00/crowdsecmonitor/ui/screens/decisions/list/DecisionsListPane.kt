@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Refresh
@@ -48,6 +49,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.LargeTopAppBarWithRefresh
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.NoDecisions
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.filters.DecisionsFiltersSheet
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.create.CreateDecisionFormScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,12 +60,25 @@ fun DecisionsListPane(
 ) {
     val listState = rememberLazyListState()
     var showFiltersSheet by remember { mutableStateOf(false) }
+    var showCreateDecisionForm by remember { mutableStateOf(false) }
 
     LargeTopAppBarWithRefresh(
         title = { Text(stringResource(R.string.decisions)) },
         isRefreshing = viewModel.isRefreshing,
         onRefresh = { viewModel.refreshDecisions() },
         actions = {
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(stringResource(R.string.create_decision)) } },
+                state = rememberTooltipState()
+            ) {
+                IconButton(onClick = { showCreateDecisionForm = true }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = stringResource(R.string.create_decision)
+                    )
+                }
+            }
             if (viewModel.state is LoadingResult.Success) {
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
@@ -180,6 +195,12 @@ fun DecisionsListPane(
         DecisionsFiltersSheet(
             viewModel = viewModel,
             onDismiss = { showFiltersSheet = false }
+        )
+    }
+
+    if (showCreateDecisionForm) {
+        CreateDecisionFormScreen(
+            onClose = { showCreateDecisionForm = false }
         )
     }
 }

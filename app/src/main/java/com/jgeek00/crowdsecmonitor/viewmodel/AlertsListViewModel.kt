@@ -33,6 +33,14 @@ class AlertsListViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            sessionManager.alertsRefreshEvent.collect {
+                refreshAlertsInternal()
+            }
+        }
+    }
+
     var state by mutableStateOf<LoadingResult<AlertsListResponse>>(LoadingResult.Loading)
         private set
 

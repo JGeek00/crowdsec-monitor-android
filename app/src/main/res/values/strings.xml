@@ -133,4 +133,16 @@
     <string name="country_not_available">Country not available</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="duration">Duration</string>
+    <string name="reason">Reason</string>
+    <string name="days">days</string>
+    <string name="hours">hours</string>
+    <string name="minutes">min</string>
+    <string name="save">Save</string>
+    <string name="ip_address_is_required">IP address is required</string>
+    <string name="ip_address_is_invalid">IP address is invalid</string>
+    <string name="duration_must_be_greater_than_0">Duration must be greater than 0</string>
+    <string name="reason_is_required">Reason is required</string>
+    <string name="error_creating_decision">An error occurred while creating the decision. Please try again.</string>
+    <string name="create_a_decision">Create a decision</string>
 </resources>

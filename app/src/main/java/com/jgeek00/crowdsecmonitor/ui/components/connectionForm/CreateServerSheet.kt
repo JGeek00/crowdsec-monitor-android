@@ -115,7 +115,7 @@ fun CreateServerSheet(
                         showDiscardDialog = false
                         onClose()
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.textButtonColors()
                 ) {
                     Text(stringResource(R.string.discard_changes))
                 }

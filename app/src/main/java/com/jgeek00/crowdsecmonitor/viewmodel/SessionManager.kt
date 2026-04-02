@@ -20,5 +20,12 @@ class SessionManager @Inject constructor() {
     fun triggerDecisionsRefresh() {
         _decisionsRefreshEvent.tryEmit(Unit)
     }
+
+    private val _alertsRefreshEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val alertsRefreshEvent = _alertsRefreshEvent.asSharedFlow()
+
+    fun triggerAlertsRefresh() {
+        _alertsRefreshEvent.tryEmit(Unit)
+    }
 }
 
