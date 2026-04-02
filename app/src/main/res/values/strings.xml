@@ -216,4 +216,11 @@
     <string name="amount_items_dashboard_description">Number of items shown per list on the dashboard (%d items)</string>
     <string name="show_only_active_decisions">Show only active decisions by default</string>
     <string name="disable_timer_animation">Disable timer animation</string>
+    <string name="onboarding_welcome_title">Welcome to CrowdSec Monitor</string>
+    <string name="onboarding_welcome_subtitle">An application to control your CrowdSec instance</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_api_info_title">API information</string>
+    <string name="onboarding_api_info_body">This application requires an intermediate API to function. This API is responsible for obtaining data from CrowdSec, processing it, and delivering it appropriately to this application.\n\nBefore continuing, ensure that you have correctly deployed it on your machine alongside CrowdSec.</string>
+    <string name="onboarding_view_api_repo">View API repository on GitHub</string>
+    <string name="onboarding_next">Next</string>
 </resources>

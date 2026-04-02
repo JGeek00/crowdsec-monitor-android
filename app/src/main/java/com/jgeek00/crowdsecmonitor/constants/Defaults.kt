@@ -10,5 +10,6 @@ object Defaults {
     const val DISABLE_DECISION_TIMER_ANIMATION = false
     const val TOP_ITEMS_DASHBOARD_MIN = 5
     const val TOP_ITEMS_DASHBOARD_MAX = 10
+    const val ONBOARDING_COMPLETED = false
 }
 

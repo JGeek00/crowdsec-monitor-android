@@ -33,10 +33,12 @@ import com.jgeek00.crowdsecmonitor.ui.navigation.AppNavGraph
 import com.jgeek00.crowdsecmonitor.ui.navigation.Route
 import com.jgeek00.crowdsecmonitor.ui.navigation.topLevelRoutesNoServer
 import com.jgeek00.crowdsecmonitor.ui.navigation.topLevelRoutesWithServer
+import com.jgeek00.crowdsecmonitor.ui.screens.onboarding.OnboardingScreen
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.utils.readThemeMode
 import com.jgeek00.crowdsecmonitor.utils.writeThemeMode
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.OnboardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -73,7 +75,8 @@ class MainActivity : ComponentActivity() {
 fun CrowdSecMonitorApp(
     themeMode: Enums.ThemeMode,
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    onboardingViewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -151,5 +154,9 @@ fun CrowdSecMonitorApp(
                 }
             }
         }
+    }
+
+    if (onboardingViewModel.showOnboarding) {
+        OnboardingScreen(onFinish = { onboardingViewModel.finishOnboarding() })
     }
 }
