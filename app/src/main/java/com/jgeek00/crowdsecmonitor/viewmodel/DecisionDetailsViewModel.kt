@@ -5,15 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jgeek00.crowdsecmonitor.constants.Defaults
 import com.jgeek00.crowdsecmonitor.data.models.DecisionItemResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
+import com.jgeek00.crowdsecmonitor.data.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DecisionDetailsViewModel @Inject constructor(
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     var state by mutableStateOf<LoadingResult<DecisionItemResponse>>(LoadingResult.Loading)
@@ -25,7 +28,19 @@ class DecisionDetailsViewModel @Inject constructor(
     var expiringDecisionProcess by mutableStateOf(false)
         private set
 
+    var disableDecisionTimerAnimation by mutableStateOf(Defaults.DISABLE_DECISION_TIMER_ANIMATION)
+        private set
+
     private var initializedForId: Int? = null
+
+    init {
+        // Collect as a flow so changes from AppConfigurationScreen reflect immediately
+        viewModelScope.launch {
+            preferencesRepository.disableDecisionTimerAnimation.collect { value ->
+                disableDecisionTimerAnimation = value
+            }
+        }
+    }
 
     fun initialize(decisionId: Int) {
         if (initializedForId == decisionId) return

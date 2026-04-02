@@ -14,6 +14,7 @@ import com.jgeek00.crowdsecmonitor.data.repository.PreferencesRepository
 import com.jgeek00.crowdsecmonitor.utils.DashboardItemData
 import com.jgeek00.crowdsecmonitor.utils.DashboardItemDataForView
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,8 +33,13 @@ class DashboardViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            snapshotFlow { sessionManager.apiClient }.collect { client ->
-                if (client != null) fetchDashboardData() else state = LoadingResult.Loading
+            combine(
+                snapshotFlow { sessionManager.apiClient },
+                preferencesRepository.topItemsDashboard
+            ) { client, _ -> client }
+            .collect { client ->
+                if (client != null) fetchDashboardData()
+                else state = LoadingResult.Loading
             }
         }
     }

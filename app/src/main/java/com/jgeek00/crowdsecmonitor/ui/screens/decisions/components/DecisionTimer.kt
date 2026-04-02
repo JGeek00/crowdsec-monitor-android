@@ -46,7 +46,7 @@ private fun computeRemaining(expirationInstant: Instant): RemainingTime? {
 }
 
 @Composable
-fun DecisionTimer(expiration: String) {
+fun DecisionTimer(expiration: String, disableAnimation: Boolean = false) {
     val expirationInstant = remember(expiration) { expiration.toInstant() }
     var remaining by remember { mutableStateOf(expirationInstant?.let { computeRemaining(it) }) }
 
@@ -82,11 +82,11 @@ fun DecisionTimer(expiration: String) {
         } else {
             val r = remaining!!
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                if (r.days > 0) TimerUnit("${r.days}d", color)
-                if (r.hours > 0) TimerUnit("${r.hours}h", color)
-                if (r.minutes > 0) TimerUnit("${r.minutes}m", color)
+                if (r.days > 0) TimerUnit("${r.days}d", color, disableAnimation)
+                if (r.hours > 0) TimerUnit("${r.hours}h", color, disableAnimation)
+                if (r.minutes > 0) TimerUnit("${r.minutes}m", color, disableAnimation)
                 if (r.seconds > 0 || (r.days == 0L && r.hours == 0L && r.minutes == 0L)) {
-                    TimerUnit("${r.seconds}s", color)
+                    TimerUnit("${r.seconds}s", color, disableAnimation)
                 }
             }
         }
@@ -94,20 +94,29 @@ fun DecisionTimer(expiration: String) {
 }
 
 @Composable
-private fun TimerUnit(text: String, color: Color) {
-    AnimatedContent(
-        targetState = text,
-        transitionSpec = {
-            slideInVertically { it } togetherWith slideOutVertically { -it }
-        },
-        label = "TimerUnit"
-    ) { value ->
+private fun TimerUnit(text: String, color: Color, disableAnimation: Boolean) {
+    if (disableAnimation) {
         Text(
-            text = value,
+            text = text,
             color = color,
             fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp
         )
+    } else {
+        AnimatedContent(
+            targetState = text,
+            transitionSpec = {
+                slideInVertically { it } togetherWith slideOutVertically { -it }
+            },
+            label = "TimerUnit"
+        ) { value ->
+            Text(
+                text = value,
+                color = color,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 

@@ -55,6 +55,7 @@ fun DecisionListItem(
     totalListAmount: Int,
     decision: DecisionsListResponseItem,
     viewModel: DecisionsListViewModel? = null,
+    disableTimerAnimation: Boolean = false,
     onNavigateToDetails: (() -> Unit)?
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -66,7 +67,7 @@ fun DecisionListItem(
         if (parts.size >= 2) parts.last() else decision.scenario
     }
 
-    if (onNavigateToDetails != null) {
+        if (onNavigateToDetails != null) {
         RoundedCornersListTile(
             index = index,
             totalItems = totalListAmount,
@@ -89,7 +90,8 @@ fun DecisionListItem(
             }
             Content(
                 decision = decision,
-                scenarioLabel = scenarioLabel
+                scenarioLabel = scenarioLabel,
+                disableTimerAnimation = disableTimerAnimation
             )
         }
     }
@@ -100,7 +102,8 @@ fun DecisionListItem(
         ) {
             Content(
                 decision,
-                scenarioLabel = scenarioLabel
+                scenarioLabel = scenarioLabel,
+                disableTimerAnimation = disableTimerAnimation
             )
         }
     }
@@ -151,6 +154,7 @@ fun DecisionListItem(
 private fun Content(
     decision: DecisionsListResponseItem,
     scenarioLabel: String,
+    disableTimerAnimation: Boolean = false,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -192,7 +196,7 @@ private fun Content(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             DecisionTypeChip(decisionType = decision.type)
-            DecisionTimer(expiration = decision.expiration)
+            DecisionTimer(expiration = decision.expiration, disableAnimation = disableTimerAnimation)
         }
     }
 }

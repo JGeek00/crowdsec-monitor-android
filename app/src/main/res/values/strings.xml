@@ -211,4 +211,9 @@
     <string name="created_by">Created on  🇪🇸 by JGeek00</string>
     <string name="donate">Donate</string>
     <string name="donate_description">If you like CrowdSec Monitor, consider giving me a tip</string>
+    <string name="dashboard_section">Dashboard</string>
+    <string name="amount_items_dashboard_label">Items in dashboard lists</string>
+    <string name="amount_items_dashboard_description">Number of items shown per list on the dashboard (%d items)</string>
+    <string name="show_only_active_decisions">Show only active decisions by default</string>
+    <string name="disable_timer_animation">Disable timer animation</string>
 </resources>

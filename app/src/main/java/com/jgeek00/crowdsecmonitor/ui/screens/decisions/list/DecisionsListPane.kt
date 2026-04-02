@@ -134,6 +134,7 @@ fun DecisionsListPane(
                                     totalListAmount = data.items.size,
                                     decision = decision,
                                     viewModel = viewModel,
+                                    disableTimerAnimation = viewModel.disableDecisionTimerAnimation,
                                     onNavigateToDetails = { onNavigateToDetails(decision.id) }
                                 )
                                 LaunchedEffect(decision.id) {

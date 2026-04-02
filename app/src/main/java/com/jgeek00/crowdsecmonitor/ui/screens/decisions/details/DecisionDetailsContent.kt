@@ -61,7 +61,8 @@ fun DecisionDetailsContent(
     onRefresh: () -> Unit,
     onNavigateToAlert: ((Int) -> Unit)?,
     nestedScrollConnection: NestedScrollConnection,
-    context: Context
+    context: Context,
+    disableTimerAnimation: Boolean = false
 ) {
     var geocodedLocation by remember { mutableStateOf<LoadingResult<String>>(LoadingResult.Loading) }
 
@@ -164,9 +165,9 @@ fun DecisionDetailsContent(
                         totalItems = 3,
                     ) {
                         ListItemContent(
-                            headlineText = stringResource(R.string.remaining_time),
-                            trailingContent = { DecisionTimer(expiration = data.expiration) }
-                        )
+                                headlineText = stringResource(R.string.remaining_time),
+                                trailingContent = { DecisionTimer(expiration = data.expiration, disableAnimation = disableTimerAnimation) }
+                            )
                     }
                 }
 

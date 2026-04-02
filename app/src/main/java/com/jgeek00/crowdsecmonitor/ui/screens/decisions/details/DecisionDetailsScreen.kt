@@ -151,7 +151,8 @@ fun DecisionDetailsScreen(
                         onRefresh = { viewModel.refresh(decisionId) },
                         onNavigateToAlert = onNavigateToAlert,
                         nestedScrollConnection = scrollBehavior.nestedScrollConnection,
-                        context = context
+                        context = context,
+                        disableTimerAnimation = viewModel.disableDecisionTimerAnimation
                     )
                 }
 

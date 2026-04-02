@@ -206,4 +206,9 @@
     <string name="created_by">Creado en  🇪🇸 por JGeek00</string>
     <string name="donate">Donar</string>
     <string name="donate_description">Si te gusta CrowdSec Monitor, considera darme una propina</string>
+    <string name="dashboard_section">Tablero</string>
+    <string name="amount_items_dashboard_label">Número de elementos en listas del tablero</string>
+    <string name="amount_items_dashboard_description">Número de elementos por lista</string>
+    <string name="show_only_active_decisions">Mostrar por defecto sólo decisiones activas</string>
+    <string name="disable_timer_animation">Desactivar animación de temporizador</string>
 </resources>

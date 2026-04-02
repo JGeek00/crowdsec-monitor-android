@@ -11,26 +11,37 @@ import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequest
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequestFilters
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequestPagination
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
+import com.jgeek00.crowdsecmonitor.data.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private val defaultRequest = DecisionsRequest(
-    filters = DecisionsRequestFilters(
-        onlyActive = Defaults.SHOW_DEFAULT_ACTIVE_DECISIONS
-    ),
-    pagination = DecisionsRequestPagination(
-        offset = 0,
-        limit = Defaults.DECISIONS_AMOUNT_BATCH
-    )
+private fun buildDefaultRequest(showOnlyActive: Boolean) = DecisionsRequest(
+    filters = DecisionsRequestFilters(onlyActive = showOnlyActive),
+    pagination = DecisionsRequestPagination(offset = 0, limit = Defaults.DECISIONS_AMOUNT_BATCH)
 )
 
 @HiltViewModel
 class DecisionsListViewModel @Inject constructor(
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
+    private var defaultRequest = buildDefaultRequest(Defaults.SHOW_DEFAULT_ACTIVE_DECISIONS)
+
     init {
+        // Observe preference changes so that reset/resetFilters always use the current default
+        viewModelScope.launch {
+            preferencesRepository.showDefaultActiveDecisions.collect { showOnlyActive ->
+                defaultRequest = buildDefaultRequest(showOnlyActive)
+            }
+        }
+        viewModelScope.launch {
+            preferencesRepository.disableDecisionTimerAnimation.collect { value ->
+                disableDecisionTimerAnimation = value
+            }
+        }
         viewModelScope.launch {
             sessionManager.decisionsRefreshEvent.collect {
                 refreshDecisionsInternal()
@@ -48,6 +59,9 @@ class DecisionsListViewModel @Inject constructor(
         private set
 
     var expiringDecisionProcess by mutableStateOf(false)
+        private set
+
+    var disableDecisionTimerAnimation by mutableStateOf(Defaults.DISABLE_DECISION_TIMER_ANIMATION)
         private set
 
     var requestParams by mutableStateOf(defaultRequest)
@@ -83,6 +97,12 @@ class DecisionsListViewModel @Inject constructor(
     fun initialFetchDecisions() {
         if (state.data != null) return
         viewModelScope.launch {
+            // Use first() so we wait for the preference before fetching (eliminates the race condition)
+            val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
+            val req = buildDefaultRequest(showOnlyActive)
+            defaultRequest = req
+            requestParams = req
+            filters = req.filters
             fetchDecisions(showLoading = true)
         }
     }
@@ -179,5 +199,3 @@ class DecisionsListViewModel @Inject constructor(
         fetchDecisions(params = req)
     }
 }
-
-
