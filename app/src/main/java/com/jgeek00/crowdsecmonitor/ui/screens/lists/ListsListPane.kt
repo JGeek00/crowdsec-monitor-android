@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums.ListType
@@ -123,7 +124,11 @@ fun ListsListPane(
                 )
                 PrimaryTabRow(
                     selectedTabIndex = if (selectedListType == ListType.BLOCKLIST) 0 else 1,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                    containerColor = lerp(
+                        MaterialTheme.colorScheme.surfaceContainer,
+                        MaterialTheme.colorScheme.surfaceContainerHighest,
+                        scrollBehavior.state.collapsedFraction
+                    )
                 ) {
                     Tab(
                         selected = selectedListType == ListType.BLOCKLIST,
