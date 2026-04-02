@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums.ListType
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.allowlists.AllowlistsListPane
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.BlocklistsListPane
 import com.jgeek00.crowdsecmonitor.viewmodel.AllowlistsListViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
@@ -194,8 +195,12 @@ fun ListsListPane(
                             )
                         }
                         ListType.ALLOWLIST -> {
-                            // TODO: AllowlistsListPane
-                            Box(modifier = Modifier.fillMaxSize())
+                            AllowlistsListPane(
+                                viewModel = allowlistsViewModel,
+                                onNavigateToDetails = { name ->
+                                    onNavigateToDetails("allowlist:$name")
+                                }
+                            )
                         }
                     }
                 }

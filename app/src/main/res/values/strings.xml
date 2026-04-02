@@ -181,8 +181,21 @@
     <string name="no_results_for">No results for &quot;%s&quot;</string>
     <string name="select_blocklist">Select a blocklist</string>
     <string name="url" translatable="false">URL</string>
+    <string name="url_copied_to_clipboard">URL copied to clipboard</string>
     <string name="monitor_api" translatable="false">Monitor API</string>
     <string name="crowdsec" translatable="false">CrowdSec</string>
     <string name="information">Information</string>
     <string name="blocked_ips_count">%d blocked IP addresses</string>
+    <string name="no_allowlists_title">No allowlists</string>
+    <string name="no_allowlists_description">There are no allowlists configured</string>
+    <string name="select_allowlist">Select an allowlist</string>
+    <string name="allowlisted_ips_count">%d IP addresses</string>
+    <string name="updated_date">Updated: %s</string>
+    <string name="allowlisted_ips">Allowlisted IPs</string>
+    <string name="amount_of_allowlisted_ips">Number of IP addresses</string>
+    <string name="updated">Updated</string>
+    <string name="description">Description</string>
+    <string name="created">Created</string>
+    <string name="allowlist_not_found">Allowlist not found</string>
+    <string name="no_allowlist_items_title">No IP addresses</string>
 </resources>

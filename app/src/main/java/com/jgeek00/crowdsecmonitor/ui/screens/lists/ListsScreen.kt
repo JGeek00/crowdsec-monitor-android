@@ -24,6 +24,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.constants.Enums.ListType
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.allowlists.details.AllowlistDetailPane
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.details.BlocklistDetailPane
 import com.jgeek00.crowdsecmonitor.viewmodel.AllowlistsListViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
@@ -89,11 +90,24 @@ fun ListsScreen(
                     ?.removePrefix("blocklist:")
                     ?.toIntOrNull()
 
-                BlocklistDetailPane(
-                    blocklistId = blocklistId,
-                    showBackButton = isSinglePane && activeListId != null,
-                    onNavigateBack = { scope.launch { navigator.navigateBack() } }
-                )
+                val allowlistName = activeListId
+                    ?.takeIf { it.startsWith("allowlist:") }
+                    ?.removePrefix("allowlist:")
+
+                if (blocklistId != null || (activeListId == null && selectedListType == ListType.BLOCKLIST)) {
+                    BlocklistDetailPane(
+                        blocklistId = blocklistId,
+                        showBackButton = isSinglePane && activeListId != null,
+                        onNavigateBack = { scope.launch { navigator.navigateBack() } }
+                    )
+                } else {
+                    AllowlistDetailPane(
+                        allowlistName = allowlistName,
+                        viewModel = allowlistsViewModel,
+                        showBackButton = isSinglePane && activeListId != null,
+                        onNavigateBack = { scope.launch { navigator.navigateBack() } }
+                    )
+                }
             }
         }
     )

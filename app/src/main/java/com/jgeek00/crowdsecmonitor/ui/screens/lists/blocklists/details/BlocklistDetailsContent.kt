@@ -16,19 +16,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Defaults
@@ -42,6 +50,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import kotlin.math.abs
 import kotlin.math.min
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BlocklistDetailsContent(
     data: BlocklistDataResponseData,
@@ -50,8 +59,13 @@ fun BlocklistDetailsContent(
     ipsRound: Int,
     innerPadding: PaddingValues,
     nestedScrollConnection: NestedScrollConnection,
-    onIncrementIpsRound: () -> Unit
+    onIncrementIpsRound: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
+    val clipboardManager = LocalClipboardManager.current
+    val coroutineScope = rememberCoroutineScope()
+    val urlCopiedMessage = stringResource(R.string.url_copied_to_clipboard)
+
     val refreshWarning = remember(data.lastRefreshAttempt, data.lastSuccessfulRefresh) {
         val attempt = data.lastRefreshAttempt?.toInstant() ?: return@remember false
         val successful = data.lastSuccessfulRefresh?.toInstant() ?: return@remember false
@@ -101,10 +115,30 @@ fun BlocklistDetailsContent(
                     title = stringResource(R.string.name), subtitle = data.name
                 )
                 if (data.url != null) {
-                    DataListTile(
-                        tileIndex = tileIdx++, groupTiles = infoCount,
-                        title = stringResource(R.string.url), subtitle = data.url
-                    )
+                    SegmentedListItem(
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString(data.url))
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(urlCopiedMessage)
+                            }
+                        },
+                        shapes = ListItemDefaults.segmentedShapes(index = tileIdx, count = infoCount),
+                        modifier = Modifier.padding(bottom = 2.dp),
+                    ) {
+                        Column() {
+                            Text(
+                                text = stringResource(R.string.url),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = data.url,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
                 DataListTile(
                     tileIndex = tileIdx++, groupTiles = infoCount,
@@ -114,19 +148,10 @@ fun BlocklistDetailsContent(
                 DataListTile(
                     tileIndex = tileIdx++, groupTiles = infoCount,
                     title = stringResource(R.string.managed_by),
-                    trailingContent = {
-                        Text(
-                            text = when (data.type) {
-                                BlocklistType.API -> stringResource(R.string.monitor_api)
-                                BlocklistType.CROWDSEC -> stringResource(R.string.crowdsec)
-                            },
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = when (data.type) {
-                                BlocklistType.API -> MaterialTheme.colorScheme.primary
-                                BlocklistType.CROWDSEC -> MaterialTheme.colorScheme.tertiary
-                            }
-                        )
-                    }
+                    subtitle = when (data.type) {
+                        BlocklistType.API -> stringResource(R.string.monitor_api)
+                        BlocklistType.CROWDSEC -> stringResource(R.string.crowdsec)
+                    },
                 )
                 if (data.enabled != null) {
                     DataListTile(

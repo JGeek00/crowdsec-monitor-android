@@ -35,6 +35,8 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -69,6 +71,7 @@ fun BlocklistDetailsScreen(
 ) {
     val viewModel: BlocklistDetailsViewModel = hiltViewModel(key = blocklistId.toString())
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(blocklistId) {
         viewModel.initialize(blocklistId)
@@ -79,6 +82,7 @@ fun BlocklistDetailsScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             AnimatedContent(
                 targetState = viewModel.searchPresented,
@@ -194,7 +198,8 @@ fun BlocklistDetailsScreen(
                             onRefresh = { viewModel.refresh(blocklistId) },
                             ipsRound = viewModel.ipsRound,
                             nestedScrollConnection = scrollBehavior.nestedScrollConnection,
-                            onIncrementIpsRound = { viewModel.incrementIpsRound() }
+                            onIncrementIpsRound = { viewModel.incrementIpsRound() },
+                            snackbarHostState = snackbarHostState
                         )
                     }
 
