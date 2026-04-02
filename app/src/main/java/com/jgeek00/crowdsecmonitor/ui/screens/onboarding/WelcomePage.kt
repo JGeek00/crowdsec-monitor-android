@@ -29,7 +29,11 @@ import com.jgeek00.crowdsecmonitor.R
 
 @Composable
 fun WelcomePage(onNext: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

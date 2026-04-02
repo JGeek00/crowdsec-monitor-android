@@ -43,6 +43,7 @@ fun ApiInformationPage(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp)
+            .padding(top = 16.dp)
     ) {
         Column(
             modifier = Modifier

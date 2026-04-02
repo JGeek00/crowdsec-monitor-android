@@ -48,8 +48,11 @@ fun OnboardingFormPage(
         WindowInsets.navigationBars.getBottom(this).toDp()
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 24.dp)
+    ) {
         ConnectionForm(
             viewModel = viewModel,
             showHeader = true,
