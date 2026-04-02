@@ -43,19 +43,20 @@ sealed interface Route {
 
 data class TopLevelRoute(
     val route: Route,
+    val startRoute: Route,
     @StringRes val label: Int,
     val icon: ImageVector
 )
 
 val topLevelRoutesNoServer = listOf(
-    TopLevelRoute(Route.HomeGraph, R.string.home, Icons.Rounded.Home),
-    TopLevelRoute(Route.SettingsGraph, R.string.settings, Icons.Rounded.Settings),
+    TopLevelRoute(Route.HomeGraph, Route.Home, R.string.home, Icons.Rounded.Home),
+    TopLevelRoute(Route.SettingsGraph, Route.Settings, R.string.settings, Icons.Rounded.Settings),
 )
 
 val topLevelRoutesWithServer = listOf(
-    TopLevelRoute(Route.DashboardGraph, R.string.dashboard, Icons.Rounded.Dashboard),
-    TopLevelRoute(Route.AlertsGraph, R.string.alerts, Icons.Rounded.Warning),
-    TopLevelRoute(Route.DecisionsGraph, R.string.decisions, Icons.Rounded.FrontHand),
-    TopLevelRoute(Route.ListsGraph, R.string.lists, Icons.AutoMirrored.Rounded.FormatListBulleted),
-    TopLevelRoute(Route.SettingsGraph, R.string.settings, Icons.Rounded.Settings),
+    TopLevelRoute(Route.DashboardGraph, Route.Dashboard, R.string.dashboard, Icons.Rounded.Dashboard),
+    TopLevelRoute(Route.AlertsGraph, Route.Alerts, R.string.alerts, Icons.Rounded.Warning),
+    TopLevelRoute(Route.DecisionsGraph, Route.Decisions, R.string.decisions, Icons.Rounded.FrontHand),
+    TopLevelRoute(Route.ListsGraph, Route.Lists, R.string.lists, Icons.AutoMirrored.Rounded.FormatListBulleted),
+    TopLevelRoute(Route.SettingsGraph, Route.Settings, R.string.settings, Icons.Rounded.Settings),
 )

@@ -79,14 +79,14 @@ fun CrowdSecMonitorApp(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
 
-    val visibleTopLevelRoutes = if (authViewModel.hasServerConfigured) {
+    val visibleTopLevelRoutes = if (authViewModel.isLoading || authViewModel.hasServerConfigured) {
         topLevelRoutesWithServer
     } else {
         topLevelRoutesNoServer
     }
 
     // Redirects automatically when tab is no longer visible (when a server is added or deleted)
-    LaunchedEffect(authViewModel.hasServerConfigured) {
+    LaunchedEffect(authViewModel.hasServerConfigured, authViewModel.isLoading) {
         if (authViewModel.isLoading) return@LaunchedEffect
         if (currentDestination == null) return@LaunchedEffect  // NavHost not ready yet (initial startup)
         val isCurrentTabVisible = visibleTopLevelRoutes.any { tab ->
@@ -110,12 +110,22 @@ fun CrowdSecMonitorApp(
                         it.hasRoute(topLevel.route::class)
                     } == true,
                     onClick = {
-                        navController.navigate(topLevel.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+                        val isAlreadySelected = currentDestination?.hierarchy?.any {
+                            it.hasRoute(topLevel.route::class)
+                        } == true
+                        if (isAlreadySelected) {
+                            val isAtRoot = currentDestination.hasRoute(topLevel.startRoute::class)
+                            if (!isAtRoot) {
+                                navController.popBackStack(topLevel.startRoute, inclusive = false)
                             }
-                            launchSingleTop = true
-                            restoreState = true
+                        } else {
+                            navController.navigate(topLevel.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 )
