@@ -204,4 +204,11 @@
     <string name="url_not_valid_msg">The value entered in the URL field is not valid, please enter a valid URL</string>
     <string name="error_adding_blocklist">An error occurred when adding the blocklist, please try again</string>
     <string name="blocklist_data">Blocklist data</string>
+    <string name="more_info_app">More information about this app</string>
+    <string name="more_info_app_description">Consulta más información sobre esta aplicación en la página web</string>
+    <string name="my_other_apps">My other apps</string>
+    <string name="my_other_apps_description">Check out the rest of my apps</string>
+    <string name="created_by">Created on  🇪🇸 by JGeek00</string>
+    <string name="donate">Donate</string>
+    <string name="donate_description">If you like CrowdSec Monitor, consider giving me a tip</string>
 </resources>

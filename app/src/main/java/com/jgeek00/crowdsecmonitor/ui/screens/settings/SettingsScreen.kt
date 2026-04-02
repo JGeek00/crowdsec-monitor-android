@@ -1,13 +1,17 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -22,14 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import android.os.Build
+import androidx.core.net.toUri
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
+import com.jgeek00.crowdsecmonitor.constants.URLs
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
+import com.jgeek00.crowdsecmonitor.utils.rememberIsInstalledFromOutsideGooglePlay
 
 private data class ThemeOption(
     val mode: Enums.ThemeMode,
@@ -82,6 +91,7 @@ private fun SettingsContent(
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val appVersion = rememberAppVersionName()
     val themeOptions = listOf(
         ThemeOption(Enums.ThemeMode.SYSTEM, R.string.theme_system_default, Icons.Rounded.Smartphone),
@@ -139,14 +149,84 @@ private fun SettingsContent(
         item { SectionHeader(stringResource(R.string.about_section)) }
 
         item {
+            val isOutsideGooglePlay = rememberIsInstalledFromOutsideGooglePlay()
+            val aboutAppItems = if (isOutsideGooglePlay) 4 else 3
+            var index = 0
             RoundedCornersListTile(
-                index = 0,
-                totalItems = 1,
+                index = index++,
+                totalItems = aboutAppItems,
+                onClick = {
+                    CustomTabsIntent.Builder()
+                        .setShowTitle(true)
+                        .build()
+                        .launchUrl(context, URLs.APP_DETAILS.toUri())
+                }
+            ) {
+                ListItemContent(
+                    headlineText = stringResource(R.string.more_info_app),
+                    subHeadlineText = stringResource(R.string.more_info_app_description),
+                    trailingContent = {
+                        Icon(Icons.Rounded.OpenInNew, contentDescription = null)
+                    }
+                )
+            }
+            RoundedCornersListTile(
+                index = index++,
+                totalItems = aboutAppItems,
+                onClick = {
+                    CustomTabsIntent.Builder()
+                        .setShowTitle(true)
+                        .build()
+                        .launchUrl(context, URLs.REST_OF_APPS.toUri())
+                }
+            ) {
+                ListItemContent(
+                    headlineText = stringResource(R.string.my_other_apps),
+                    subHeadlineText = stringResource(R.string.my_other_apps_description),
+                    trailingContent = {
+                        Icon(Icons.Rounded.OpenInNew, contentDescription = null)
+                    }
+                )
+            }
+            if (isOutsideGooglePlay) {
+                RoundedCornersListTile(
+                    index = index++,
+                    totalItems = aboutAppItems,
+                    onClick = {
+                        CustomTabsIntent.Builder()
+                            .setShowTitle(true)
+                            .build()
+                            .launchUrl(context, URLs.PAYPAL.toUri())
+                    }
+                ) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.donate),
+                        subHeadlineText = stringResource(R.string.donate_description),
+                        trailingContent = {
+                            Icon(Icons.Rounded.OpenInNew, contentDescription = null)
+                        }
+                    )
+                }
+            }
+            RoundedCornersListTile(
+                index = index++,
+                totalItems = aboutAppItems,
             ) {
                 ListItemContent(
                     headlineText = stringResource(R.string.app_version),
                     subHeadlineText = appVersion
                 )
+            }
+        }
+
+        item {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                Text(stringResource(R.string.created_by))
             }
         }
     }
@@ -161,3 +241,5 @@ private fun rememberAppVersionName(): String {
         }.getOrDefault("-")
     }
 }
+
+

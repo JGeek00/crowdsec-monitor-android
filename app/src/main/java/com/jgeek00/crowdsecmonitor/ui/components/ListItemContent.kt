@@ -33,12 +33,14 @@ fun ListItemContent(
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .weight(1f)
         ) {
             if (leadingContent != null) {
                 leadingContent()
+                Spacer(modifier = Modifier.width(12.dp))
             }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = headlineText,
                     maxLines = 1,
@@ -63,6 +65,7 @@ fun ListItemContent(
             }
         }
         if (trailingContent != null) {
+            Spacer(modifier = Modifier.width(8.dp))
             trailingContent()
         }
     }

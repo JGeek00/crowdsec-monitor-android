@@ -24,6 +24,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServerStatusViewModel
+import androidx.core.net.toUri
 
 @Composable
 fun ServerInformationSection(
@@ -99,7 +100,7 @@ fun ServerInformationSection(
     if (newVersion != null) {
         ListItem(
             modifier = Modifier.clickable {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(URLs.API_PACKAGE_URL))
+                val intent = Intent(Intent.ACTION_VIEW, URLs.API_PACKAGE.toUri())
                 context.startActivity(intent)
             },
             leadingContent = {
