@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
@@ -46,6 +47,8 @@ fun FullScreenDialog(
     title: String,
     allowClose: Boolean = true,
     dismissConfirmation: Boolean = false,
+    navigationIcon: ImageVector = Icons.Rounded.Close,
+    navigationIconContentDescription: String? = null,
     actions: @Composable () -> Unit,
 ) {
     val darkTheme = LocalDarkTheme.current
@@ -90,11 +93,12 @@ fun FullScreenDialog(
                 TopAppBar(
                     title = { Text(title) },
                     navigationIcon = {
+                        val navDesc = navigationIconContentDescription ?: stringResource(R.string.close)
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
                                 TooltipAnchorPosition.Below
                             ),
-                            tooltip = { PlainTooltip { Text(stringResource(R.string.close)) } },
+                            tooltip = { PlainTooltip { Text(navDesc) } },
                             state = rememberTooltipState()
                         ) {
                             IconButton(
@@ -102,8 +106,8 @@ fun FullScreenDialog(
                                 enabled = allowClose
                             ) {
                                 Icon(
-                                    imageVector = Icons.Rounded.Close,
-                                    contentDescription = stringResource(R.string.close)
+                                    imageVector = navigationIcon,
+                                    contentDescription = navDesc
                                 )
                             }
                         }

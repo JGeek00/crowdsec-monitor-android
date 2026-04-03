@@ -239,4 +239,16 @@
     <string name="domain_not_resolvable_msg">The domain you entered could not be resolved. Please check the domain and try again.</string>
     <string name="error_checking_domain">An error occurred while checking the domain. Please try again.</string>
     <string name="checking_domain">Checking domain…\nThis may take up to one minute.</string>
+    <string name="list_type">List type</string>
+    <string name="ip_addresses_to_validate">IP addresses to validate</string>
+    <string name="enter_ip_address_hint">Enter an IP address</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="invalid_ip_address">Invalid IP address</string>
+    <string name="invalid_ip_address_msg">The value introduced doesn\'t correspond to a valid IPv4 or IPv6 address.</string>
+    <string name="check_ip_addresses">Check IP addresses</string>
+    <string name="ip_addresses_in_blocklists">IP addresses in blocklists</string>
+    <string name="ip_addresses_in_allowlists">IP addresses in allowlists</string>
+    <string name="not_in_any_allowlist">This IP is not in any allowlist</string>
+    <string name="allowlist_label">Allowlist: %s</string>
 </resources>

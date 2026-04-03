@@ -234,4 +234,16 @@
     <string name="domain_not_resolvable_msg">El dominio que has introducido no se ha podido resolver. Por favor comprueba el dominio y prueba de nuevo.</string>
     <string name="error_checking_domain">Ha ocurrido un error al comprobar el dominio. Por favor, prueba de nuevo.</string>
     <string name="checking_domain">Comprobando dominio...</string>
+    <string name="list_type">Tipo de lista</string>
+    <string name="ip_addresses_to_validate">Direcciones IP a validar</string>
+    <string name="enter_ip_address_hint">Introduce una dirección IP</string>
+    <string name="add">Añadir</string>
+    <string name="remove">Eliminar</string>
+    <string name="invalid_ip_address">Dirección IP inválida</string>
+    <string name="invalid_ip_address_msg">El valor introducido no corresponde a una dirección IPv4 o IPv6 válida.</string>
+    <string name="check_ip_addresses">Comprobar dirección IP</string>
+    <string name="ip_addresses_in_blocklists">Direcciones IP en listas de bloqueo</string>
+    <string name="ip_addresses_in_allowlists">Direcciones IP en listas de permitidos</string>
+    <string name="not_in_any_allowlist">Esta IP no está en ninguna lista de permitidos</string>
+    <string name="allowlist_label">Lista de permitidos: %s</string>
 </resources>

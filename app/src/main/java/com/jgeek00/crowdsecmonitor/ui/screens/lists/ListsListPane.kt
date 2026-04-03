@@ -1,6 +1,5 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.lists
 
-import android.view.ContextMenu
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,12 +48,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums.ListType
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.allowlists.AllowlistsListPane
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.AddBlocklistFormScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.BlocklistsListPane
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.ipsChecker.IPsCheckerScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.AllowlistsListViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
 import kotlinx.coroutines.launch
@@ -86,6 +84,7 @@ fun ListsListPane(
     val errorDeleteMsg = stringResource(R.string.error_delete_blocklist)
 
     var dropdownMenuOpen by remember { mutableStateOf(false) }
+    var showIPsChecker by remember { mutableStateOf(false) }
     var showCheckDomainReachable by remember { mutableStateOf(false) }
 
     LaunchedEffect(blocklistsViewModel.blocklistDeletedSuccessfully) {
@@ -122,6 +121,12 @@ fun ListsListPane(
                     scope.launch { snackbarHostState.showSnackbar(addedMsg) }
                 }
             }
+        )
+    }
+
+    if (showIPsChecker) {
+        IPsCheckerScreen(
+            onClose = { showIPsChecker = false }
         )
     }
 
@@ -174,6 +179,7 @@ fun ListsListPane(
                                 text = { Text(stringResource(R.string.ip_addresses_checker)) },
                                 onClick = {
                                     dropdownMenuOpen = false
+                                    showIPsChecker = true
                                 }
                             )
                             DropdownMenuItem(
