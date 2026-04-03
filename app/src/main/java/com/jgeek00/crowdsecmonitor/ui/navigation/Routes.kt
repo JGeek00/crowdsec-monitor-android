@@ -7,6 +7,7 @@ import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.FrontHand
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.jgeek00.crowdsecmonitor.R
@@ -57,6 +58,6 @@ val topLevelRoutesWithServer = listOf(
     TopLevelRoute(Route.DashboardGraph, Route.Dashboard, R.string.dashboard, Icons.Rounded.Dashboard),
     TopLevelRoute(Route.AlertsGraph, Route.Alerts, R.string.alerts, Icons.Rounded.Warning),
     TopLevelRoute(Route.DecisionsGraph, Route.Decisions, R.string.decisions, Icons.Rounded.FrontHand),
-    TopLevelRoute(Route.ListsGraph, Route.Lists, R.string.lists, Icons.AutoMirrored.Rounded.FormatListBulleted),
+    TopLevelRoute(Route.ListsGraph, Route.Lists, R.string.lists, Icons.Rounded.Shield),
     TopLevelRoute(Route.SettingsGraph, Route.Settings, R.string.settings, Icons.Rounded.Settings),
 )

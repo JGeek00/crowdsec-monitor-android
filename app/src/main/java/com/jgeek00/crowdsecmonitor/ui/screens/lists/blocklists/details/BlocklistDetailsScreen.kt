@@ -48,6 +48,7 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -76,6 +77,10 @@ fun BlocklistDetailsScreen(
 
     LaunchedEffect(blocklistId) {
         viewModel.initialize(blocklistId)
+    }
+
+    BackHandler(enabled = viewModel.searchPresented) {
+        viewModel.updateSearchPresented(false)
     }
 
     val successData = (viewModel.state as? LoadingResult.Success)?.value

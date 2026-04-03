@@ -20,8 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -51,6 +49,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerShee
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerInformationSection
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerListItem
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
+import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -184,6 +183,7 @@ fun ServerConfigurationScreen(
     }
 
     if (showCreateServerSheet) {
+        val darkTheme = LocalDarkTheme.current
         Dialog(
             onDismissRequest = { showCreateServerSheet = false },
             properties = DialogProperties(
@@ -191,7 +191,7 @@ fun ServerConfigurationScreen(
                 decorFitsSystemWindows = false
             )
         ) {
-            CrowdSecMonitorTheme {
+            CrowdSecMonitorTheme(darkTheme = darkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

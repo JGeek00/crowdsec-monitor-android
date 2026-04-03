@@ -27,6 +27,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerSheet
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
+import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 
 @Composable
@@ -43,6 +44,7 @@ fun NoServerConfiguredContent() {
     var showSheet by remember { mutableStateOf(false) }
 
     if (showSheet) {
+        val darkTheme = LocalDarkTheme.current
         Dialog(
             onDismissRequest = { showSheet = false },
             properties = DialogProperties(
@@ -50,7 +52,7 @@ fun NoServerConfiguredContent() {
                 decorFitsSystemWindows = false
             )
         ) {
-            CrowdSecMonitorTheme {
+            CrowdSecMonitorTheme(darkTheme = darkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

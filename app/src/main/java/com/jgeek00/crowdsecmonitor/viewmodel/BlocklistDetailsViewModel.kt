@@ -38,6 +38,8 @@ class BlocklistDetailsViewModel @Inject constructor(
         if (initializedForId == blocklistId) return
         initializedForId = blocklistId
         ipsRound = 1
+        searchPresented = false
+        searchText = ""
         fetchData(blocklistId)
     }
 

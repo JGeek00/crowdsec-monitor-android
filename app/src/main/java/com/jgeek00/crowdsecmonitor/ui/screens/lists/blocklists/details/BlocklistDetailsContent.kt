@@ -128,19 +128,10 @@ fun BlocklistDetailsContent(
                             }
                         },
                     ) {
-                        Column() {
-                            Text(
-                                text = stringResource(R.string.url),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = data.url,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        ListItemContent(
+                            headlineText = stringResource(R.string.url),
+                            subHeadlineText = data.url
+                        )
                     }
                 }
                 RoundedCornersListTile(

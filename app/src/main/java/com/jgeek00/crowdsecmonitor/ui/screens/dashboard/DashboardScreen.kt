@@ -1,5 +1,9 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.dashboard
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,34 +97,41 @@ fun DashboardScreen(
             }
         }
     ) {
-        when (val state = dashboardViewModel.state) {
-            is LoadingResult.Loading -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+        AnimatedContent(
+            targetState = dashboardViewModel.state,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            contentKey = { it::class },
+            label = "DashboardState"
+        ) { state ->
+            when (state) {
+                is LoadingResult.Loading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            is LoadingResult.Success -> {
-                if (isTablet) {
-                    DashboardContentTablet(data = state.value, onNavigateToFullList = onNavigateToFullList)
-                } else {
-                    DashboardContentPhone(data = state.value, onNavigateToFullList = onNavigateToFullList)
+                is LoadingResult.Success -> {
+                    if (isTablet) {
+                        DashboardContentTablet(data = state.value, onNavigateToFullList = onNavigateToFullList)
+                    } else {
+                        DashboardContentPhone(data = state.value, onNavigateToFullList = onNavigateToFullList)
+                    }
                 }
-            }
-            is LoadingResult.Failure -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Icon(
-                            Icons.Rounded.Error,
-                            null,
-                            modifier = Modifier.size(56.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(stringResource(R.string.error_fetching_data), style = MaterialTheme.typography.bodyLarge)
-                        IconButton(onClick = { dashboardViewModel.fetchDashboardData() }) {
-                            Icon(Icons.Rounded.Refresh, contentDescription = null)
+                is LoadingResult.Failure -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                Icons.Rounded.Error,
+                                null,
+                                modifier = Modifier.size(56.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(stringResource(R.string.error_fetching_data), style = MaterialTheme.typography.bodyLarge)
+                            IconButton(onClick = { dashboardViewModel.fetchDashboardData() }) {
+                                Icon(Icons.Rounded.Refresh, contentDescription = null)
+                            }
                         }
                     }
                 }

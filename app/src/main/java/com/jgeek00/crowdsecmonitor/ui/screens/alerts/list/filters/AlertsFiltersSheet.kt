@@ -83,10 +83,6 @@ fun AlertsFiltersSheet(
 
     val darkTheme = isSystemInDarkTheme()
 
-    BackHandler(enabled = currentScreen != FilterScreen.Main) {
-        navigateToMain()
-    }
-
     Dialog(
         onDismissRequest = {
             navigateToMain()
@@ -94,11 +90,19 @@ fun AlertsFiltersSheet(
         },
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
-            dismissOnBackPress = true,
+            dismissOnBackPress = false,
             dismissOnClickOutside = false,
             decorFitsSystemWindows = false
         ),
     ) {
+        BackHandler {
+            if (currentScreen != FilterScreen.Main) {
+                navigateToMain()
+            } else {
+                onDismiss()
+            }
+        }
+
         val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
         SideEffect {
             dialogWindow?.let { window ->
