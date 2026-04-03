@@ -2,7 +2,6 @@ package com.jgeek00.crowdsecmonitor.ui.components
 
 import android.graphics.Color
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -37,6 +36,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +48,7 @@ fun FullScreenDialog(
     dismissConfirmation: Boolean = false,
     actions: @Composable () -> Unit,
 ) {
-    val darkTheme = isSystemInDarkTheme()
+    val darkTheme = LocalDarkTheme.current
     var showDiscardConfirmation by remember { mutableStateOf(false) }
 
     fun handleClose() {

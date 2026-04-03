@@ -9,6 +9,7 @@ import com.jgeek00.crowdsecmonitor.data.models.BlocklistsCheckDomainRequest
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistsCheckDomainResponse
 import com.jgeek00.crowdsecmonitor.data.models.HttpClientException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -37,6 +38,22 @@ class CheckDomainReachableViewModel @Inject constructor(
     private val domainPattern = Pattern.compile(
         "^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$"
     )
+
+    fun reset() {
+        domain = ""
+        invalidDomainAlert = false
+        data = null
+        error = false
+        domainNotResolvable = false
+        loading = false
+    }
+
+    fun resetAfterClose(delayMs: Long = 300L) {
+        viewModelScope.launch {
+            delay(delayMs)
+            reset()
+        }
+    }
 
     fun checkDomain() {
         if (!domainPattern.matcher(domain.trim()).matches()) {

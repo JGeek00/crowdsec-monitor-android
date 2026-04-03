@@ -2,7 +2,6 @@ package com.jgeek00.crowdsecmonitor.ui.screens.onboarding
 
 import android.graphics.Color
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,7 +14,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
@@ -23,6 +21,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ConnectionFormViewModel
+import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -30,7 +29,7 @@ fun OnboardingScreen(
     onFinish: () -> Unit,
     connectionFormViewModel: ConnectionFormViewModel = hiltViewModel(key = "onboarding")
 ) {
-    val darkTheme = isSystemInDarkTheme()
+    val darkTheme = LocalDarkTheme.current
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 3 })
 
