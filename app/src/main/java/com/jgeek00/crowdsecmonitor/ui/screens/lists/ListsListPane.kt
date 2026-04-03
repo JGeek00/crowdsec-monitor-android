@@ -1,5 +1,6 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.lists
 
+import android.view.ContextMenu
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -14,7 +15,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -81,6 +85,9 @@ fun ListsListPane(
     val errorDisableMsg = stringResource(R.string.error_disable_blocklist)
     val errorDeleteMsg = stringResource(R.string.error_delete_blocklist)
 
+    var dropdownMenuOpen by remember { mutableStateOf(false) }
+    var showCheckDomainReachable by remember { mutableStateOf(false) }
+
     LaunchedEffect(blocklistsViewModel.blocklistDeletedSuccessfully) {
         if (blocklistsViewModel.blocklistDeletedSuccessfully) {
             scope.launch { snackbarHostState.showSnackbar(deletedMsg) }
@@ -118,6 +125,12 @@ fun ListsListPane(
         )
     }
 
+    if (showCheckDomainReachable) {
+        CheckDomainReachableScreen(
+            onClose = { showCheckDomainReachable = false }
+        )
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -137,10 +150,39 @@ fun ListsListPane(
                                 tooltip = { PlainTooltip { Text(stringResource(R.string.add_blocklist)) } },
                                 state = rememberTooltipState()
                             ) {
-                            IconButton(onClick = { showAddBlocklistForm = true }) {
+                                IconButton(onClick = { showAddBlocklistForm = true }) {
                                     Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.add_blocklist))
                                 }
                             }
+                        }
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                            tooltip = { PlainTooltip { Text(stringResource(R.string.more_options)) } },
+                            state = rememberTooltipState()
+                        ) {
+                            IconButton(
+                                onClick = { dropdownMenuOpen = true }
+                            ) {
+                                Icon(Icons.Rounded.MoreVert, contentDescription = stringResource(R.string.more_options))
+                            }
+                        }
+                        DropdownMenu(
+                            onDismissRequest = { dropdownMenuOpen = false },
+                            expanded = dropdownMenuOpen,
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.ip_addresses_checker)) },
+                                onClick = {
+                                    dropdownMenuOpen = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.check_domain_reachable)) },
+                                onClick = {
+                                    dropdownMenuOpen = false
+                                    showCheckDomainReachable = true
+                                },
+                            )
                         }
                     }
                 )

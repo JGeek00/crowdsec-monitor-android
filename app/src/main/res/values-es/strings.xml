@@ -218,4 +218,20 @@
     <string name="onboarding_api_info_body">Esta aplicación requiere una API intermedia para funcionar. Esta API se encarga de obtener datos de CrowdSec, procesarlos y entregarlos de manera adecuada a esta aplicación.\n\nAntes de continuar, asegúrate de haberla desplegado correctamente en tu máquina junto a CrowdSec.</string>
     <string name="onboarding_view_api_repo">Ver repositorio de la API en GitHub</string>
     <string name="onboarding_next">Siguiente</string>
+    <string name="ip_addresses_checker">Comprobador de direcciones IP</string>
+    <string name="check_domain_reachable">Comprobar si un dominio es alcanzable</string>
+    <string name="more_options">Más opciones</string>
+    <string name="domain_reachable_checker">Comprobador de dominio alcanzable</string>
+    <string name="domain">Dominio</string>
+    <string name="check_domain">Comprobar dominio</string>
+    <string name="domain_checker_footer">El backend tratará de resolver el dominio contra un servidor DNS. Si el dominio se resuelve correctamente, el backend comprobará si las direcciones IP resueltas están listadas en alguna lista de bloqueo. El resultado mostrará las direcciones IP resueltas y si se encuentran listadas en alguna lista de bloqueo.</string>
+    <string name="ip_addresses_section">Direcciones IP</string>
+    <string name="not_blocked">No bloqueado</string>
+    <string name="blocklists_label">Listas de bloqueo: %s</string>
+    <string name="invalid_domain">Dominio no válido</string>
+    <string name="invalid_domain_msg">El dominio que has introducido no es válido. Por favor, comprueba el formato y prueba de nuevo.</string>
+    <string name="domain_not_resolvable_title">El dominio no existe.</string>
+    <string name="domain_not_resolvable_msg">El dominio que has introducido no se ha podido resolver. Por favor comprueba el dominio y prueba de nuevo.</string>
+    <string name="error_checking_domain">Ha ocurrido un error al comprobar el dominio. Por favor, prueba de nuevo.</string>
+    <string name="checking_domain">Comprobando dominio...</string>
 </resources>

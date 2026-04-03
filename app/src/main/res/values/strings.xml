@@ -223,4 +223,20 @@
     <string name="onboarding_api_info_body">This application requires an intermediate API to function. This API is responsible for obtaining data from CrowdSec, processing it, and delivering it appropriately to this application.\n\nBefore continuing, ensure that you have correctly deployed it on your machine alongside CrowdSec.</string>
     <string name="onboarding_view_api_repo">View API repository on GitHub</string>
     <string name="onboarding_next">Next</string>
+    <string name="ip_addresses_checker">IP addresses checker</string>
+    <string name="check_domain_reachable">Check domain reachable</string>
+    <string name="more_options">More options</string>
+    <string name="domain_reachable_checker">Domain reachable checker</string>
+    <string name="domain">Domain</string>
+    <string name="check_domain">Check domain</string>
+    <string name="domain_checker_footer">The backend will try to resolve the domain against a DNS server. If the domain is resolved correctly, the backend will check if the resolved IP addresses are listed in any blocklist. The result will show the resolved IP addresses and the blocklists they are listed in, if any.</string>
+    <string name="ip_addresses_section">IP addresses</string>
+    <string name="not_blocked">Not blocked</string>
+    <string name="blocklists_label">Blocklists: %s</string>
+    <string name="invalid_domain">Invalid domain</string>
+    <string name="invalid_domain_msg">The domain you entered is not valid. Please check the format and try again.</string>
+    <string name="domain_not_resolvable_title">Domain does not exist</string>
+    <string name="domain_not_resolvable_msg">The domain you entered could not be resolved. Please check the domain and try again.</string>
+    <string name="error_checking_domain">An error occurred while checking the domain. Please try again.</string>
+    <string name="checking_domain">Checking domain…\nThis may take up to one minute.</string>
 </resources>
