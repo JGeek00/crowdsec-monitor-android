@@ -1,11 +1,8 @@
 package com.jgeek00.crowdsecmonitor.ui.navigation
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
@@ -34,11 +31,6 @@ private fun NavDestination.topLevelAncestorRoute(): String? {
     return dest.route
 }
 
-private const val ANIM_DURATION = 350
-private const val FADE_DURATION = 250
-private val easingSpec = FastOutSlowInEasing
-private const val SLIDE_RATIO = 0.10f
-
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -55,42 +47,30 @@ fun AppNavGraph(
 
         enterTransition = {
             if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
-                fadeIn(tween(FADE_DURATION))
+                fadeIn(tween(NAV_FADE_DURATION))
             } else {
-                slideInHorizontally(
-                    initialOffsetX = { (it * SLIDE_RATIO).toInt() },
-                    animationSpec = tween(ANIM_DURATION, easing = easingSpec)
-                ) + fadeIn(tween(ANIM_DURATION, easing = easingSpec))
+                detailPaneEnterTransition
             }
         },
         exitTransition = {
             if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
-                fadeOut(tween(FADE_DURATION))
+                fadeOut(tween(NAV_FADE_DURATION))
             } else {
-                slideOutHorizontally(
-                    targetOffsetX = { -(it * SLIDE_RATIO).toInt() },
-                    animationSpec = tween(ANIM_DURATION, easing = easingSpec)
-                ) + fadeOut(tween(ANIM_DURATION, easing = easingSpec))
+                listPaneExitTransition
             }
         },
         popEnterTransition = {
             if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
-                fadeIn(tween(FADE_DURATION))
+                fadeIn(tween(NAV_FADE_DURATION))
             } else {
-                slideInHorizontally(
-                    initialOffsetX = { -(it * SLIDE_RATIO).toInt() },
-                    animationSpec = tween(ANIM_DURATION, easing = easingSpec)
-                ) + fadeIn(tween(ANIM_DURATION, easing = easingSpec))
+                listPaneEnterTransition
             }
         },
         popExitTransition = {
             if (initialState.destination.topLevelAncestorRoute() != targetState.destination.topLevelAncestorRoute()) {
-                fadeOut(tween(FADE_DURATION))
+                fadeOut(tween(NAV_FADE_DURATION))
             } else {
-                slideOutHorizontally(
-                    targetOffsetX = { (it * SLIDE_RATIO).toInt() },
-                    animationSpec = tween(ANIM_DURATION, easing = easingSpec)
-                ) + fadeOut(tween(ANIM_DURATION, easing = easingSpec))
+                detailPaneExitTransition
             }
         }
     ) {

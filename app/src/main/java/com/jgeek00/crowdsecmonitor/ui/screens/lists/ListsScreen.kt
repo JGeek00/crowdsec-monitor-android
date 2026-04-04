@@ -8,6 +8,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import com.jgeek00.crowdsecmonitor.ui.navigation.detailPaneEnterTransition
+import com.jgeek00.crowdsecmonitor.ui.navigation.detailPaneExitTransition
+import com.jgeek00.crowdsecmonitor.ui.navigation.listPaneEnterTransition
+import com.jgeek00.crowdsecmonitor.ui.navigation.listPaneExitTransition
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -69,7 +73,10 @@ fun ListsScreen(
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            AnimatedPane {
+            AnimatedPane(
+                enterTransition = listPaneEnterTransition,
+                exitTransition = listPaneExitTransition
+            ) {
                 ListsListPane(
                     selectedListType = selectedListType,
                     onListTypeChange = { selectedListType = it },
@@ -84,7 +91,10 @@ fun ListsScreen(
             }
         },
         detailPane = {
-            AnimatedPane {
+            AnimatedPane(
+                enterTransition = detailPaneEnterTransition,
+                exitTransition = detailPaneExitTransition
+            ) {
                 val blocklistId = activeListId
                     ?.takeIf { it.startsWith("blocklist:") }
                     ?.removePrefix("blocklist:")
