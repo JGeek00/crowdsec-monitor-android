@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
@@ -117,7 +119,12 @@ fun DashboardScreen(
                     }
                 }
                 is LoadingResult.Failure -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -128,7 +135,11 @@ fun DashboardScreen(
                                 modifier = Modifier.size(56.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Text(stringResource(R.string.error_fetching_data), style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                stringResource(R.string.error_fetching_data),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
                             IconButton(onClick = { dashboardViewModel.fetchDashboardData() }) {
                                 Icon(Icons.Rounded.Refresh, contentDescription = null)
                             }

@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -212,7 +213,10 @@ fun BlocklistDetailsScreen(
 
                     is LoadingResult.Failure -> {
                         Box(
-                            modifier = Modifier.fillMaxSize().padding(innerPadding),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                                .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(
@@ -227,7 +231,8 @@ fun BlocklistDetailsScreen(
                                 )
                                 Text(
                                     text = stringResource(R.string.error_fetching_data),
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center
                                 )
                                 IconButton(onClick = { viewModel.refresh(blocklistId) }) {
                                     Icon(Icons.Rounded.Refresh, contentDescription = null)
@@ -252,7 +257,12 @@ fun BlocklistDetailsScreen(
                     val blocklistIps = successData?.data?.blocklistIps ?: emptyList()
 
                     if (viewModel.searchText.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -266,7 +276,8 @@ fun BlocklistDetailsScreen(
                                 Text(
                                     text = stringResource(R.string.enter_search_text),
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         }
