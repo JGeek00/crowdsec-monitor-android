@@ -95,10 +95,11 @@ fun ListsScreen(
                 enterTransition = detailPaneEnterTransition,
                 exitTransition = detailPaneExitTransition
             ) {
-                val blocklistId = activeListId
+                val blocklistSegment = activeListId
                     ?.takeIf { it.startsWith("blocklist:") }
                     ?.removePrefix("blocklist:")
-                    ?.toIntOrNull()
+                val blocklistId = blocklistSegment?.substringBefore(':')?.toIntOrNull()
+                val blocklistName = blocklistSegment?.substringAfter(':')?.takeIf { it.isNotEmpty() }
 
                 val allowlistName = activeListId
                     ?.takeIf { it.startsWith("allowlist:") }
@@ -107,6 +108,7 @@ fun ListsScreen(
                 if (blocklistId != null || (activeListId == null && selectedListType == ListType.BLOCKLIST)) {
                     BlocklistDetailPane(
                         blocklistId = blocklistId,
+                        blocklistName = blocklistName,
                         showBackButton = isSinglePane && activeListId != null,
                         onNavigateBack = { scope.launch { navigator.navigateBack() } }
                     )

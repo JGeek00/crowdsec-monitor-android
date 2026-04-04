@@ -37,7 +37,7 @@ import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
 @Composable
 fun BlocklistsListPane(
     viewModel: BlocklistsListViewModel,
-    onNavigateToDetails: (Int) -> Unit
+    onNavigateToDetails: (id: Int, name: String) -> Unit
 ) {
     AnimatedContent(
         targetState = viewModel.state,
@@ -90,7 +90,7 @@ fun BlocklistsListPane(
                                 totalItems = data.items.size,
                                 blocklist = blocklist,
                                 viewModel = viewModel,
-                                onNavigateToDetails = { onNavigateToDetails(blocklist.id) }
+                                onNavigateToDetails = { onNavigateToDetails(blocklist.id, blocklist.name) }
                             )
                             LaunchedEffect(blocklist.id) {
                                 if (blocklist == data.items.last()) {

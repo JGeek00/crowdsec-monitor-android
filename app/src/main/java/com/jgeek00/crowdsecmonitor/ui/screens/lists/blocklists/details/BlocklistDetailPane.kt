@@ -23,6 +23,7 @@ import com.jgeek00.crowdsecmonitor.R
 @Composable
 fun BlocklistDetailPane(
     blocklistId: Int?,
+    blocklistName: String?,
     showBackButton: Boolean,
     onNavigateBack: () -> Unit
 ) {
@@ -30,6 +31,7 @@ fun BlocklistDetailPane(
         key(blocklistId) {
             BlocklistDetailsScreen(
                 blocklistId = blocklistId,
+                blocklistName = blocklistName,
                 showBackButton = showBackButton,
                 onNavigateBack = onNavigateBack
             )

@@ -68,6 +68,7 @@ import kotlin.math.min
 @Composable
 fun BlocklistDetailsScreen(
     blocklistId: Int,
+    blocklistName: String? = null,
     showBackButton: Boolean = false,
     onNavigateBack: () -> Unit = {}
 ) {
@@ -84,7 +85,7 @@ fun BlocklistDetailsScreen(
     }
 
     val successData = (viewModel.state as? LoadingResult.Success)?.value
-    val title = successData?.data?.name ?: stringResource(R.string.blocklist_details)
+    val title = successData?.data?.name ?: blocklistName ?: stringResource(R.string.blocklist_details)
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,

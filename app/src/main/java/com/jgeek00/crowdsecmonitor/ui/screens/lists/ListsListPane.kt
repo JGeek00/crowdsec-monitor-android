@@ -254,12 +254,12 @@ fun ListsListPane(
                 ) { listType ->
                     when (listType) {
                         ListType.BLOCKLIST -> {
-                            BlocklistsListPane(
-                                viewModel = blocklistsViewModel,
-                                onNavigateToDetails = { id ->
-                                    onNavigateToDetails("blocklist:$id")
-                                }
-                            )
+                        BlocklistsListPane(
+                            viewModel = blocklistsViewModel,
+                            onNavigateToDetails = { id, name ->
+                                onNavigateToDetails("blocklist:$id:$name")
+                            }
+                        )
                         }
                         ListType.ALLOWLIST -> {
                             AllowlistsListPane(
