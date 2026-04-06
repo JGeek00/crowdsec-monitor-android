@@ -11,12 +11,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.io.IOException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+
+internal class InvalidConnectionValuesIOException(cause: Throwable) :
+    IOException("Invalid header value in connection settings: ${cause.message}", cause)
 
 class HttpClient(private val server: CSServerModel) {
 
@@ -30,20 +34,25 @@ class HttpClient(private val server: CSServerModel) {
             .addInterceptor { chain ->
                 val requestBuilder = chain.request().newBuilder()
 
-                when (server.authMethod) {
-                    "basic" -> {
-                        val credentials = "${server.basicUser}:${server.basicPassword}"
-                        val base64 = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
-                        requestBuilder.addHeader("Authorization", "Basic $base64")
-                    }
-                    "bearer" -> {
-                        server.bearerToken?.let {
-                            requestBuilder.addHeader("Authorization", "Bearer $it")
+                try {
+                    when (server.authMethod) {
+                        "basic" -> {
+                            val credentials = "${server.basicUser}:${server.basicPassword}"
+                            val base64 = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+                            requestBuilder.addHeader("Authorization", "Basic $base64")
+                        }
+                        "bearer" -> {
+                            server.bearerToken?.let {
+                                requestBuilder.addHeader("Authorization", "Bearer $it")
+                            }
                         }
                     }
+
+                    requestBuilder.addHeader("Content-Type", "application/json")
+                } catch (e: IllegalArgumentException) {
+                    throw InvalidConnectionValuesIOException(e)
                 }
 
-                requestBuilder.addHeader("Content-Type", "application/json")
                 chain.proceed(requestBuilder.build())
             }
             .addInterceptor(HttpLoggingInterceptor().apply {

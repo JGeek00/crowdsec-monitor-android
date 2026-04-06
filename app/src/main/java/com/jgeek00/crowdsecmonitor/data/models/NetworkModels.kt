@@ -36,6 +36,7 @@ sealed class LoadingResult<out T> {
 sealed class HttpClientException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {
     class InvalidResponse : HttpClientException("Invalid response from server")
     class Unauthorized : HttpClientException("Unauthorized access")
+    class InvalidConnectionValues : HttpClientException("One or more connection values contain invalid characters")
     data class HttpError(val statusCode: Int) : HttpClientException("HTTP Error: $statusCode")
     data class HttpErrorWithMessage(val statusCode: Int, override val message: String) : HttpClientException(message)
     data class NetworkError(val throwable: Throwable) : HttpClientException(cause = throwable)

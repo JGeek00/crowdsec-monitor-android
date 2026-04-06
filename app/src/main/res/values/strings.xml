@@ -27,6 +27,7 @@
     <string name="connection_error_no_response">Could not connect to the server. Please check the connection settings (IP/domain, port, path) and make sure the server is reachable.</string>
     <string name="connection_error_invalid_credentials">Authentication failed. The credentials provided are incorrect. Please verify your username, password, or access token.</string>
     <string name="connection_error_server">The server returned an unexpected error (code %d). Please check the server status and try again.</string>
+    <string name="connection_error_invalid_values">One or more connection values (token, username or password) contain invalid characters. Please review the authentication settings and make sure there are no extra spaces, line breaks or special characters.</string>
     <string name="settings">Settings</string>
     <string name="home">Home</string>
     <string name="back">Back</string>

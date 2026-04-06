@@ -36,6 +36,8 @@ class CrowdSecApiClient(server: CSServerModel) {
             throw e
         } catch (e: SerializationException) {
             throw HttpClientException.DecodingError(e)
+        } catch (_: InvalidConnectionValuesIOException) {
+            throw HttpClientException.InvalidConnectionValues()
         } catch (e: IOException) {
             throw HttpClientException.NetworkError(e)
         } catch (e: Exception) {

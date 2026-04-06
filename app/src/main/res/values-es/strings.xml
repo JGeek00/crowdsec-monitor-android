@@ -28,6 +28,7 @@
     <string name="connection_error_no_response">No se ha podido conectar al servidor. Por favor, comprueba los datos de conexión (IP/dominio, puerto, ruta) y asegúrate de que el servidor es alcanzable.</string>
     <string name="connection_error_invalid_credentials">Autenticación fallida. Las credenciales proporcionadas no son correctas. Por favor, comprueba el usuario, contraseña o token de acceso.</string>
     <string name="connection_error_server">El servidor retornó un error inesperado (código %d). Por favor, comprueba el servidor y prueba de nuevo.</string>
+    <string name="connection_error_invalid_values">Uno o más valores de conexión (token, usuario, contraseña) contienen caracteres inválidos. Por favor, revisa la configuración de autenticación y asegúrate de que no hay espacios extra, saltos de línea o caracteres especiales.</string>
     <string name="settings">Ajustes</string>
     <string name="home">Inicio</string>
     <string name="back">Atrás</string>

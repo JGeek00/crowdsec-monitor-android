@@ -176,6 +176,7 @@ class ConnectionFormViewModel @Inject constructor(
                     connectionErrorAlert = true
                     connectionErrorMessage = when (e) {
                         is HttpClientException.Unauthorized -> context.getString(R.string.connection_error_invalid_credentials)
+                        is HttpClientException.InvalidConnectionValues -> context.getString(R.string.connection_error_invalid_values)
                         is HttpClientException.HttpErrorWithMessage -> e.message
                         is HttpClientException.HttpError -> context.getString(R.string.connection_error_server, e.statusCode)
                         else -> context.getString(R.string.connection_error_no_response)
