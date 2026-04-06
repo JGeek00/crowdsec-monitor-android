@@ -19,3 +19,50 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep line numbers for debugging
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+# ---- Kotlin Serialization ----
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class **$$serializer {
+    static **$$serializer INSTANCE;
+}
+# Keep all classes annotated with @Serializable
+-keep @kotlinx.serialization.Serializable class * { *; }
+-keepclassmembers @kotlinx.serialization.Serializable class * {
+    static ** Companion;
+    static ** $serializer;
+    private static final ** $$serializer;
+    public static final ** Companion;
+}
+
+# ---- Retrofit ----
+-keepattributes Signature, Exceptions
+-keep class retrofit2.** { *; }
+-keepclasseswithmembers interface * {
+    @retrofit2.http.* <methods>;
+}
+-dontwarn retrofit2.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# ---- OkHttp ----
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# ---- Hilt ----
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-dontwarn dagger.hilt.**
+
+# ---- Room ----
+-keep class * extends androidx.room.RoomDatabase { *; }
+-dontwarn androidx.room.**
