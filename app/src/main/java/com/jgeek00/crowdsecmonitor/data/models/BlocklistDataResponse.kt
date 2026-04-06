@@ -10,7 +10,7 @@ data class BlocklistDataResponse(
 
 @Serializable
 data class BlocklistDataResponseData(
-    @SerialName("id") val id: Int,
+    @SerialName("id") val id: String,
     @SerialName("url") val url: String? = null,
     @SerialName("name") val name: String,
     @SerialName("enabled") val enabled: Boolean? = null,

@@ -50,7 +50,7 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
         }
     }
 
-    suspend fun fetchBlocklistData(blocklistId: Int): HttpResponse<BlocklistDataResponse> {
+    suspend fun fetchBlocklistData(blocklistId: String): HttpResponse<BlocklistDataResponse> {
         return try {
             val response = service.fetchBlocklistData(blocklistId)
             val body = response.body()
@@ -70,7 +70,7 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
         }
     }
 
-    suspend fun fetchBlocklistIps(blocklistId: Int): HttpResponse<BlocklistIpsResponse> {
+    suspend fun fetchBlocklistIps(blocklistId: String): HttpResponse<BlocklistIpsResponse> {
         return try {
             val response = service.fetchBlocklistIps(blocklistId)
             val body = response.body()
@@ -110,7 +110,7 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
         }
     }
 
-    suspend fun toggleBlocklist(blocklistId: Int, body: ToggleBlocklistRequest): HttpResponse<EmptyResponse> {
+    suspend fun toggleBlocklist(blocklistId: String, body: ToggleBlocklistRequest): HttpResponse<EmptyResponse> {
         return try {
             val response = service.toggleBlocklist(blocklistId, body)
             val responseBody = response.body()
@@ -130,7 +130,7 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
         }
     }
 
-    suspend fun deleteBlocklist(blocklistId: Int): HttpResponse<EmptyResponse> {
+    suspend fun deleteBlocklist(blocklistId: String): HttpResponse<EmptyResponse> {
         return try {
             val response = service.deleteBlocklist(blocklistId)
             val body = response.body()
@@ -199,12 +199,12 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
 
         @GET("api/v1/blocklists/{id}?include_ips=ip_string")
         suspend fun fetchBlocklistData(
-            @Path("id") blocklistId: Int
+            @Path("id") blocklistId: String
         ): Response<BlocklistDataResponse>
 
         @GET("api/v1/blocklists/{id}/ips?unpaged=true&ip_string=true")
         suspend fun fetchBlocklistIps(
-            @Path("id") blocklistId: Int
+            @Path("id") blocklistId: String
         ): Response<BlocklistIpsResponse>
 
         @POST("api/v1/blocklists")
@@ -214,13 +214,13 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
 
         @POST("api/v1/blocklists/{id}/enabled")
         suspend fun toggleBlocklist(
-            @Path("id") blocklistId: Int,
+            @Path("id") blocklistId: String,
             @Body body: ToggleBlocklistRequest
         ): Response<EmptyResponse>
 
         @DELETE("api/v1/blocklists/{id}")
         suspend fun deleteBlocklist(
-            @Path("id") blocklistId: Int
+            @Path("id") blocklistId: String
         ): Response<EmptyResponse>
 
         @POST("api/v1/blocklists/check")

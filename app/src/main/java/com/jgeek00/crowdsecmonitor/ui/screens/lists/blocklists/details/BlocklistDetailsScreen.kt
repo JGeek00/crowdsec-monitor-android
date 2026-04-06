@@ -68,7 +68,7 @@ import kotlin.math.min
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BlocklistDetailsScreen(
-    blocklistId: Int,
+    blocklistId: String,
     blocklistName: String? = null,
     showBackButton: Boolean = false,
     onNavigateBack: () -> Unit = {}

@@ -32,9 +32,9 @@ class BlocklistDetailsViewModel @Inject constructor(
     var searchText by mutableStateOf("")
         private set
 
-    private var initializedForId: Int? = null
+    private var initializedForId: String? = null
 
-    fun initialize(blocklistId: Int) {
+    fun initialize(blocklistId: String) {
         if (initializedForId == blocklistId) return
         initializedForId = blocklistId
         ipsRound = 1
@@ -43,7 +43,7 @@ class BlocklistDetailsViewModel @Inject constructor(
         fetchData(blocklistId)
     }
 
-    fun refresh(blocklistId: Int) {
+    fun refresh(blocklistId: String) {
         viewModelScope.launch {
             isRefreshing = true
             fetchData(blocklistId)
@@ -51,7 +51,7 @@ class BlocklistDetailsViewModel @Inject constructor(
         }
     }
 
-    fun updateBlocklistId(newId: Int) {
+    fun updateBlocklistId(newId: String) {
         initializedForId = newId
         ipsRound = 1
         searchText = ""
@@ -71,7 +71,7 @@ class BlocklistDetailsViewModel @Inject constructor(
         searchText = text
     }
 
-    private fun fetchData(blocklistId: Int, showLoading: Boolean = false) {
+    private fun fetchData(blocklistId: String, showLoading: Boolean = false) {
         val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
             if (showLoading) {

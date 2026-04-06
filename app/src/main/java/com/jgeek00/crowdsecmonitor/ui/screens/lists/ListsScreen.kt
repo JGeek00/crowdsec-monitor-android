@@ -98,7 +98,7 @@ fun ListsScreen(
                 val blocklistSegment = activeListId
                     ?.takeIf { it.startsWith("blocklist:") }
                     ?.removePrefix("blocklist:")
-                val blocklistId = blocklistSegment?.substringBefore(':')?.toIntOrNull()
+                val blocklistId = blocklistSegment?.substringBefore(':')
                 val blocklistName = blocklistSegment?.substringAfter(':')?.takeIf { it.isNotEmpty() }
 
                 val allowlistName = activeListId

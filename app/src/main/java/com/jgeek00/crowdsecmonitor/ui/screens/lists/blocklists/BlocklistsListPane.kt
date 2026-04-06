@@ -38,7 +38,7 @@ import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
 @Composable
 fun BlocklistsListPane(
     viewModel: BlocklistsListViewModel,
-    onNavigateToDetails: (id: Int, name: String) -> Unit
+    onNavigateToDetails: (id: String, name: String) -> Unit
 ) {
     AnimatedContent(
         targetState = viewModel.state,

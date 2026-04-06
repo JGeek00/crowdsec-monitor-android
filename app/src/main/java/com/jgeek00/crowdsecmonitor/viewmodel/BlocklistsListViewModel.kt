@@ -130,7 +130,7 @@ class BlocklistsListViewModel @Inject constructor(
         }
     }
 
-    fun enableDisableBlocklist(blocklistId: Int, newStatus: Boolean) {
+    fun enableDisableBlocklist(blocklistId: String, newStatus: Boolean) {
         val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
             processingModal = true
@@ -145,7 +145,7 @@ class BlocklistsListViewModel @Inject constructor(
         }
     }
 
-    fun deleteBlocklist(blocklistId: Int) {
+    fun deleteBlocklist(blocklistId: String) {
         val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
             processingModal = true
