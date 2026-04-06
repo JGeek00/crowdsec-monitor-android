@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+
+// Code from https://github.com/bocajthomas/ExpressiveCardShape
+
 private sealed class ShapeStyle(
     val topRadius: Dp,
     val bottomRadius: Dp
