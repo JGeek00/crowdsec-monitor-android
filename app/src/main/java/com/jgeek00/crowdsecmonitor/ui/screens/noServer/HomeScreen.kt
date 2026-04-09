@@ -21,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.jgeek00.crowdsecmonitor.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -76,17 +78,17 @@ fun NoServerConfiguredContent() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No servers configured",
+            text = stringResource(R.string.no_servers_configured),
             style = MaterialTheme.typography.headlineSmall
         )
         Text(
-            text = "Add a server to start monitoring your CrowdSec instance.",
+            text = stringResource(R.string.no_servers_configured_message),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = { showSheet = true }) {
-            Text("Add Server")
+            Text(stringResource(R.string.add_server))
         }
     }
 }

@@ -247,4 +247,5 @@
     <string name="ip_addresses_in_allowlists">Direcciones IP en listas de permitidos</string>
     <string name="not_in_any_allowlist">Esta IP no está en ninguna lista de permitidos</string>
     <string name="allowlist_label">Lista de permitidos: %s</string>
+    <string name="no_servers_configured_message">Añade un servidor para empezar a monitorizar tu instancia de CrowdSec.</string>
 </resources>

@@ -252,4 +252,5 @@
     <string name="ip_addresses_in_allowlists">IP addresses in allowlists</string>
     <string name="not_in_any_allowlist">This IP is not in any allowlist</string>
     <string name="allowlist_label">Allowlist: %s</string>
+    <string name="no_servers_configured_message">Add a server to start monitoring your CrowdSec Instance.</string>
 </resources>
