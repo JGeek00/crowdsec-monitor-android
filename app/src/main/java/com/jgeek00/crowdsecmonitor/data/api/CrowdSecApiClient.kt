@@ -3,6 +3,8 @@ package com.jgeek00.crowdsecmonitor.data.api
 import com.jgeek00.crowdsecmonitor.data.api.statistics.StatisticsApiClient
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponse
+import kotlinx.coroutines.flow.Flow
+import okhttp3.OkHttpClient
 import com.jgeek00.crowdsecmonitor.data.models.HttpClientException
 import com.jgeek00.crowdsecmonitor.data.models.HttpResponse
 import kotlinx.serialization.SerializationException
@@ -13,6 +15,7 @@ import java.io.IOException
 class CrowdSecApiClient(server: CSServerModel) {
 
     private val httpClient = HttpClient(server)
+    private val websocketClient = WebSocketClient(server)
 
     val statistics: StatisticsApiClient by lazy { StatisticsApiClient(httpClient) }
     val alerts: AlertsApiClient by lazy { AlertsApiClient(httpClient) }
@@ -42,6 +45,28 @@ class CrowdSecApiClient(server: CSServerModel) {
             throw HttpClientException.NetworkError(e)
         } catch (e: Exception) {
             throw HttpClientException.NetworkError(e)
+        }
+    }
+
+    fun streamApiStatus(): Flow<ApiStatusResponse> {
+        return websocketClient.stream(endpoint = "/api/v1/status")
+    }
+
+    fun disconnectApiStatusStream() {
+        websocketClient.disconnect()
+    }
+
+    fun invalidate() {
+        websocketClient.disconnect()
+
+        val callFactory = httpClient.retrofit.callFactory()
+        if (callFactory is OkHttpClient) {
+            callFactory.dispatcher.executorService.shutdown()
+            callFactory.connectionPool.evictAll()
+            try {
+                callFactory.cache?.close()
+            } catch (_: Exception) {
+            }
         }
     }
 }
