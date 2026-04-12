@@ -13,6 +13,7 @@ import com.jgeek00.crowdsecmonitor.data.models.ToggleBlocklistRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 private val defaultRequest = BlocklistsRequest(
     offset = 0,

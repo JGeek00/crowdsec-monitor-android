@@ -82,43 +82,43 @@ fun IPsCheckerScreen(
                 onClose()
             }
         },
-        content = { innerPadding ->
-            AnimatedContent(
-                targetState = showResults,
-                transitionSpec = {
-                    val direction = if (targetState) 1 else -1
-                    slideInHorizontally(
-                        initialOffsetX = { (it * 0.10f * direction).toInt() },
-                        animationSpec = tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing)
-                    ) + fadeIn(tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing)) togetherWith
-                    slideOutHorizontally(
-                        targetOffsetX = { -(it * 0.10f * direction).toInt() },
-                        animationSpec = tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing)
-                    ) + fadeOut(tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing))
-                },
-                label = "IPsCheckerContent",
-                modifier = Modifier.fillMaxSize()
-            ) { displayResults ->
-                if (displayResults) {
-                    BackHandler { showResults = false }
-                    IPsCheckerResultsContent(
-                        viewModel = viewModel,
-                        innerPadding = innerPadding
-                    )
-                } else {
-                    IPsCheckerFormContent(
-                        viewModel = viewModel,
-                        innerPadding = innerPadding,
-                        onShowInvalidIpAlert = { showInvalidIpAlert = true },
-                        onCheckIps = {
-                            viewModel.checkIps()
-                            showResults = true
-                        }
-                    )
-                }
+        actions = {}
+    ) { innerPadding ->
+        AnimatedContent(
+            targetState = showResults,
+            transitionSpec = {
+                val direction = if (targetState) 1 else -1
+                slideInHorizontally(
+                    initialOffsetX = { (it * 0.10f * direction).toInt() },
+                    animationSpec = tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing)
+                ) + fadeIn(tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing)) togetherWith
+                        slideOutHorizontally(
+                            targetOffsetX = { -(it * 0.10f * direction).toInt() },
+                            animationSpec = tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing)
+                        ) + fadeOut(tween(IPS_CHECKER_ANIM_DURATION, easing = FastOutSlowInEasing))
+            },
+            label = "IPsCheckerContent",
+            modifier = Modifier.fillMaxSize()
+        ) { displayResults ->
+            if (displayResults) {
+                BackHandler { showResults = false }
+                IPsCheckerResultsContent(
+                    viewModel = viewModel,
+                    innerPadding = innerPadding
+                )
+            } else {
+                IPsCheckerFormContent(
+                    viewModel = viewModel,
+                    innerPadding = innerPadding,
+                    onShowInvalidIpAlert = { showInvalidIpAlert = true },
+                    onCheckIps = {
+                        viewModel.checkIps()
+                        showResults = true
+                    }
+                )
             }
         }
-    ) {}
+    }
 
     if (showInvalidIpAlert) {
         AlertDialog(

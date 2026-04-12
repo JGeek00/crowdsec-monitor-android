@@ -9,11 +9,13 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.URLs
@@ -23,22 +25,23 @@ import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
-import androidx.core.net.toUri
 
 @Composable
 fun ServerInformationSection(
     serversManagerViewModel: ServersManagerViewModel = hiltViewModel(),
     serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel()
 ) {
+    val status = serviceStatusViewModel.status.collectAsState().value
+
     @Composable
     fun getStatusSubtitle(): String {
-        return when (val s = serviceStatusViewModel.status) {
+        return when (status) {
             is LoadingResult.Loading -> {
                 stringResource(R.string.loading)
             }
 
             is LoadingResult.Success -> {
-                if (s.value.csLapi.lapiConnected) {
+                if (status.value.csLapi.lapiConnected) {
                     stringResource(R.string.online)
                 } else {
                     stringResource(R.string.offline)
@@ -53,13 +56,13 @@ fun ServerInformationSection(
 
     @Composable
     fun getVersionSubtitle(): String {
-        return when (val s = serviceStatusViewModel.status) {
+        return when (status) {
             is LoadingResult.Loading -> {
                 stringResource(R.string.loading)
             }
 
             is LoadingResult.Success -> {
-                s.value.csMonitorApi.version
+                status.value.csMonitorApi.version
             }
 
             is LoadingResult.Failure -> {
@@ -94,7 +97,7 @@ fun ServerInformationSection(
         )
     }
 
-    val newVersion = serviceStatusViewModel.status.data?.csMonitorApi?.newVersionAvailable
+    val newVersion = (status as? LoadingResult.Success)?.value?.csMonitorApi?.newVersionAvailable
 
     if (newVersion != null) {
         ListItem(

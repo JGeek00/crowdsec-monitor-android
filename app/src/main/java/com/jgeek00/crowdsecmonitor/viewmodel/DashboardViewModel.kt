@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(

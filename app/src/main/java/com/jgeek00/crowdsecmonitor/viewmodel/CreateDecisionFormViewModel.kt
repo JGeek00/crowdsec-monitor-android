@@ -14,6 +14,7 @@ import java.net.Inet6Address
 import java.net.InetAddress
 import java.util.regex.Pattern
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 @HiltViewModel
 class CreateDecisionFormViewModel @Inject constructor(

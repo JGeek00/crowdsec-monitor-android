@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 private fun buildDefaultRequest(showOnlyActive: Boolean) = DecisionsRequest(
     filters = DecisionsRequestFilters(onlyActive = showOnlyActive),
@@ -29,25 +30,6 @@ class DecisionsListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var defaultRequest = buildDefaultRequest(Defaults.SHOW_DEFAULT_ACTIVE_DECISIONS)
-
-    init {
-        // Observe preference changes so that reset/resetFilters always use the current default
-        viewModelScope.launch {
-            preferencesRepository.showDefaultActiveDecisions.collect { showOnlyActive ->
-                defaultRequest = buildDefaultRequest(showOnlyActive)
-            }
-        }
-        viewModelScope.launch {
-            preferencesRepository.disableDecisionTimerAnimation.collect { value ->
-                disableDecisionTimerAnimation = value
-            }
-        }
-        viewModelScope.launch {
-            sessionManager.decisionsRefreshEvent.collect {
-                refreshDecisionsInternal()
-            }
-        }
-    }
 
     var state by mutableStateOf<LoadingResult<DecisionsListResponse>>(LoadingResult.Loading)
         private set
@@ -69,6 +51,24 @@ class DecisionsListViewModel @Inject constructor(
 
     var filters by mutableStateOf(defaultRequest.filters)
         private set
+
+    init {
+        viewModelScope.launch {
+            preferencesRepository.showDefaultActiveDecisions.collect { showOnlyActive ->
+                defaultRequest = buildDefaultRequest(showOnlyActive)
+            }
+        }
+        viewModelScope.launch {
+            preferencesRepository.disableDecisionTimerAnimation.collect { value ->
+                disableDecisionTimerAnimation = value
+            }
+        }
+        viewModelScope.launch {
+            sessionManager.decisionsRefreshEvent.collect {
+                refreshDecisionsInternal()
+            }
+        }
+    }
 
     fun reset() {
         state = LoadingResult.Loading
@@ -97,7 +97,6 @@ class DecisionsListViewModel @Inject constructor(
     fun initialFetchDecisions() {
         if (state.data != null) return
         viewModelScope.launch {
-            // Use first() so we wait for the preference before fetching (eliminates the race condition)
             val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
             val req = buildDefaultRequest(showOnlyActive)
             defaultRequest = req

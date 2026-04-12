@@ -16,6 +16,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 @HiltViewModel(assistedFactory = FullListDashboardViewModel.Factory::class)
 class FullListDashboardViewModel @AssistedInject constructor(

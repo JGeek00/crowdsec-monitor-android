@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 @HiltViewModel
 class CheckDomainReachableViewModel @Inject constructor(

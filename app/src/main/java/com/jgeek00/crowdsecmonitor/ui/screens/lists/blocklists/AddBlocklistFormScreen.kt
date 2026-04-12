@@ -49,75 +49,75 @@ fun AddBlocklistFormScreen(
         onClose = { onClose(false) },
         allowClose = !viewModel.isSaving,
         dismissConfirmation = false,
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+        actions = {
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(stringResource(R.string.save)) } },
+                state = rememberTooltipState()
             ) {
-                SectionHeader(
-                    text = stringResource(R.string.blocklist_data),
-                    topPadding = Enums.SectionHeaderPaddingTop.SMALL
-                )
-                OutlinedTextField(
-                    value = viewModel.name,
-                    onValueChange = { viewModel.name = it },
-                    label = { Text(stringResource(R.string.name)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !viewModel.isSaving,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None,
-                        imeAction = ImeAction.Next
-                    )
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                OutlinedTextField(
-                    value = viewModel.url,
-                    onValueChange = { viewModel.url = it },
-                    label = { Text(stringResource(R.string.url)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !viewModel.isSaving,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Uri,
-                        capitalization = KeyboardCapitalization.None,
-                        autoCorrectEnabled = false,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-        }
-    ) {
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-            tooltip = { PlainTooltip { Text(stringResource(R.string.save)) } },
-            state = rememberTooltipState()
-        ) {
-            IconButton(
-                onClick = {
-                    viewModel.save(onSuccess = { onClose(true) })
-                },
-                enabled = !viewModel.isSaving
-            ) {
-                if (viewModel.isSaving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .height(24.dp),
-                        strokeWidth = 2.5.dp
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = stringResource(R.string.save)
-                    )
+                IconButton(
+                    onClick = {
+                        viewModel.save(onSuccess = { onClose(true) })
+                    },
+                    enabled = !viewModel.isSaving
+                ) {
+                    if (viewModel.isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .height(24.dp),
+                            strokeWidth = 2.5.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = stringResource(R.string.save)
+                        )
+                    }
                 }
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            SectionHeader(
+                text = stringResource(R.string.blocklist_data),
+                topPadding = Enums.SectionHeaderPaddingTop.SMALL
+            )
+            OutlinedTextField(
+                value = viewModel.name,
+                onValueChange = { viewModel.name = it },
+                label = { Text(stringResource(R.string.name)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !viewModel.isSaving,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    imeAction = ImeAction.Next
+                )
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            OutlinedTextField(
+                value = viewModel.url,
+                onValueChange = { viewModel.url = it },
+                label = { Text(stringResource(R.string.url)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !viewModel.isSaving,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Uri,
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 

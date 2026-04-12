@@ -10,6 +10,7 @@ import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 @HiltViewModel
 class AllowlistsListViewModel @Inject constructor(

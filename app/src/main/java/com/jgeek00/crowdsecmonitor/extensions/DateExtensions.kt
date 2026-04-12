@@ -68,3 +68,15 @@ fun String.toFormattedTime(): String {
     }
 }
 
+fun String.toFormattedTimeOrNull(): String? {
+    return try {
+        val instant = Instant.parse(this)
+        DateTimeFormatter
+            .ofPattern("HH:mm:ss")
+            .withZone(ZoneId.systemDefault())
+            .format(instant)
+    } catch (_: Exception) {
+        null
+    }
+}
+

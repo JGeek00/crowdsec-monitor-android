@@ -37,54 +37,54 @@ fun DecisionsFiltersSheet(
         title = stringResource(R.string.filters),
         onClose = onDismiss,
         allowClose = true,
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
-                    .fillMaxWidth()
+        actions = {
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(stringResource(R.string.reset)) } },
+                state = rememberTooltipState()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.only_active),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = viewModel.filters.onlyActive == true,
-                        onCheckedChange = { checked ->
-                            viewModel.updateFilters(viewModel.filters.copy(onlyActive = checked))
-                        }
-                    )
+                IconButton(onClick = {
+                    onDismiss()
+                    viewModel.resetFilters()
+                }) {
+                    Icon(Icons.Rounded.DeleteSweep, contentDescription = stringResource(R.string.reset))
                 }
             }
-        }
-    ) {
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-            tooltip = { PlainTooltip { Text(stringResource(R.string.reset)) } },
-            state = rememberTooltipState()
-        ) {
-            IconButton(onClick = {
-                onDismiss()
-                viewModel.resetFilters()
-            }) {
-                Icon(Icons.Rounded.DeleteSweep, contentDescription = stringResource(R.string.reset))
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(stringResource(R.string.apply)) } },
+                state = rememberTooltipState()
+            ) {
+                IconButton(onClick = {
+                    onDismiss()
+                    viewModel.applyFilters()
+                }) {
+                    Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.apply))
+                }
             }
-        }
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-            tooltip = { PlainTooltip { Text(stringResource(R.string.apply)) } },
-            state = rememberTooltipState()
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .fillMaxWidth()
         ) {
-            IconButton(onClick = {
-                onDismiss()
-                viewModel.applyFilters()
-            }) {
-                Icon(Icons.Rounded.Check, contentDescription = stringResource(R.string.apply))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.only_active),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = viewModel.filters.onlyActive == true,
+                    onCheckedChange = { checked ->
+                        viewModel.updateFilters(viewModel.filters.copy(onlyActive = checked))
+                    }
+                )
             }
         }
     }

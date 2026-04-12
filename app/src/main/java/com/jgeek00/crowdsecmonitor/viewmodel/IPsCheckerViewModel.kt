@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jgeek00.crowdsecmonitor.session.SessionManager
 
 @HiltViewModel
 class IPsCheckerViewModel @Inject constructor(

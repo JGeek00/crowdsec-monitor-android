@@ -54,83 +54,83 @@ fun CreateDecisionFormScreen(
         onClose = onClose,
         allowClose = !viewModel.creatingDecision,
         dismissConfirmation = true,
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+        actions = {
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                tooltip = { PlainTooltip { Text(stringResource(R.string.save)) } },
+                state = rememberTooltipState()
             ) {
-                SectionHeader(
-                    text = stringResource(R.string.ip_address),
-                    topPadding = Enums.SectionHeaderPaddingTop.SMALL
-                )
-                OutlinedTextField(
-                    value = viewModel.ipAddress,
-                    onValueChange = { viewModel.ipAddress = it },
-                    label = { Text(stringResource(R.string.ip_address)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                IconButton(
+                    onClick = { viewModel.save(onSuccess = onClose) },
                     enabled = !viewModel.creatingDecision
-                )
-
-                SectionHeader(text = stringResource(R.string.type))
-                DecisionTypeDropdown(
-                    selectedType = viewModel.type,
-                    onTypeSelected = { viewModel.type = it },
-                    enabled = !viewModel.creatingDecision
-                )
-
-                SectionHeader(text = stringResource(R.string.duration))
-                DurationPickerView(
-                    days = viewModel.durationDays,
-                    hours = viewModel.durationHours,
-                    minutes = viewModel.durationMinutes,
-                    onDaysChanged = { viewModel.durationDays = it },
-                    onHoursChanged = { viewModel.durationHours = it },
-                    onMinutesChanged = { viewModel.durationMinutes = it },
-                    enabled = !viewModel.creatingDecision
-                )
-
-                SectionHeader(text = stringResource(R.string.reason))
-                OutlinedTextField(
-                    value = viewModel.reason,
-                    onValueChange = { viewModel.reason = it },
-                    label = { Text(stringResource(R.string.reason)) },
-                    minLines = 4,
-                    maxLines = 6,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !viewModel.creatingDecision
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-        }
-    ) {
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
-            tooltip = { PlainTooltip { Text(stringResource(R.string.save)) } },
-            state = rememberTooltipState()
-        ) {
-            IconButton(
-                onClick = { viewModel.save(onSuccess = onClose) },
-                enabled = !viewModel.creatingDecision
-            ) {
-                if (viewModel.creatingDecision) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .height(24.dp),
-                        strokeWidth = 2.5.dp
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = stringResource(R.string.save)
-                    )
+                ) {
+                    if (viewModel.creatingDecision) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .height(24.dp),
+                            strokeWidth = 2.5.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = stringResource(R.string.save)
+                        )
+                    }
                 }
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            SectionHeader(
+                text = stringResource(R.string.ip_address),
+                topPadding = Enums.SectionHeaderPaddingTop.SMALL
+            )
+            OutlinedTextField(
+                value = viewModel.ipAddress,
+                onValueChange = { viewModel.ipAddress = it },
+                label = { Text(stringResource(R.string.ip_address)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !viewModel.creatingDecision
+            )
+
+            SectionHeader(text = stringResource(R.string.type))
+            DecisionTypeDropdown(
+                selectedType = viewModel.type,
+                onTypeSelected = { viewModel.type = it },
+                enabled = !viewModel.creatingDecision
+            )
+
+            SectionHeader(text = stringResource(R.string.duration))
+            DurationPickerView(
+                days = viewModel.durationDays,
+                hours = viewModel.durationHours,
+                minutes = viewModel.durationMinutes,
+                onDaysChanged = { viewModel.durationDays = it },
+                onHoursChanged = { viewModel.durationHours = it },
+                onMinutesChanged = { viewModel.durationMinutes = it },
+                enabled = !viewModel.creatingDecision
+            )
+
+            SectionHeader(text = stringResource(R.string.reason))
+            OutlinedTextField(
+                value = viewModel.reason,
+                onValueChange = { viewModel.reason = it },
+                label = { Text(stringResource(R.string.reason)) },
+                minLines = 4,
+                maxLines = 6,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !viewModel.creatingDecision
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 

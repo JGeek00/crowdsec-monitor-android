@@ -43,14 +43,14 @@ import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 @Composable
 fun FullScreenDialog(
     onClose: () -> Unit,
-    content: @Composable (innerPadding: PaddingValues) -> Unit,
     title: String,
     allowClose: Boolean = true,
     dismissConfirmation: Boolean = false,
     navigationIcon: ImageVector = Icons.Rounded.Close,
     navigationIconContentDescription: String? = null,
     actions: @Composable () -> Unit,
-) {
+    content: @Composable (innerPadding: PaddingValues) -> Unit,
+    ) {
     val darkTheme = LocalDarkTheme.current
     var showDiscardConfirmation by remember { mutableStateOf(false) }
 
