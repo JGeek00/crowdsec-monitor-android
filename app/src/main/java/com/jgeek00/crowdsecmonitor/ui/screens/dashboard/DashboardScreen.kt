@@ -42,14 +42,14 @@ import com.jgeek00.crowdsecmonitor.ui.components.LargeTopAppBarWithRefresh
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components.DashboardContentPhone
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components.DashboardContentTablet
 import com.jgeek00.crowdsecmonitor.viewmodel.DashboardViewModel
-import com.jgeek00.crowdsecmonitor.viewmodel.ServerStatusViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onNavigateToFullList: (Enums.DashboardItemType) -> Unit,
     dashboardViewModel: DashboardViewModel = hiltViewModel(),
-    serverStatusViewModel: ServerStatusViewModel = hiltViewModel()
+    serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel()
 ) {
     val isTablet = LocalConfiguration.current.screenWidthDp >= 600
     var lapiOnlineAlertPresented by remember { mutableStateOf(false) }
@@ -60,7 +60,7 @@ fun DashboardScreen(
         isRefreshing = dashboardViewModel.isRefreshing,
         onRefresh = { dashboardViewModel.refresh() },
         actions = {
-            when (val status = serverStatusViewModel.status) {
+            when (val status = serviceStatusViewModel.status) {
                 is LoadingResult.Loading -> {
                     CircularProgressIndicator(
                         modifier = Modifier

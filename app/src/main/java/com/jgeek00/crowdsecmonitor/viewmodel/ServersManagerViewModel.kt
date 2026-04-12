@@ -79,12 +79,6 @@ class ServersManagerViewModel @Inject constructor(
         }
     }
 
-    private fun deleteServerSilently(server: CSServerModel) {
-        viewModelScope.launch {
-            runCatching { serverRepository.deleteServer(server) }
-        }
-    }
-
     fun changeCurrentServer(server: CSServerModel) {
         if (server.id == sessionManager.currentServer?.id) return
         sessionManager.activate(server)

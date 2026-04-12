@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,6 +43,7 @@ import com.jgeek00.crowdsecmonitor.utils.readThemeMode
 import com.jgeek00.crowdsecmonitor.utils.writeThemeMode
 import com.jgeek00.crowdsecmonitor.viewmodel.OnboardingViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -76,11 +81,27 @@ fun CrowdSecMonitorApp(
     themeMode: Enums.ThemeMode,
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
     serversManagerViewModel: ServersManagerViewModel = hiltViewModel(),
+    serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel(),
     onboardingViewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
+
+    // Close/open WebSocket when the app goes to background/foreground
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (!serversManagerViewModel.hasServerConfigured) return@LifecycleEventObserver
+            when (event) {
+                Lifecycle.Event.ON_STOP -> serviceStatusViewModel.closeWebSocket()
+                Lifecycle.Event.ON_START -> serviceStatusViewModel.openWebSocket()
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     val visibleTopLevelRoutes = if (serversManagerViewModel.isLoading || serversManagerViewModel.hasServerConfigured) {
         topLevelRoutesWithServer

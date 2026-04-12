@@ -22,17 +22,17 @@ import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
-import com.jgeek00.crowdsecmonitor.viewmodel.ServerStatusViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 import androidx.core.net.toUri
 
 @Composable
 fun ServerInformationSection(
     serversManagerViewModel: ServersManagerViewModel = hiltViewModel(),
-    serverStatusViewModel: ServerStatusViewModel = hiltViewModel()
+    serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel()
 ) {
     @Composable
     fun getStatusSubtitle(): String {
-        return when (val s = serverStatusViewModel.status) {
+        return when (val s = serviceStatusViewModel.status) {
             is LoadingResult.Loading -> {
                 stringResource(R.string.loading)
             }
@@ -53,7 +53,7 @@ fun ServerInformationSection(
 
     @Composable
     fun getVersionSubtitle(): String {
-        return when (val s = serverStatusViewModel.status) {
+        return when (val s = serviceStatusViewModel.status) {
             is LoadingResult.Loading -> {
                 stringResource(R.string.loading)
             }
@@ -94,7 +94,7 @@ fun ServerInformationSection(
         )
     }
 
-    val newVersion = serverStatusViewModel.status.data?.csMonitorApi?.newVersionAvailable
+    val newVersion = serviceStatusViewModel.status.data?.csMonitorApi?.newVersionAvailable
 
     if (newVersion != null) {
         ListItem(
