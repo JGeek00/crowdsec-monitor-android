@@ -1,9 +1,14 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.dashboard.status
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -22,16 +27,20 @@ import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcessBlocklist
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcessBlocklistFieldStatus
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedTimeOrNull
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 
 @Composable
 fun ProcessBlocklistImportEnableStatus(process: ApiStatusResponseProcess) {
 	val status: ApiStatusResponseProcessBlocklist? = process.blocklistImport ?: process.blocklistEnable
 	if (status == null) return
 
-	Column(modifier = Modifier
-		.fillMaxWidth()
-		.padding(vertical = 8.dp)) {
+	Column(
+		verticalArrangement = Arrangement.spacedBy(12.dp),
+		modifier = Modifier
+			.fillMaxWidth()
+	) {
 		if (process.blocklistImport != null) {
 			Text(
 				text = stringResource(R.string.import_blocklist_fmt, status.blocklistName),
@@ -56,7 +65,7 @@ fun ProcessBlocklistImportEnableStatus(process: ApiStatusResponseProcess) {
 			Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
 				Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
 					Text(text = stringResource(R.string.imported_progress_fmt, processed, total), style = MaterialTheme.typography.bodySmall)
-					androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
+					Spacer(modifier = Modifier.weight(1f))
 					val percent = if (total > 0) ((processed.toDouble() / total.toDouble()) * 100).toInt() else 0
 					Text(text = "$percent%", style = MaterialTheme.typography.bodySmall)
 				}
@@ -69,20 +78,20 @@ fun ProcessBlocklistImportEnableStatus(process: ApiStatusResponseProcess) {
                 )
 			}
 		}
-
 		if (status.step == ApiStatusResponseProcessBlocklistStep.IMPORT && process.successful == false) {
+			Spacer(modifier = Modifier.height(12.dp))
 			Text(text = stringResource(R.string.imported_summary_fmt, status.processIps.processedIps, status.processIps.totalIps), style = MaterialTheme.typography.bodySmall)
 		}
 
-		Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+		Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
 			val start = process.beginDatetime.toFormattedTimeOrNull()
 			if (start != null) {
-				Text(text = stringResource(R.string.started_at_fmt, start))
+				Text(text = stringResource(R.string.started_at_fmt, start), fontSize = 14.sp)
 			}
-			val end = process.endDatetime?.let { it.toFormattedTimeOrNull() }
+			val end = process.endDatetime?.toFormattedTimeOrNull()
 			if (end != null) {
-				androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
-				Text(text = stringResource(R.string.finished_at_fmt, end))
+				Spacer(modifier = Modifier.weight(1f))
+				Text(text = stringResource(R.string.finished_at_fmt, end), fontSize = 14.sp)
 			}
 		}
 	}
@@ -111,7 +120,20 @@ fun Preview_ProcessBlocklistImportEnable_FetchRunning() {
 		blocklistDelete = null,
 		blocklistRefresh = null
 	)
-	Column { ProcessBlocklistImportEnableStatus(process = proc) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		RoundedCornersListTile(
+			index = 0,
+			totalItems = 1,
+		) {
+			ProcessBlocklistImportEnableStatus(process = proc)
+		}
+	}
 }
 
 @Preview(showBackground = true)
@@ -137,7 +159,20 @@ fun Preview_ProcessBlocklistImportEnable_ParseRunning() {
 		blocklistDelete = null,
 		blocklistRefresh = null
 	)
-	Column { ProcessBlocklistImportEnableStatus(process = proc) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		RoundedCornersListTile(
+			index = 0,
+			totalItems = 1,
+		) {
+			ProcessBlocklistImportEnableStatus(process = proc)
+		}
+	}
 }
 
 @Preview(showBackground = true)
@@ -163,7 +198,20 @@ fun Preview_ProcessBlocklistImportEnable_ImportRunning() {
 		blocklistDelete = null,
 		blocklistRefresh = null
 	)
-	Column { ProcessBlocklistImportEnableStatus(process = proc) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		RoundedCornersListTile(
+			index = 0,
+			totalItems = 1,
+		) {
+			ProcessBlocklistImportEnableStatus(process = proc)
+		}
+	}
 }
 
 @Preview(showBackground = true)
@@ -189,12 +237,18 @@ fun Preview_ProcessBlocklistImportEnable_ImportSuccess() {
 		blocklistDelete = null,
 		blocklistRefresh = null
 	)
-	Column { ProcessBlocklistImportEnableStatus(process = proc) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		RoundedCornersListTile(
+			index = 0,
+			totalItems = 1,
+		) {
+			ProcessBlocklistImportEnableStatus(process = proc)
+		}
+	}
 }
-
-
-
-
-// moved parse/format helpers to `com.jgeek00.crowdsecmonitor.extensions.DateExtensions`
-
-

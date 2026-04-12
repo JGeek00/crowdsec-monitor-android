@@ -260,9 +260,6 @@
     <string name="failed_tasks">Failed tasks</string>
     <string name="running_tasks">Running tasks</string>
     <string name="successful_tasks">Successful tasks</string>
-    <string name="blocklist_import_enable_present">Blocklist import/enable: present</string>
-    <string name="blocklist_delete_disable_present">Blocklist delete/disable: present</string>
-    <string name="blocklist_refresh_present">Blocklist refresh: present</string>
     <string name="error_fetching_service_status">An error occurred when fetching the service status</string>
     <string name="process_error_fmt">Error: %s</string>
     <string name="import_blocklist_fmt">Import blocklist %s</string>

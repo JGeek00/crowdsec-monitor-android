@@ -29,6 +29,9 @@ import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcessBlocklist
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcessBlocklistStep
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun StatusProcessStepper(
@@ -71,20 +74,25 @@ private fun StepPill(step: ApiStatusResponseProcessBlocklistStep, status: ApiSta
 		when (status) {
 			ApiStatusResponseProcessBlocklistFieldStatus.RUNNING -> {
 				CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = Color.White)
-				Spacer(modifier = Modifier.size(4.dp))
+				Spacer(modifier = Modifier.width(6.dp))
 			}
 			ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL -> {
-				Icon(imageVector = Icons.Rounded.Check, contentDescription = null, tint = Color.White)
-				Spacer(modifier = Modifier.size(4.dp))
+				Icon(imageVector = Icons.Rounded.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+				Spacer(modifier = Modifier.width(4.dp))
 			}
 			ApiStatusResponseProcessBlocklistFieldStatus.FAILED -> {
-				Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.White)
-				Spacer(modifier = Modifier.size(4.dp))
+				Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+				Spacer(modifier = Modifier.width(4.dp))
 			}
 			else -> { /* pending: no icon */ }
 		}
 
-		Text(text = label, color = Color.White, style = MaterialTheme.typography.bodySmall)
+		Text(
+			text = label,
+			color = Color.White,
+			style = MaterialTheme.typography.bodySmall,
+			fontWeight = FontWeight.Medium
+		)
 	}
 }
 
@@ -103,41 +111,97 @@ private fun RowScope.StepDivider() {
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_FetchRunning() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING, parse = ApiStatusResponseProcessBlocklistFieldStatus.PENDING, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING) }
+    Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING, parse = ApiStatusResponseProcessBlocklistFieldStatus.PENDING, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_FetchFailed() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.FAILED, parse = ApiStatusResponseProcessBlocklistFieldStatus.PENDING, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.FAILED, parse = ApiStatusResponseProcessBlocklistFieldStatus.PENDING, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_ParseRunning() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_ParseFailed() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.FAILED, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.FAILED, imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_ImportRunning() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_ImportFailed() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.FAILED) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.FAILED)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Preview_StatusProcessStepper_ImportSuccess() {
-    Column { StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL) }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL)
+	}
 }

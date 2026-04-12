@@ -18,8 +18,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,11 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponse
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcess
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 
@@ -104,22 +104,40 @@ private fun Content(status: ApiStatusResponse, innerPadding: PaddingValues) {
     ) {
         item {
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = stringResource(R.string.lapi_available))
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (status.csLapi.lapiConnected) {
-                        Icon(imageVector = Icons.Rounded.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50))
-                    } else {
-                        Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.Red)
+                var idx = 0
+                val items = 2
+                RoundedCornersListTile(
+                    index = idx++,
+                    totalItems = items
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = stringResource(R.string.lapi_available))
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (status.csLapi.lapiConnected) {
+                            Icon(imageVector = Icons.Rounded.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50))
+                        } else {
+                            Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.Red)
+                        }
                     }
                 }
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = stringResource(R.string.bouncer_available))
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (status.csBouncer.available) {
-                        Icon(imageVector = Icons.Rounded.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50))
-                    } else {
-                        Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.Red)
+                RoundedCornersListTile(
+                    index = idx++,
+                    totalItems = items
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = stringResource(R.string.bouncer_available))
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (status.csBouncer.available) {
+                            Icon(imageVector = Icons.Rounded.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50))
+                        } else {
+                            Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.Red)
+                        }
                     }
                 }
             }
@@ -127,55 +145,65 @@ private fun Content(status: ApiStatusResponse, innerPadding: PaddingValues) {
 
         if (filteredFailed.isNotEmpty()) {
             item {
-                SectionHeader(
-                    text = stringResource(R.string.failed_tasks),
-                    topPadding = Enums.SectionHeaderPaddingTop.SMALL,
-                )
+                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                    SectionHeader(
+                        text = stringResource(R.string.failed_tasks),
+                    )
+                }
             }
             items(filteredFailed) { item ->
-                ProcessSummary(item)
+                ProcessSummary(item, index = filteredFailed.indexOf(item), total = filteredFailed.size)
             }
         }
 
         if (filteredRunning.isNotEmpty()) {
             item {
-                SectionHeader(
-                    text = stringResource(R.string.running_tasks),
-                    topPadding = if (filteredFailed.isNotEmpty()) Enums.SectionHeaderPaddingTop.NORMAL
-                    else Enums.SectionHeaderPaddingTop.SMALL,
-                )
+                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                    SectionHeader(
+                        text = stringResource(R.string.running_tasks),
+                    )
+                }
             }
             items(filteredRunning) { item ->
-                ProcessSummary(item)
+                ProcessSummary(item, index = filteredRunning.indexOf(item), total = filteredRunning.size)
             }
         }
 
         if (filteredSuccessful.isNotEmpty()) {
             item {
-                SectionHeader(
-                    text = stringResource(R.string.successful_tasks),
-                    topPadding = if (filteredFailed.isNotEmpty() || filteredRunning.isNotEmpty()) Enums.SectionHeaderPaddingTop.NORMAL
-                    else Enums.SectionHeaderPaddingTop.SMALL,
-                )
+                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                    SectionHeader(
+                        text = stringResource(R.string.successful_tasks),
+                    )
+                }
             }
             items(filteredSuccessful) { item ->
-                ProcessSummary(item)
+                ProcessSummary(item, index = filteredSuccessful.indexOf(item), total = filteredSuccessful.size)
             }
         }
     }
 }
 
 @Composable
-private fun ProcessSummary(process: ApiStatusResponseProcess) {
-    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        if (process.blocklistImport != null || process.blocklistEnable != null) {
-            ProcessBlocklistImportEnableStatus(process = process)
-        }
-        if (process.blocklistDelete != null || process.blocklistDisable != null) {
-            ProcessBlocklistDeleteDisableStatus(process = process)
-        }
-        if (process.blocklistRefresh != null) {
-           ProcessBlocklistRefreshStatus(process = process)
+private fun ProcessSummary(
+    process: ApiStatusResponseProcess,
+    index: Int,
+    total: Int,
+) {
+    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+        RoundedCornersListTile(
+            index = index,
+            totalItems = total
+        ) {
+            if (process.blocklistImport != null || process.blocklistEnable != null) {
+                ProcessBlocklistImportEnableStatus(process = process)
+            }
+            if (process.blocklistDelete != null || process.blocklistDisable != null) {
+                ProcessBlocklistDeleteDisableStatus(process = process)
+            }
+            if (process.blocklistRefresh != null) {
+                ProcessBlocklistRefreshStatus(process = process)
+            }
         }
     }
 }
