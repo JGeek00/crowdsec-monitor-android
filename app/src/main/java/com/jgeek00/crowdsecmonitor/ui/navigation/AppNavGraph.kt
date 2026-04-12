@@ -21,7 +21,7 @@ import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.FullListDashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.noServer.NoServerScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
-import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
 private fun NavDestination.topLevelAncestorRoute(): String? {
     var dest: NavDestination = this
@@ -37,7 +37,7 @@ fun AppNavGraph(
     startDestination: Route = Route.HomeGraph,
     themeMode: Enums.ThemeMode,
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
-    authViewModel: AuthViewModel,
+    serversManagerViewModel: ServersManagerViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -76,7 +76,7 @@ fun AppNavGraph(
     ) {
         navigation<Route.HomeGraph>(startDestination = Route.Home) {
             composable<Route.Home> {
-                NoServerScreen(authViewModel)
+                NoServerScreen(serversManagerViewModel)
             }
         }
 

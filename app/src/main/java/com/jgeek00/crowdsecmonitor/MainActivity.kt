@@ -37,8 +37,8 @@ import com.jgeek00.crowdsecmonitor.ui.screens.onboarding.OnboardingScreen
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.utils.readThemeMode
 import com.jgeek00.crowdsecmonitor.utils.writeThemeMode
-import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.OnboardingViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -75,22 +75,22 @@ class MainActivity : ComponentActivity() {
 fun CrowdSecMonitorApp(
     themeMode: Enums.ThemeMode,
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel(),
+    serversManagerViewModel: ServersManagerViewModel = hiltViewModel(),
     onboardingViewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
 
-    val visibleTopLevelRoutes = if (authViewModel.isLoading || authViewModel.hasServerConfigured) {
+    val visibleTopLevelRoutes = if (serversManagerViewModel.isLoading || serversManagerViewModel.hasServerConfigured) {
         topLevelRoutesWithServer
     } else {
         topLevelRoutesNoServer
     }
 
     // Redirects automatically when tab is no longer visible (when a server is added or deleted)
-    LaunchedEffect(authViewModel.hasServerConfigured, authViewModel.isLoading) {
-        if (authViewModel.isLoading) return@LaunchedEffect
+    LaunchedEffect(serversManagerViewModel.hasServerConfigured, serversManagerViewModel.isLoading) {
+        if (serversManagerViewModel.isLoading) return@LaunchedEffect
         if (currentDestination == null) return@LaunchedEffect  // NavHost not ready yet (initial startup)
         val isCurrentTabVisible = visibleTopLevelRoutes.any { tab ->
             currentDestination.hierarchy.any { it.hasRoute(tab.route::class) }
@@ -140,15 +140,15 @@ fun CrowdSecMonitorApp(
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                if (authViewModel.isLoading) {
+                if (serversManagerViewModel.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {
                     AppNavGraph(
                         navController = navController,
-                        startDestination = if (authViewModel.hasServerConfigured) Route.DashboardGraph else Route.HomeGraph,
+                        startDestination = if (serversManagerViewModel.hasServerConfigured) Route.DashboardGraph else Route.HomeGraph,
                         themeMode = themeMode,
                         onThemeModeChange = onThemeModeChange,
-                        authViewModel = authViewModel,
+                        serversManagerViewModel = serversManagerViewModel,
                         modifier = Modifier.fillMaxSize()
                     )
                 }

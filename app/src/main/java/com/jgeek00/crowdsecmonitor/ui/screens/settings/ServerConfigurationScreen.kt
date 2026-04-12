@@ -50,24 +50,24 @@ import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerInformat
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerListItem
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
-import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ServerConfigurationScreen(
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel()
+    serversManagerViewModel: ServersManagerViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
     var showCreateServerSheet by remember { mutableStateOf(false) }
 
-    val newDefault = authViewModel.newDefaultServerSet
+    val newDefault = serversManagerViewModel.newDefaultServerSet
     val newDefaultMsg = newDefault?.let { stringResource(R.string.new_default_server_msg, it) }
     LaunchedEffect(newDefault) {
         if (newDefault != null && newDefaultMsg != null) {
             snackbarHostState.showSnackbar(newDefaultMsg)
-            authViewModel.clearNewDefaultServerSet()
+            serversManagerViewModel.clearNewDefaultServerSet()
         }
     }
 
@@ -103,17 +103,17 @@ fun ServerConfigurationScreen(
             item {
                 SectionHeader(stringResource(R.string.servers_section), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
             }
-            if (authViewModel.servers.isNotEmpty()) {
-                items(authViewModel.servers, key = { it.id }) { server ->
-                    val index = authViewModel.servers.indexOf(server)
+            if (serversManagerViewModel.servers.isNotEmpty()) {
+                items(serversManagerViewModel.servers, key = { it.id }) { server ->
+                    val index = serversManagerViewModel.servers.indexOf(server)
                     ServerListItem(
                         index = index,
-                        totalItems = authViewModel.servers.size,
+                        totalItems = serversManagerViewModel.servers.size,
                         server = server,
-                        isCurrentServer = server.id == authViewModel.currentServer?.id,
-                        onSelect = { authViewModel.changeCurrentServer(server) },
-                        onSetDefault = { authViewModel.setDefaultServer(server) },
-                        onDelete = { authViewModel.deleteServer(server) },
+                        isCurrentServer = server.id == serversManagerViewModel.currentServer?.id,
+                        onSelect = { serversManagerViewModel.changeCurrentServer(server) },
+                        onSetDefault = { serversManagerViewModel.setDefaultServer(server) },
+                        onDelete = { serversManagerViewModel.deleteServer(server) },
                     )
                 }
             } else {
@@ -148,7 +148,7 @@ fun ServerConfigurationScreen(
                     }
                 }
             }
-            if (authViewModel.hasServerConfigured) {
+            if (serversManagerViewModel.hasServerConfigured) {
                 item {
                     ServerInformationSection()
                 }
@@ -156,26 +156,26 @@ fun ServerConfigurationScreen(
         }
     }
 
-    if (authViewModel.deleteServerError) {
+    if (serversManagerViewModel.deleteServerError) {
         AlertDialog(
-            onDismissRequest = { authViewModel.clearDeleteServerError() },
+            onDismissRequest = { serversManagerViewModel.clearDeleteServerError() },
             title = { Text(stringResource(R.string.error)) },
             text = { Text(stringResource(R.string.delete_server_error)) },
             confirmButton = {
-                TextButton(onClick = { authViewModel.clearDeleteServerError() }) {
+                TextButton(onClick = { serversManagerViewModel.clearDeleteServerError() }) {
                     Text(stringResource(R.string.ok))
                 }
             }
         )
     }
 
-    if (authViewModel.setDefaultServerError) {
+    if (serversManagerViewModel.setDefaultServerError) {
         AlertDialog(
-            onDismissRequest = { authViewModel.clearSetDefaultServerError() },
+            onDismissRequest = { serversManagerViewModel.clearSetDefaultServerError() },
             title = { Text(stringResource(R.string.error)) },
             text = { Text(stringResource(R.string.set_default_server_error)) },
             confirmButton = {
-                TextButton(onClick = { authViewModel.clearSetDefaultServerError() }) {
+                TextButton(onClick = { serversManagerViewModel.clearSetDefaultServerError() }) {
                     Text(stringResource(R.string.ok))
                 }
             }

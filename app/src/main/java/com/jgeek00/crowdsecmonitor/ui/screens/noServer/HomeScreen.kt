@@ -30,14 +30,14 @@ import androidx.compose.ui.window.DialogProperties
 import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerSheet
 import com.jgeek00.crowdsecmonitor.ui.theme.CrowdSecMonitorTheme
 import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
-import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
 @Composable
-fun NoServerScreen(authViewModel: AuthViewModel) {
-    if (!authViewModel.hasServerConfigured) {
+fun NoServerScreen(serversManagerViewModel: ServersManagerViewModel) {
+    if (!serversManagerViewModel.hasServerConfigured) {
         NoServerConfiguredContent()
     } else {
-        Text("Dashboard Content - Server: ${authViewModel.currentServer?.name}")
+        Text("Dashboard Content - Server: ${serversManagerViewModel.currentServer?.name}")
     }
 }
 

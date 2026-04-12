@@ -1,7 +1,6 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.settings.components
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Update
@@ -22,13 +21,13 @@ import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-import com.jgeek00.crowdsecmonitor.viewmodel.AuthViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServerStatusViewModel
 import androidx.core.net.toUri
 
 @Composable
 fun ServerInformationSection(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    serversManagerViewModel: ServersManagerViewModel = hiltViewModel(),
     serverStatusViewModel: ServerStatusViewModel = hiltViewModel()
 ) {
     @Composable
@@ -71,7 +70,7 @@ fun ServerInformationSection(
 
     val context = LocalContext.current
 
-    if (!authViewModel.hasServerConfigured) return
+    if (!serversManagerViewModel.hasServerConfigured) return
 
     SectionHeader(stringResource(R.string.information_section))
 

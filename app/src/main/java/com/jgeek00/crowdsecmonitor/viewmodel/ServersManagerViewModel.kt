@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jgeek00.crowdsecmonitor.data.api.CrowdSecApiClient
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.data.repository.ServerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,20 +12,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+class ServersManagerViewModel @Inject constructor(
     private val serverRepository: ServerRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
+
     var isLoading by mutableStateOf(true)
         private set
 
-    var currentServer by mutableStateOf<CSServerModel?>(null)
-        private set
-
     var servers by mutableStateOf<List<CSServerModel>>(emptyList())
-        private set
-
-    var apiClient by mutableStateOf<CrowdSecApiClient?>(null)
         private set
 
     var deleteServerError by mutableStateOf(false)
@@ -38,8 +32,11 @@ class AuthViewModel @Inject constructor(
     var newDefaultServerSet by mutableStateOf<String?>(null)
         private set
 
+    val currentServer: CSServerModel?
+        get() = sessionManager.currentServer
+
     val hasServerConfigured: Boolean
-        get() = currentServer != null && apiClient != null
+        get() = sessionManager.hasServerConfigured
 
     fun clearDeleteServerError() { deleteServerError = false }
     fun clearSetDefaultServerError() { setDefaultServerError = false }
@@ -54,26 +51,20 @@ class AuthViewModel @Inject constructor(
             isLoading = true
             serverRepository.getAllServers().collect { list ->
                 servers = list
-                checkInstance()
+                activateAppropriateServer(list)
                 isLoading = false
             }
         }
     }
 
-    private fun checkInstance() {
-        val server = servers.find { it.defaultServer == true } ?: servers.firstOrNull()
-
+    private fun activateAppropriateServer(list: List<CSServerModel>) {
+        val server = list.find { it.defaultServer == true } ?: list.firstOrNull()
         if (server != null) {
-            if (currentServer?.id != server.id || apiClient == null) {
-                currentServer = server
-                val client = CrowdSecApiClient(server)
-                apiClient = client
-                sessionManager.apiClient = client
+            if (sessionManager.currentServer?.id != server.id || sessionManager.apiClient == null) {
+                sessionManager.activate(server)
             }
         } else {
-            currentServer = null
-            apiClient = null
-            sessionManager.apiClient = null
+            sessionManager.deactivate()
         }
     }
 
@@ -95,15 +86,8 @@ class AuthViewModel @Inject constructor(
     }
 
     fun changeCurrentServer(server: CSServerModel) {
-        if (server.id == currentServer?.id) return
-
-        currentServer = server
-        val client = CrowdSecApiClient(server)
-        apiClient = client
-        sessionManager.apiClient = client
-
-        // TODO: Resetear los ViewModels dependientes cuando existan
-        //  (ServerStatusViewModel, DashboardViewModel, AlertsListViewModel…)
+        if (server.id == sessionManager.currentServer?.id) return
+        sessionManager.activate(server)
     }
 
     fun setDefaultServer(server: CSServerModel) {
@@ -117,12 +101,5 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
-
-    fun handleUnauthorized() {
-        currentServer?.let { deleteServerSilently(it) }
-    }
-
-    fun logout() {
-        currentServer?.let { deleteServerSilently(it) }
-    }
 }
+
