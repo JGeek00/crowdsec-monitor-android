@@ -49,6 +49,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -62,7 +63,9 @@ import com.jgeek00.crowdsecmonitor.constants.Defaults
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.getBlocklistActiveProcess
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistDetailsViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

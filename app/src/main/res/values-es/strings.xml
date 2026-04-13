@@ -275,4 +275,9 @@
     <string name="processed_blocklists_progress_fmt">Procesadas %1$d de %2$d listas</string>
     <string name="processed_blocklists_summary_fmt">%1$d listas procesadas de un total de %2$d</string>
     <string name="processed_blocklists_all_fmt">Procesadas las %1$d listas</string>
+    <string name="enabling_blocklist">Activando lista de bloqueo</string>
+    <string name="importing_blocklist">Importando lista de bloqueo</string>
+    <string name="deleting_blocklist">Eliminando lista de bloqueo</string>
+    <string name="disabling_blocklist">Desactivando lista de bloqueo</string>
+    <string name="processing_blocklist">Procesando lista de bloqueo</string>
 </resources>

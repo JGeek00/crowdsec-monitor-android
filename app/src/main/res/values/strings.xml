@@ -280,4 +280,9 @@
     <string name="processed_blocklists_progress_fmt">Processed %1$d of %2$d blocklists</string>
     <string name="processed_blocklists_summary_fmt">%1$d blocklists processed of a total of %2$d</string>
     <string name="processed_blocklists_all_fmt">Processed all %1$d blocklists</string>
+    <string name="enabling_blocklist">Enabling blocklist</string>
+    <string name="importing_blocklist">Importing blocklist</string>
+    <string name="deleting_blocklist">Deleting blocklist</string>
+    <string name="disabling_blocklist">Disabling blocklist</string>
+    <string name="processing_blocklist">Processing blocklist</string>
 </resources>

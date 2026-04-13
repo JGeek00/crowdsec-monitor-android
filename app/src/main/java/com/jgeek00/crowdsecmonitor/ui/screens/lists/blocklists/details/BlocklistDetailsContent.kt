@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,6 +38,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Defaults
 import com.jgeek00.crowdsecmonitor.constants.Enums
@@ -46,6 +49,9 @@ import com.jgeek00.crowdsecmonitor.extensions.toInstant
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.getBlocklistActiveProcess
+import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.getProcessType
+import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -59,8 +65,12 @@ fun BlocklistDetailsContent(
     innerPadding: PaddingValues,
     nestedScrollConnection: NestedScrollConnection,
     onIncrementIpsRound: () -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
+    snackbarHostState: SnackbarHostState,
+    serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel(),
+    ) {
+    val serviceStatus = serviceStatusViewModel.status.collectAsState().value
+    val blocklistProcess = getBlocklistActiveProcess(serviceStatus.data, data.id)
+
     val clipboardManager = LocalClipboardManager.current
     val coroutineScope = rememberCoroutineScope()
     val urlCopiedMessage = stringResource(R.string.url_copied_to_clipboard)
@@ -191,7 +201,7 @@ fun BlocklistDetailsContent(
                         )
                     }
                 }
-                if (refreshWarning && data.lastRefreshAttempt != null) {
+                if (refreshWarning && data.lastRefreshAttempt != null && blocklistProcess == null) {
                     RoundedCornersListTile(
                         index = tileIdx, totalItems = infoCount,
                     ) {
@@ -202,6 +212,22 @@ fun BlocklistDetailsContent(
                                     text = data.lastRefreshAttempt.toFormattedDateTime(),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                    }
+                }
+                if (blocklistProcess != null) {
+                    RoundedCornersListTile(
+                        index = tileIdx, totalItems = infoCount,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(getProcessType(blocklistProcess) ?: R.string.processing_blocklist) + "...",
+                            leadingContent = {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         )

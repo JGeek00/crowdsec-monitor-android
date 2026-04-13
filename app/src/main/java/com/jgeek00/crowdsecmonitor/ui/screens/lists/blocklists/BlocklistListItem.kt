@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -24,6 +25,7 @@ import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistType
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistsListResponseItem
@@ -45,6 +48,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
 import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.BlocklistsListViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -54,7 +58,8 @@ fun BlocklistListItem(
     totalItems: Int,
     blocklist: BlocklistsListResponseItem,
     viewModel: BlocklistsListViewModel,
-    onNavigateToDetails: () -> Unit
+    onNavigateToDetails: () -> Unit,
+    serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel(),
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
@@ -65,6 +70,9 @@ fun BlocklistListItem(
         val diffSeconds = abs(attempt.epochSecond - successful.epochSecond)
         diffSeconds >= 3600L
     }
+
+    val serviceStatus = serviceStatusViewModel.status.collectAsState().value
+    val blocklistProcess = getBlocklistActiveProcess(serviceStatus.data, blocklist.id)
 
     RoundedCornersListTile(
         index = index,
@@ -106,7 +114,7 @@ fun BlocklistListItem(
                         color = MaterialTheme.colorScheme.tertiary
                     )
                 }
-                if (showRefreshWarning) {
+                if (showRefreshWarning && blocklistProcess == null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -120,6 +128,24 @@ fun BlocklistListItem(
                             text = stringResource(R.string.blocklist_refresh_failed),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+                if (blocklistProcess != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(14.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(getProcessType(blocklistProcess) ?: R.string.processing_blocklist) + "...",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -149,13 +175,15 @@ fun BlocklistListItem(
                                 blocklist.id,
                                 blocklist.enabled != true
                             )
-                        }
+                        },
+                        disabled = blocklistProcess != null
                     ),
                     OptionsMenuBottomSheetItem(
                         title = stringResource(R.string.delete_blocklist),
                         icon = Icons.Rounded.Delete,
                         onClick = { showDeleteConfirm = true },
-                        role = OptionsMenuBottomSheetItemRole.DESTRUCTIVE
+                        role = OptionsMenuBottomSheetItemRole.DESTRUCTIVE,
+                        disabled = blocklistProcess != null
                     )
                 ),
                 showMenu = menuExpanded,
