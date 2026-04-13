@@ -83,12 +83,7 @@ fun DashboardScreen(
                             StatusIcon(serviceStatus.value)
                         }
                         is LoadingResult.Failure -> {
-                            Icon(
-                                Icons.Rounded.Error,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.error
-                            )
+                            Box() {}
                         }
                     }
                     Text(stringResource(R.string.status))
