@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
@@ -80,7 +81,8 @@ fun ConnectionForm(
             isError = viewModel.name.error != null,
             supportingText = viewModel.name.error?.let { { Text(it) } },
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-            enabled = viewModel.name.enabled
+            enabled = viewModel.name.enabled,
+            maxLines = 1,
         )
 
         // Server Route Section
@@ -120,7 +122,8 @@ fun ConnectionForm(
                 keyboardType = KeyboardType.Uri,
                 capitalization = KeyboardCapitalization.None
             ),
-            enabled = viewModel.ipDomain.enabled
+            enabled = viewModel.ipDomain.enabled,
+            maxLines = 1,
         )
 
         OutlinedTextField(
@@ -132,7 +135,8 @@ fun ConnectionForm(
             isError = viewModel.port.error != null,
             supportingText = viewModel.port.error?.let { { Text(it) } },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            enabled = viewModel.port.enabled
+            enabled = viewModel.port.enabled,
+            maxLines = 1,
         )
 
         OutlinedTextField(
@@ -147,7 +151,8 @@ fun ConnectionForm(
                 keyboardType = KeyboardType.Uri,
                 capitalization = KeyboardCapitalization.None
             ),
-            enabled = viewModel.path.enabled
+            enabled = viewModel.path.enabled,
+            maxLines = 1,
         )
 
         // Authentication Section
@@ -173,7 +178,8 @@ fun ConnectionForm(
                 label = { Text(stringResource(R.string.method)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth(),
-                enabled = !viewModel.connecting
+                enabled = !viewModel.connecting,
+                maxLines = 1,
             )
             ExposedDropdownMenu(
                 expanded = expanded,
@@ -214,7 +220,8 @@ fun ConnectionForm(
                     isError = viewModel.basicUser.error != null,
                     supportingText = viewModel.basicUser.error?.let { { Text(it) } },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.None),
-                    enabled = viewModel.basicUser.enabled
+                    enabled = viewModel.basicUser.enabled,
+                    maxLines = 1,
                 )
                 OutlinedTextField(
                     value = viewModel.basicPassword.value,
@@ -229,7 +236,8 @@ fun ConnectionForm(
                         keyboardType = KeyboardType.Password,
                         capitalization = KeyboardCapitalization.None
                     ),
-                    enabled = viewModel.basicPassword.enabled
+                    enabled = viewModel.basicPassword.enabled,
+                    maxLines = 1,
                 )
             }
             Enums.AuthMethod.BEARER -> {
@@ -255,7 +263,8 @@ fun ConnectionForm(
                         keyboardType = KeyboardType.Password,
                         capitalization = KeyboardCapitalization.None
                     ),
-                    enabled = viewModel.bearerToken.enabled
+                    enabled = viewModel.bearerToken.enabled,
+                    maxLines = 1,
                 )
             }
             else -> {}

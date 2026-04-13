@@ -21,13 +21,15 @@ class ServiceStatusRepository @Inject constructor() {
     private val _status = MutableStateFlow<LoadingResult<ApiStatusResponse>>(LoadingResult.Loading)
     val status: StateFlow<LoadingResult<ApiStatusResponse>> = _status.asStateFlow()
 
+    private var initJob: Job? = null
     private var webSocketJob: Job? = null
 
     fun start(apiClient: CrowdSecApiClient) {
+        initJob?.cancel()
         webSocketJob?.cancel()
         _status.value = LoadingResult.Loading
 
-        scope.launch {
+        initJob = scope.launch {
             try {
                 val response = apiClient.checkApiStatus()
                 _status.value = LoadingResult.Success(response.body)
@@ -53,6 +55,8 @@ class ServiceStatusRepository @Inject constructor() {
     }
 
     fun stop(apiClient: CrowdSecApiClient?) {
+        initJob?.cancel()
+        initJob = null
         webSocketJob?.cancel()
         webSocketJob = null
         apiClient?.disconnectApiStatusStream()
@@ -63,6 +67,8 @@ class ServiceStatusRepository @Inject constructor() {
     }
 
     fun close() {
+        initJob?.cancel()
+        initJob = null
         webSocketJob?.cancel()
         webSocketJob = null
         scope.coroutineContext[Job]?.cancel()

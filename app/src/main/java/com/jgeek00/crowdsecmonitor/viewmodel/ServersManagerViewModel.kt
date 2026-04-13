@@ -58,7 +58,7 @@ class ServersManagerViewModel @Inject constructor(
         }
     }
 
-    private fun activateAppropriateServer(list: List<CSServerModel>) {
+    private suspend fun activateAppropriateServer(list: List<CSServerModel>) {
         val server = list.find { it.defaultServer == true } ?: list.firstOrNull()
         if (server != null) {
             if (sessionManager.currentServer?.id != server.id || sessionManager.apiClient == null) {
@@ -82,7 +82,9 @@ class ServersManagerViewModel @Inject constructor(
 
     fun changeCurrentServer(server: CSServerModel) {
         if (server.id == sessionManager.currentServer?.id) return
-        sessionManager.activate(server)
+        viewModelScope.launch {
+            sessionManager.activate(server)
+        }
     }
 
     fun setDefaultServer(server: CSServerModel) {

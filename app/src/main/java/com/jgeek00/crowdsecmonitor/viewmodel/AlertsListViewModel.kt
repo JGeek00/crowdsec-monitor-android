@@ -3,6 +3,7 @@ package com.jgeek00.crowdsecmonitor.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.constants.Defaults
@@ -34,14 +35,6 @@ class AlertsListViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    init {
-        viewModelScope.launch {
-            sessionManager.alertsRefreshEvent.collect {
-                refreshAlertsInternal()
-            }
-        }
-    }
-
     var state by mutableStateOf<LoadingResult<AlertsListResponse>>(LoadingResult.Loading)
         private set
 
@@ -62,6 +55,20 @@ class AlertsListViewModel @Inject constructor(
 
     var filters by mutableStateOf(defaultRequest.filters)
         private set
+
+    init {
+        viewModelScope.launch {
+            snapshotFlow { sessionManager.apiClient }.collect { client ->
+                reset()
+                if (client != null) fetchAlerts(showLoading = true)
+            }
+        }
+        viewModelScope.launch {
+            sessionManager.alertsRefreshEvent.collect {
+                refreshAlertsInternal()
+            }
+        }
+    }
 
     fun reset() {
         state = LoadingResult.Loading
@@ -89,7 +96,7 @@ class AlertsListViewModel @Inject constructor(
     }
 
     fun initialFetchAlerts() {
-        if (state.data != null) return
+        if (state.data != null || state.isLoading) return
         viewModelScope.launch {
             fetchAlerts(showLoading = true)
         }

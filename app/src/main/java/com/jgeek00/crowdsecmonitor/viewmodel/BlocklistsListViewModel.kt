@@ -3,6 +3,7 @@ package com.jgeek00.crowdsecmonitor.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.constants.Defaults
@@ -68,6 +69,15 @@ class BlocklistsListViewModel @Inject constructor(
         blocklistDeletedSuccessfully = false
     }
 
+    init {
+        viewModelScope.launch {
+            snapshotFlow { sessionManager.apiClient }.collect { client ->
+                reset()
+                if (client != null) fetchData(showLoading = true)
+            }
+        }
+    }
+
     fun selectListName(name: String?) { selectedListName = name }
     fun clearErrorDisableBlocklist() { errorDisableBlocklist = false }
     fun clearErrorEnableBlocklist() { errorEnableBlocklist = false }
@@ -88,7 +98,7 @@ class BlocklistsListViewModel @Inject constructor(
     }
 
     fun initialFetch() {
-        if (state.data != null) return
+        if (state.data != null || state.isLoading) return
         viewModelScope.launch {
             fetchData(showLoading = true)
         }

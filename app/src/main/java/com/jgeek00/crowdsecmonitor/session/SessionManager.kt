@@ -9,12 +9,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.jgeek00.crowdsecmonitor.repository.ServiceStatusRepository
 
 @Singleton
-class SessionManager @Inject constructor(
-    private val serviceStatusRepository: ServiceStatusRepository
-) {
+class SessionManager @Inject constructor() {
     var apiClient by mutableStateOf<CrowdSecApiClient?>(null)
         internal set
 
@@ -24,18 +21,16 @@ class SessionManager @Inject constructor(
     val hasServerConfigured: Boolean
         get() = currentServer != null && apiClient != null
 
-    fun activate(server: CSServerModel) {
+    suspend fun activate(server: CSServerModel) {
         apiClient?.invalidate()
         currentServer = server
         apiClient = CrowdSecApiClient(server)
-        apiClient?.let { serviceStatusRepository.start(it) }
     }
 
-    fun deactivate() {
+    suspend fun deactivate() {
         apiClient?.invalidate()
         currentServer = null
         apiClient = null
-        serviceStatusRepository.stop(null)
     }
 
     private val _decisionsRefreshEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)

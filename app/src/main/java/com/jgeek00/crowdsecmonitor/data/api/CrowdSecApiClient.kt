@@ -3,7 +3,9 @@ package com.jgeek00.crowdsecmonitor.data.api
 import com.jgeek00.crowdsecmonitor.data.api.statistics.StatisticsApiClient
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import com.jgeek00.crowdsecmonitor.data.models.HttpClientException
 import com.jgeek00.crowdsecmonitor.data.models.HttpResponse
@@ -56,16 +58,18 @@ class CrowdSecApiClient(server: CSServerModel) {
         websocketClient.disconnect()
     }
 
-    fun invalidate() {
+    suspend fun invalidate() {
         websocketClient.disconnect()
 
         val callFactory = httpClient.retrofit.callFactory()
         if (callFactory is OkHttpClient) {
-            callFactory.dispatcher.executorService.shutdown()
-            callFactory.connectionPool.evictAll()
-            try {
-                callFactory.cache?.close()
-            } catch (_: Exception) {
+            withContext(Dispatchers.IO) {
+                callFactory.dispatcher.executorService.shutdown()
+                callFactory.connectionPool.evictAll()
+                try {
+                    callFactory.cache?.close()
+                } catch (_: Exception) {
+                }
             }
         }
     }

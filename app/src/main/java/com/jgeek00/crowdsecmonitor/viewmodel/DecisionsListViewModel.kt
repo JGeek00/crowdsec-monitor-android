@@ -3,6 +3,7 @@ package com.jgeek00.crowdsecmonitor.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.constants.Defaults
@@ -54,6 +55,12 @@ class DecisionsListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            snapshotFlow { sessionManager.apiClient }.collect { client ->
+                reset()
+                if (client != null) fetchDecisions(showLoading = true)
+            }
+        }
+        viewModelScope.launch {
             preferencesRepository.showDefaultActiveDecisions.collect { showOnlyActive ->
                 defaultRequest = buildDefaultRequest(showOnlyActive)
             }
@@ -95,7 +102,7 @@ class DecisionsListViewModel @Inject constructor(
     }
 
     fun initialFetchDecisions() {
-        if (state.data != null) return
+        if (state.data != null || state.isLoading) return
         viewModelScope.launch {
             val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
             val req = buildDefaultRequest(showOnlyActive)

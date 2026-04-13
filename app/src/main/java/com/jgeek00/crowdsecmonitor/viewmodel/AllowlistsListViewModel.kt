@@ -3,6 +3,7 @@ package com.jgeek00.crowdsecmonitor.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.data.models.AllowlistsListResponse
@@ -23,6 +24,15 @@ class AllowlistsListViewModel @Inject constructor(
     var isRefreshing by mutableStateOf(false)
         private set
 
+    init {
+        viewModelScope.launch {
+            snapshotFlow { sessionManager.apiClient }.collect { client ->
+                reset()
+                if (client != null) fetchData(showLoading = true)
+            }
+        }
+    }
+
     fun reset() {
         state = LoadingResult.Loading
         isRefreshing = false
@@ -42,7 +52,7 @@ class AllowlistsListViewModel @Inject constructor(
     }
 
     fun initialFetch() {
-        if (state.data != null) return
+        if (state.data != null || state.isLoading) return
         viewModelScope.launch {
             fetchData(showLoading = true)
         }
