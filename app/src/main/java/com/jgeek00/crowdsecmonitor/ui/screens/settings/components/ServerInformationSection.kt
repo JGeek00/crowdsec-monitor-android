@@ -34,7 +34,7 @@ fun ServerInformationSection(
     val status = serviceStatusViewModel.status.collectAsState().value
 
     @Composable
-    fun getStatusSubtitle(): String {
+    fun getLapiStatusSubtitle(): String {
         return when (status) {
             is LoadingResult.Loading -> {
                 stringResource(R.string.loading)
@@ -42,6 +42,27 @@ fun ServerInformationSection(
 
             is LoadingResult.Success -> {
                 if (status.value.csLapi.lapiConnected) {
+                    stringResource(R.string.online)
+                } else {
+                    stringResource(R.string.offline)
+                }
+            }
+
+            is LoadingResult.Failure -> {
+                "N/A"
+            }
+        }
+    }
+
+    @Composable
+    fun getBouncerStatusSubtitle(): String {
+        return when (status) {
+            is LoadingResult.Loading -> {
+                stringResource(R.string.loading)
+            }
+
+            is LoadingResult.Success -> {
+                if (status.value.csBouncer.available) {
                     stringResource(R.string.online)
                 } else {
                     stringResource(R.string.offline)
@@ -77,19 +98,29 @@ fun ServerInformationSection(
 
     SectionHeader(stringResource(R.string.information_section))
 
+    var idx = 0
+    val itemsLength = 3
     RoundedCornersListTile(
-        index = 0,
-        totalItems = 2,
+        index = idx++,
+        totalItems = itemsLength,
     ) {
         ListItemContent(
-            headlineText = stringResource(R.string.lapi_status),
-            subHeadlineText = getStatusSubtitle()
+            headlineText = stringResource(R.string.lapi_available),
+            subHeadlineText = getLapiStatusSubtitle()
         )
     }
-
     RoundedCornersListTile(
-        index = 1,
-        totalItems = 2,
+        index = idx++,
+        totalItems = itemsLength,
+    ) {
+        ListItemContent(
+            headlineText = stringResource(R.string.bouncer_available),
+            subHeadlineText = getBouncerStatusSubtitle()
+        )
+    }
+    RoundedCornersListTile(
+        index = idx++,
+        totalItems = itemsLength,
     ) {
         ListItemContent(
             headlineText = stringResource(R.string.api_version),
