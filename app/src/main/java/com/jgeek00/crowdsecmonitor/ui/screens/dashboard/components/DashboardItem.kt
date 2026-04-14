@@ -61,7 +61,7 @@ fun DashboardItem(
         shape = groupedShape
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,6 +71,7 @@ fun DashboardItem(
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
                 if (color != null) {
                     ColorDot(color)
@@ -78,7 +79,10 @@ fun DashboardItem(
                 }
                 when (itemType) {
                     Enums.DashboardItemType.COUNTRY -> {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(label.toFlagEmoji())
                             Spacer(Modifier.width(8.dp))
                             Text(
@@ -88,7 +92,8 @@ fun DashboardItem(
                                 ).getDisplayCountry(LocalLocale.current.platformLocale)
                                     .ifBlank { label.uppercase() },
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
@@ -101,7 +106,10 @@ fun DashboardItem(
                         val parts = label.split("/")
                         val type = parts.getOrNull(0)?.trim() ?: label
                         val name = parts.getOrNull(1)?.trim() ?: ""
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = type,
                                 style = MaterialTheme.typography.bodySmall,
@@ -115,7 +123,12 @@ fun DashboardItem(
                                     .padding(horizontal = 8.dp, vertical = 2.dp)
                             )
                             Spacer(Modifier.width(8.dp))
-                            Text(text = name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(
+                                text = name,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
 
@@ -124,13 +137,22 @@ fun DashboardItem(
                     }
                 }
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "$amount")
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "$amount",
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible
+                )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     text = "(${(percentage * 100).roundToInt()}%)",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible
                 )
             }
         }
