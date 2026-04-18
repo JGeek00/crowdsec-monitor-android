@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.ConnectionFormViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.MAX_CUSTOM_HEADERS
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -268,6 +270,79 @@ fun ConnectionForm(
                 )
             }
             else -> {}
+        }
+
+        SectionHeader(
+            text = stringResource(R.string.custom_headers),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+        )
+
+        viewModel.customHeaders.forEachIndexed { index, header ->
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.custom_header_n, index + 1),
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        onClick = { viewModel.removeCustomHeader(index) },
+                        enabled = !viewModel.connecting
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.remove_custom_header)
+                        )
+                    }
+                }
+                OutlinedTextField(
+                    value = header.key,
+                    onValueChange = { viewModel.updateCustomHeaderKey(index, it) },
+                    label = { Text(stringResource(R.string.header_name)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = header.keyError != null,
+                    supportingText = header.keyError?.let { { Text(it) } },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Ascii,
+                        capitalization = KeyboardCapitalization.None
+                    ),
+                    enabled = !viewModel.connecting,
+                    maxLines = 1,
+                    placeholder = { Text("X-My-Header") }
+                )
+                OutlinedTextField(
+                    value = header.value,
+                    onValueChange = { viewModel.updateCustomHeaderValue(index, it) },
+                    label = { Text(stringResource(R.string.header_value)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = header.valueError != null,
+                    supportingText = header.valueError?.let { { Text(it) } },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None
+                    ),
+                    enabled = !viewModel.connecting,
+                    maxLines = 1,
+                )
+            }
+        }
+
+        if (viewModel.customHeaders.size < MAX_CUSTOM_HEADERS) {
+            OutlinedButton(
+                onClick = { viewModel.addCustomHeader() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !viewModel.connecting
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.add_custom_header))
+            }
         }
 
         Spacer(modifier = Modifier.height(48.dp))

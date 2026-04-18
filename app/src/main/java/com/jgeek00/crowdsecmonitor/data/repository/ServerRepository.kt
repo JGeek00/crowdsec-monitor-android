@@ -34,7 +34,8 @@ class ServerRepository @Inject constructor(
         authMethod: String,
         basicUser: String?,
         basicPassword: String?,
-        bearerToken: String?
+        bearerToken: String?,
+        customHeaders: List<Pair<String, String>>? = null
     ) {
         val count = csServerDao.countServers()
         val isFirst = count == 0
@@ -48,7 +49,8 @@ class ServerRepository @Inject constructor(
             basicUser = basicUser,
             basicPassword = basicPassword,
             bearerToken = bearerToken,
-            defaultServer = isFirst
+            defaultServer = isFirst,
+            customHeaders = customHeaders?.takeIf { it.isNotEmpty() }
         )
         csServerDao.insertServer(server)
     }

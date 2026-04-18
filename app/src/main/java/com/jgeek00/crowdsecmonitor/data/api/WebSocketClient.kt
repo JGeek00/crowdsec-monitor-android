@@ -84,6 +84,10 @@ class WebSocketClient(private val server: CSServerModel) {
             }
         }
 
+        server.customHeaders?.forEach { (key, value) ->
+            builder.addHeader(key, value)
+        }
+
         return builder.build()
     }
 
