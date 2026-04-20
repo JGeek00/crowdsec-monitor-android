@@ -279,57 +279,64 @@ fun ConnectionForm(
         )
 
         viewModel.customHeaders.forEachIndexed { index, header ->
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+            Card(
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.custom_header_n, index + 1),
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(
-                        onClick = { viewModel.removeCustomHeader(index) },
-                        enabled = !viewModel.connecting
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.remove_custom_header)
+                        Text(
+                            text = stringResource(R.string.custom_header_n, index + 1),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            modifier = Modifier.weight(1f)
                         )
+                        IconButton(
+                            onClick = { viewModel.removeCustomHeader(index) },
+                            enabled = !viewModel.connecting
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.remove_custom_header)
+                            )
+                        }
                     }
+                    OutlinedTextField(
+                        value = header.key,
+                        onValueChange = { viewModel.updateCustomHeaderKey(index, it) },
+                        label = { Text(stringResource(R.string.header_name)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        isError = header.keyError != null,
+                        supportingText = header.keyError?.let { { Text(it) } },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Ascii,
+                            capitalization = KeyboardCapitalization.None
+                        ),
+                        enabled = !viewModel.connecting,
+                        maxLines = 1,
+                        placeholder = { Text("X-My-Header") }
+                    )
+                    OutlinedTextField(
+                        value = header.value,
+                        onValueChange = { viewModel.updateCustomHeaderValue(index, it) },
+                        label = { Text(stringResource(R.string.header_value)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        isError = header.valueError != null,
+                        supportingText = header.valueError?.let { { Text(it) } },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None
+                        ),
+                        enabled = !viewModel.connecting,
+                        maxLines = 1,
+                    )
                 }
-                OutlinedTextField(
-                    value = header.key,
-                    onValueChange = { viewModel.updateCustomHeaderKey(index, it) },
-                    label = { Text(stringResource(R.string.header_name)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    isError = header.keyError != null,
-                    supportingText = header.keyError?.let { { Text(it) } },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Ascii,
-                        capitalization = KeyboardCapitalization.None
-                    ),
-                    enabled = !viewModel.connecting,
-                    maxLines = 1,
-                    placeholder = { Text("X-My-Header") }
-                )
-                OutlinedTextField(
-                    value = header.value,
-                    onValueChange = { viewModel.updateCustomHeaderValue(index, it) },
-                    label = { Text(stringResource(R.string.header_value)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    isError = header.valueError != null,
-                    supportingText = header.valueError?.let { { Text(it) } },
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None
-                    ),
-                    enabled = !viewModel.connecting,
-                    maxLines = 1,
-                )
             }
         }
 

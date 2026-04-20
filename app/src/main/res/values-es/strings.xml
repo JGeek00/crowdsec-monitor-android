@@ -280,4 +280,10 @@
     <string name="deleting_blocklist">Eliminando lista de bloqueo</string>
     <string name="disabling_blocklist">Desactivando lista de bloqueo</string>
     <string name="processing_blocklist">Procesando lista de bloqueo</string>
+    <string name="custom_headers">Cabeceras personalizadas</string>
+    <string name="custom_header_n">Cabecera #%d</string>
+    <string name="header_name">Nombre de la cabecera</string>
+    <string name="header_value">Valor de la cabecera</string>
+    <string name="add_custom_header">Añadir cabecera</string>
+    <string name="remove_custom_header">Eliminar cabecera</string>
 </resources>
