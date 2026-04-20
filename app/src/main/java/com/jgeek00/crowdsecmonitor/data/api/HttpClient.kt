@@ -49,6 +49,10 @@ class HttpClient(private val server: CSServerModel) {
                     }
 
                     requestBuilder.addHeader("Content-Type", "application/json")
+
+                    server.customHeaders?.forEach { (key, value) ->
+                        requestBuilder.addHeader(key, value)
+                    }
                 } catch (e: IllegalArgumentException) {
                     throw InvalidConnectionValuesIOException(e)
                 }

@@ -16,5 +16,6 @@ data class CSServerModel(
     val basicUser: String?,
     val basicPassword: String?,
     val bearerToken: String?,
-    val defaultServer: Boolean? = false
+    val defaultServer: Boolean? = false,
+    val customHeaders: List<Pair<String, String>>? = null
 )

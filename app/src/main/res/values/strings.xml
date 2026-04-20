@@ -285,4 +285,10 @@
     <string name="deleting_blocklist">Deleting blocklist</string>
     <string name="disabling_blocklist">Disabling blocklist</string>
     <string name="processing_blocklist">Processing blocklist</string>
+    <string name="custom_headers">Custom headers</string>
+    <string name="custom_header_n">Header #%d</string>
+    <string name="header_name">Header name</string>
+    <string name="header_value">Header value</string>
+    <string name="add_custom_header">Add header</string>
+    <string name="remove_custom_header">Remove header</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Patterns
 import java.util.regex.Pattern
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+const val MAX_CUSTOM_HEADERS = 10
+data class CustomHeaderState(
+    var key: String = "",
+    var value: String = "",
+    var keyError: String? = null,
+    var valueError: String? = null
+)
 
 @HiltViewModel
 class ConnectionFormViewModel @Inject constructor(
@@ -41,6 +50,7 @@ class ConnectionFormViewModel @Inject constructor(
 
     var connectionErrorAlert by mutableStateOf(false)
     var connectionErrorMessage by mutableStateOf("")
+    val customHeaders = mutableStateListOf<CustomHeaderState>()
 
     private fun updateEnabledStates(enabled: Boolean) {
         name.enabled = enabled
@@ -50,6 +60,53 @@ class ConnectionFormViewModel @Inject constructor(
         basicUser.enabled = enabled
         basicPassword.enabled = enabled
         bearerToken.enabled = enabled
+    }
+    fun addCustomHeader() {
+        if (customHeaders.size < MAX_CUSTOM_HEADERS) {
+            customHeaders.add(CustomHeaderState())
+        }
+    }
+
+    fun removeCustomHeader(index: Int) {
+        if (index in customHeaders.indices) customHeaders.removeAt(index)
+    }
+
+    fun updateCustomHeaderKey(index: Int, key: String) {
+        if (index !in customHeaders.indices) return
+        val current = customHeaders[index]
+        customHeaders[index] = current.copy(
+            key = key,
+            keyError = validateHeaderKey(key)
+        )
+    }
+
+    fun updateCustomHeaderValue(index: Int, value: String) {
+        if (index !in customHeaders.indices) return
+        val current = customHeaders[index]
+        customHeaders[index] = current.copy(
+            value = value,
+            valueError = if (value.isBlank()) "Header value is required" else null
+        )
+    }
+
+    private fun validateHeaderKey(key: String): String? = when {
+        key.isBlank() -> "Header name is required"
+        !key.matches(Regex("[!#\$%&'*+\\-.0-9A-Z^_`a-z|~]+")) ->
+            "Header name contains invalid characters"
+        else -> null
+    }
+
+    private fun validateAllCustomHeaders(): Boolean {
+        var valid = true
+        customHeaders.forEachIndexed { i, h ->
+            val keyError = validateHeaderKey(h.key)
+            val valueError = if (h.value.isBlank()) "Header value is required" else null
+            if (keyError != null || valueError != null) {
+                customHeaders[i] = h.copy(keyError = keyError, valueError = valueError)
+                valid = false
+            }
+        }
+        return valid
     }
 
     fun validateName(value: String) {
@@ -121,9 +178,11 @@ class ConnectionFormViewModel @Inject constructor(
         } else if (authMethod == Enums.AuthMethod.BEARER) {
             validateBearerToken(bearerToken.value)
         }
-        
+        val headersValid = validateAllCustomHeaders()
+
         return name.error == null && ipDomain.error == null && port.error == null &&
-               basicUser.error == null && basicPassword.error == null && bearerToken.error == null
+                basicUser.error == null && basicPassword.error == null && bearerToken.error == null &&
+                headersValid
     }
 
     suspend fun connect(): Boolean {
@@ -138,7 +197,12 @@ class ConnectionFormViewModel @Inject constructor(
             try {
                 val portValue = port.value.ifBlank { null }?.toIntOrNull()
                 val pathValue = path.value.ifBlank { null }
-                
+
+                val headersSnapshot = customHeaders
+                    .filter { it.key.isNotBlank() }
+                    .map { Pair(it.key.trim(), it.value) }
+                    .takeIf { it.isNotEmpty() }
+
                 val tempServer = CSServerModel(
                     name = name.value,
                     http = connectionMethod.value,
@@ -148,7 +212,8 @@ class ConnectionFormViewModel @Inject constructor(
                     authMethod = authMethod.value,
                     basicUser = basicUser.value.ifBlank { null },
                     basicPassword = basicPassword.value.ifBlank { null },
-                    bearerToken = bearerToken.value.ifBlank { null }
+                    bearerToken = bearerToken.value.ifBlank { null },
+                    customHeaders = headersSnapshot
                 )
 
                 val apiClient = CrowdSecApiClient(tempServer)
@@ -163,7 +228,8 @@ class ConnectionFormViewModel @Inject constructor(
                     authMethod = authMethod.value,
                     basicUser = basicUser.value.ifBlank { null },
                     basicPassword = basicPassword.value.ifBlank { null },
-                    bearerToken = bearerToken.value.ifBlank { null }
+                    bearerToken = bearerToken.value.ifBlank { null },
+                    customHeaders = headersSnapshot
                 )
 
                 withContext(Dispatchers.Main) {
@@ -208,6 +274,8 @@ class ConnectionFormViewModel @Inject constructor(
 
         connectionMethod = Enums.ConnectionMethod.HTTP
         authMethod = Enums.AuthMethod.NONE
+
+        customHeaders.clear()
 
         connecting = false
         updateEnabledStates(true)
