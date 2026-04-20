@@ -1,19 +1,22 @@
 package com.jgeek00.crowdsecmonitor.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 
 
 // Code from https://github.com/bocajthomas/ExpressiveCardShape
@@ -73,6 +76,7 @@ fun RoundedCornersListTile(
     onLongClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     selected: Boolean = false,
+    customBackground: Color? = null,
     content: @Composable () -> Unit,
 ) {
     val defaultShape = generateShape(groupSize = totalItems, index = index)
@@ -86,26 +90,62 @@ fun RoundedCornersListTile(
         draggedShape = selectedShape,
     )
 
+    val containerColor = customBackground
+        ?: if (LocalDarkTheme.current)
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        else
+            MaterialTheme.colorScheme.surface
+
     if (onClick != null) {
         SegmentedListItem(
             onClick = onClick,
             onLongClick = onLongClick,
             shapes = shapes,
+            colors = ListItemColors(
+                containerColor = containerColor,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                leadingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                trailingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                overlineContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                supportingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface,
+                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                disabledLeadingContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                disabledTrailingContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                disabledOverlineContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                disabledSupportingContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                selectedContentColor = MaterialTheme.colorScheme.onSurface,
+                selectedLeadingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedTrailingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedOverlineContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedSupportingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                draggedContainerColor = MaterialTheme.colorScheme.onSurface,
+                draggedContentColor = MaterialTheme.colorScheme.onSurface,
+                draggedLeadingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                draggedTrailingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                draggedOverlineContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                draggedSupportingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
             enabled = enabled,
             selected = selected,
-            modifier = Modifier.padding(bottom = if (index == totalItems - 1) 0.dp else 2.dp)
+            modifier = Modifier
+                .padding(bottom = if (index == totalItems - 1) 0.dp else 2.dp)
         ) {
             content()
         }
     } else {
         Card(
             shape = defaultShape,
-            modifier = Modifier.padding(bottom = if (index == totalItems - 1) 0.dp else 2.dp)
+            colors = CardDefaults.cardColors(
+                containerColor = containerColor
+            ),
+            modifier = Modifier
+                .padding(bottom = if (index == totalItems - 1) 0.dp else 2.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
             ) {
                 content()

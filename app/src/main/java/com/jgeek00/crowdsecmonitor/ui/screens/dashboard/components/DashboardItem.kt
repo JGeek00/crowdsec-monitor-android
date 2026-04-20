@@ -33,6 +33,8 @@ import uk.co.bocajsolutions.cardshape.Shape
 import java.util.Locale
 import kotlin.math.roundToInt
 import androidx.compose.ui.platform.LocalLocale
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
+import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -47,113 +49,120 @@ fun DashboardItem(
     isHighlighted: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val groupedShape = Shape(groupSize = listLength, index = index)
-
     val rowBackground by animateColorAsState(
         targetValue = if (isHighlighted) MaterialTheme.colorScheme.primaryContainer
-                      else MaterialTheme.colorScheme.background,
+                      else (
+                        if (LocalDarkTheme.current)
+                            MaterialTheme.colorScheme.surfaceContainerHigh
+                        else
+                            MaterialTheme.colorScheme.surface
+                      ),
         animationSpec = tween(durationMillis = 120),
         label = "itemHighlight"
     )
 
-    Card(
-        modifier = modifier.padding(bottom = if (index == listLength - 1) 0.dp else 2.dp),
-        shape = groupedShape
+    Box(
+        modifier = modifier
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(rowBackground)
-                .padding(16.dp)
+        RoundedCornersListTile(
+            index = index,
+            totalItems = listLength,
+            customBackground = rowBackground
         ) {
             Row(
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .padding(vertical = 6.dp)
+                    .fillMaxWidth()
             ) {
-                if (color != null) {
-                    ColorDot(color)
-                    Spacer(Modifier.width(8.dp))
-                }
-                when (itemType) {
-                    Enums.DashboardItemType.COUNTRY -> {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(label.toFlagEmoji())
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = Locale(
-                                    "",
-                                    label.uppercase()
-                                ).getDisplayCountry(LocalLocale.current.platformLocale)
-                                    .ifBlank { label.uppercase() },
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (color != null) {
+                        ColorDot(color)
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    when (itemType) {
+                        Enums.DashboardItemType.COUNTRY -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(label.toFlagEmoji())
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = Locale(
+                                        "",
+                                        label.uppercase()
+                                    ).getDisplayCountry(LocalLocale.current.platformLocale)
+                                        .ifBlank { label.uppercase() },
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+
+                        Enums.DashboardItemType.IP_OWNER -> {
+                            Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+
+                        Enums.DashboardItemType.SCENARIO -> {
+                            val parts = label.split("/")
+                            val type = parts.getOrNull(0)?.trim() ?: label
+                            val name = parts.getOrNull(1)?.trim() ?: ""
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = type,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color.Gray)
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = name,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+
+                        Enums.DashboardItemType.TARGET -> {
+                            Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
-
-                    Enums.DashboardItemType.IP_OWNER -> {
-                        Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
-
-                    Enums.DashboardItemType.SCENARIO -> {
-                        val parts = label.split("/")
-                        val type = parts.getOrNull(0)?.trim() ?: label
-                        val name = parts.getOrNull(1)?.trim() ?: ""
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = type,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.Gray)
-                                    .padding(horizontal = 8.dp, vertical = 2.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = name,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-
-                    Enums.DashboardItemType.TARGET -> {
-                        Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
                 }
-            }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "$amount",
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = "(${(percentage * 100).roundToInt()}%)",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible
-                )
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "$amount",
+                        maxLines = 1,
+                        overflow = TextOverflow.Visible
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = "(${(percentage * 100).roundToInt()}%)",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Visible
+                    )
+                }
             }
         }
     }

@@ -2,6 +2,9 @@ package com.jgeek00.crowdsecmonitor.ui.screens.settings.components
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.Icon
@@ -10,11 +13,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
@@ -98,8 +103,10 @@ fun ServerInformationSection(
 
     SectionHeader(stringResource(R.string.information_section))
 
+    val newVersion = (status as? LoadingResult.Success)?.value?.csMonitorApi?.newVersionAvailable
+
     var idx = 0
-    val itemsLength = 3
+    val itemsLength = if (newVersion != null) 4 else 4
     RoundedCornersListTile(
         index = idx++,
         totalItems = itemsLength,
@@ -128,31 +135,38 @@ fun ServerInformationSection(
         )
     }
 
-    val newVersion = (status as? LoadingResult.Success)?.value?.csMonitorApi?.newVersionAvailable
-
     if (newVersion != null) {
-        ListItem(
-            modifier = Modifier.clickable {
+        RoundedCornersListTile(
+            index = idx,
+            totalItems = itemsLength,
+            onClick = {
                 val intent = Intent(Intent.ACTION_VIEW, URLs.API_PACKAGE.toUri())
                 context.startActivity(intent)
-            },
-            leadingContent = {
-                Icon(
-                    imageVector = Icons.Rounded.Update,
-                    contentDescription = null,
-                    tint = Color(0xFF4CAF50)
-                )
-            },
-            headlineContent = {
-                Text(
-                    text = stringResource(R.string.new_version_available),
-                    color = Color(0xFF4CAF50),
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold
+            }
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Update,
+                        contentDescription = null,
+                        tint = Color(0xFF4CAF50)
                     )
-                )
-            },
-            trailingContent = {
+                    Text(
+                        text = stringResource(R.string.new_version_available),
+                        color = Color(0xFF4CAF50),
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
                 Text(
                     text = newVersion,
                     color = Color(0xFF4CAF50),
@@ -161,6 +175,6 @@ fun ServerInformationSection(
                     )
                 )
             }
-        )
+        }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -33,14 +34,14 @@ fun MultiSelectFilterContent(
         items(options) { option ->
             val isChecked = option in selected
             val index = options.indexOf(option)
-            SegmentedListItem(
-                checked = isChecked,
-                onCheckedChange = {
+            RoundedCornersListTile(
+                index = index,
+                totalItems = options.size,
+                selected = isChecked,
+                onClick = {
                     val newSelected = if (isChecked) selected - option else selected + option
                     onChange(newSelected)
                 },
-                shapes = ListItemDefaults.segmentedShapes(index = index, count = options.size),
-                modifier = Modifier.padding(bottom = if (index < options.size - 1) 2.dp else 0.dp)
             ) {
                 Row(
                     modifier = Modifier
