@@ -92,7 +92,7 @@ fun RoundedCornersListTile(
 
     val containerColor = customBackground
         ?: if (LocalDarkTheme.current)
-            MaterialTheme.colorScheme.surfaceContainerHigh
+            MaterialTheme.colorScheme.surfaceContainerHighest
         else
             MaterialTheme.colorScheme.surface
 

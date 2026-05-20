@@ -106,7 +106,7 @@ fun ServerInformationSection(
     val newVersion = (status as? LoadingResult.Success)?.value?.csMonitorApi?.newVersionAvailable
 
     var idx = 0
-    val itemsLength = if (newVersion != null) 4 else 4
+    val itemsLength = if (newVersion != null) 4 else 3
     RoundedCornersListTile(
         index = idx++,
         totalItems = itemsLength,

@@ -53,7 +53,7 @@ fun DashboardItem(
         targetValue = if (isHighlighted) MaterialTheme.colorScheme.primaryContainer
                       else (
                         if (LocalDarkTheme.current)
-                            MaterialTheme.colorScheme.surfaceContainerHigh
+                            MaterialTheme.colorScheme.surfaceContainerHighest
                         else
                             MaterialTheme.colorScheme.surface
                       ),
