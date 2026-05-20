@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.jgeek00.crowdsecmonitor"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.jgeek00.crowdsecmonitor"
         minSdk = 31
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 6
         versionName = "1.2.0"
 
