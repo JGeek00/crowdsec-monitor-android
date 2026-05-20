@@ -254,6 +254,7 @@
     <string name="allowlist_label">Allowlist: %s</string>
     <string name="no_servers_configured_message">Add a server to start monitoring your CrowdSec Instance.</string>
     <string name="status">Status</string>
+    <string name="switch_server">Switch server</string>
     <string name="service_status">Service status</string>
     <string name="lapi_available">LAPI available</string>
     <string name="bouncer_available">Bouncer available</string>

@@ -249,6 +249,7 @@
     <string name="allowlist_label">Lista de permitidos: %s</string>
     <string name="no_servers_configured_message">Añade un servidor para empezar a monitorizar tu instancia de CrowdSec.</string>
     <string name="status">Estado</string>
+    <string name="switch_server">Cambiar servidor</string>
     <string name="service_status">Estado del servicio</string>
     <string name="lapi_available">LAPI disponible</string>
     <string name="bouncer_available">Bouncer disponible</string>

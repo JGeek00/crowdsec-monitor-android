@@ -4,14 +4,21 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Dns
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
@@ -20,8 +27,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,11 +51,15 @@ import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponse
 import com.jgeek00.crowdsecmonitor.data.models.StatisticsResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.ui.components.LargeTopAppBarWithRefresh
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components.DashboardContentPhone
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.components.DashboardContentTablet
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.status.ServiceStatusScreen
+import com.jgeek00.crowdsecmonitor.utils.buildServerUrl
 import com.jgeek00.crowdsecmonitor.viewmodel.DashboardViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,9 +67,11 @@ fun DashboardScreen(
     onNavigateToFullList: (Enums.DashboardItemType) -> Unit,
     dashboardViewModel: DashboardViewModel = hiltViewModel(),
     serviceStatusViewModel: ServiceStatusViewModel = hiltViewModel(),
+    serversManagerViewModel: ServersManagerViewModel = hiltViewModel(),
 ) {
     val isTablet = LocalConfiguration.current.screenWidthDp >= 600
     var statusScreenPresented by remember { mutableStateOf(false) }
+    var showServerSwitcher by remember { mutableStateOf(false) }
     val serviceStatus = serviceStatusViewModel.status.collectAsState().value
 
     LargeTopAppBarWithRefresh(
@@ -87,6 +102,16 @@ fun DashboardScreen(
                         }
                     }
                     Text(stringResource(R.string.status))
+                }
+            }
+            if (serversManagerViewModel.servers.size > 1) {
+                IconButton(
+                    onClick = { showServerSwitcher = true },
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Dns,
+                        contentDescription = stringResource(R.string.switch_server)
+                    )
                 }
             }
         }
@@ -146,6 +171,68 @@ fun DashboardScreen(
         ServiceStatusScreen(
             onClose = { statusScreenPresented = false },
         )
+    }
+
+    if (showServerSwitcher) {
+        val sheetState = rememberModalBottomSheetState()
+        ModalBottomSheet(
+            onDismissRequest = { showServerSwitcher = false },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            dragHandle = {
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .size(width = 40.dp, height = 4.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            shape = MaterialTheme.shapes.small
+                        )
+                )
+            }
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                items(serversManagerViewModel.servers, key = { it.id }) { server ->
+                    val index = serversManagerViewModel.servers.indexOf(server)
+                    val isCurrentServer = server.id == serversManagerViewModel.currentServer?.id
+                    RoundedCornersListTile(
+                        index = index,
+                        totalItems = serversManagerViewModel.servers.size,
+                        onClick = {
+                            if (!isCurrentServer) {
+                                serversManagerViewModel.changeCurrentServer(server)
+                                showServerSwitcher = false
+                            }
+                        },
+                        selected = isCurrentServer,
+                    ) {
+                        ListItemContent(
+                            headlineText = server.name,
+                            subHeadlineText = buildServerUrl(server),
+                            leadingContent = {
+                                Icon(
+                                    imageVector = Icons.Rounded.Dns,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            trailingContent = {
+                                if (isCurrentServer) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            },
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.navigationBarsPadding())
+        }
     }
 }
 
