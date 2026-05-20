@@ -18,6 +18,7 @@ data class BlocklistsListResponseItem(
     @SerialName("added_date") val addedDate: String? = null,
     @SerialName("last_refresh_attempt") val lastRefreshAttempt: String? = null,
     @SerialName("last_successful_refresh") val lastSuccessfulRefresh: String? = null,
+    @SerialName("last_refresh_failed") val lastRefreshFailed: Boolean? = null,
     @SerialName("count_ips") val countIps: Int,
     @SerialName("type") val type: BlocklistType
 )

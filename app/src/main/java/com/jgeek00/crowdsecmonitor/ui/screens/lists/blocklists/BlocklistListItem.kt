@@ -64,13 +64,6 @@ fun BlocklistListItem(
     var menuExpanded by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
 
-    val showRefreshWarning = remember(blocklist.lastRefreshAttempt, blocklist.lastSuccessfulRefresh) {
-        val attempt = blocklist.lastRefreshAttempt?.toInstant() ?: return@remember false
-        val successful = blocklist.lastSuccessfulRefresh?.toInstant() ?: return@remember false
-        val diffSeconds = abs(attempt.epochSecond - successful.epochSecond)
-        diffSeconds >= 3600L
-    }
-
     val serviceStatus = serviceStatusViewModel.status.collectAsState().value
     val blocklistProcess = getBlocklistActiveProcess(serviceStatus.data, blocklist.id)
 
@@ -114,7 +107,7 @@ fun BlocklistListItem(
                         color = MaterialTheme.colorScheme.tertiary
                     )
                 }
-                if (showRefreshWarning && blocklistProcess == null) {
+                if (blocklist.lastRefreshFailed == true) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(

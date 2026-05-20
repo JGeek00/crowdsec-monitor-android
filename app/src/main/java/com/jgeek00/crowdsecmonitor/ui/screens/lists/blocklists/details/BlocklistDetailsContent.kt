@@ -75,20 +75,14 @@ fun BlocklistDetailsContent(
     val coroutineScope = rememberCoroutineScope()
     val urlCopiedMessage = stringResource(R.string.url_copied_to_clipboard)
 
-    val refreshWarning = remember(data.lastRefreshAttempt, data.lastSuccessfulRefresh) {
-        val attempt = data.lastRefreshAttempt?.toInstant() ?: return@remember false
-        val successful = data.lastSuccessfulRefresh?.toInstant() ?: return@remember false
-        abs(attempt.epochSecond - successful.epochSecond) >= 300L
-    }
-
-    val infoCount = remember(data, refreshWarning) {
+    val infoCount = remember(data, data.lastRefreshFailed) {
         var count = 2
         if (data.url != null) count++
         count++
         if (data.enabled != null) count++
         if (data.addedDate != null) count++
         if (data.lastSuccessfulRefresh != null) count++
-        if (refreshWarning && data.lastRefreshAttempt != null) count++
+        if (data.lastRefreshFailed == true && data.lastRefreshAttempt != null) count++
         count
     }
 
@@ -195,13 +189,13 @@ fun BlocklistDetailsContent(
                         index = tileIdx++, totalItems = infoCount,
                     ) {
                         ListItemContent(
-                            headlineText = if (refreshWarning) stringResource(R.string.last_successful_refresh)
+                            headlineText = if (data.lastRefreshFailed == true) stringResource(R.string.last_successful_refresh)
                             else stringResource(R.string.last_refresh),
                             subHeadlineText = data.lastSuccessfulRefresh.toFormattedDateTime()
                         )
                     }
                 }
-                if (refreshWarning && data.lastRefreshAttempt != null && blocklistProcess == null) {
+                if (data.lastRefreshFailed == true && data.lastRefreshAttempt != null) {
                     RoundedCornersListTile(
                         index = tileIdx, totalItems = infoCount,
                     ) {
