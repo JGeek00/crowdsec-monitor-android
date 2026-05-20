@@ -15,8 +15,8 @@ android {
         applicationId = "com.jgeek00.crowdsecmonitor"
         minSdk = 31
         targetSdk = 37
-        versionCode = 6
-        versionName = "1.2.0"
+        versionCode = 7
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
