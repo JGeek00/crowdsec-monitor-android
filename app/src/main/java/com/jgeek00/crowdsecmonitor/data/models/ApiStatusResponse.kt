@@ -22,8 +22,8 @@ data class ApiStatusResponseCSBouncer(
 @Serializable
 data class ApiStatusResponseCSLapi(
     val lapiConnected: Boolean,
-    val lastSuccessfulSync: String? = null,
-    val timestamp: String? = null
+    val lastSuccessfulSync: String,
+    val timestamp: String
 )
 
 @Serializable
@@ -58,6 +58,7 @@ enum class ApiStatusResponseProcessBlocklistFieldStatus {
 enum class ApiStatusResponseProcessBlocklistStep {
     @SerialName("fetch") FETCH,
     @SerialName("parse") PARSE,
+    @SerialName("delete") DELETE,
     @SerialName("import") IMPORT
 }
 
@@ -90,8 +91,25 @@ data class ApiStatusResponseProcessBlocklist(
 @Serializable
 data class ApiStatusResponseProcessBlocklistRefresh(
     val totalBlocklists: Int,
-    val processedBlocklists: Int,
-    val successful: Int,
-    val failed: Int
+    val currentBlocklist: Int,
+    val blocklists: List<ApiStatusResponseProcessBlocklistRefreshBlocklist>,
+    @SerialName("totalIps")
+    val totalIps: Int
+)
+
+@Serializable
+data class ApiStatusResponseProcessBlocklistRefreshBlocklist(
+    val number: Int,
+    val name: String,
+    val steps: ApiStatusResponseProcessBlocklistRefreshBlocklistSteps
+)
+
+@Serializable
+data class ApiStatusResponseProcessBlocklistRefreshBlocklistSteps(
+    val fetch: ApiStatusResponseProcessBlocklistFieldStatus,
+    val parse: ApiStatusResponseProcessBlocklistFieldStatus,
+    val delete: ApiStatusResponseProcessBlocklistFieldStatus,
+    @SerialName("import")
+    val imported: ApiStatusResponseProcessBlocklistFieldStatus
 )
 

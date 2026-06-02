@@ -271,7 +271,11 @@
     <string name="finished_at_fmt">Finished at %s</string>
     <string name="step_fetch">Fetch</string>
     <string name="step_parse">Parse</string>
+    <string name="step_delete">Delete</string>
     <string name="step_import">Import</string>
+    <string name="refresh_current_label">Current</string>
+    <string name="refresh_total_label">Total</string>
+    <string name="refresh_progress_of_fmt">%1$d of %2$d</string>
     <string name="delete_blocklist_fmt">Delete blocklist %s</string>
     <string name="disable_blocklist_fmt">Disable blocklist %s</string>
     <string name="processed_progress_fmt">Processed %1$d of %2$d IPs</string>

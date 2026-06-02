@@ -1,14 +1,15 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.dashboard.status
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Cancel
@@ -23,34 +24,72 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcessBlocklistFieldStatus
 import com.jgeek00.crowdsecmonitor.data.models.ApiStatusResponseProcessBlocklistStep
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
-import androidx.compose.ui.text.font.FontWeight
+
+private val LEFT_RADIUS = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp, topEnd = 0.dp, bottomEnd = 0.dp)
+private val RIGHT_RADIUS = RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, topEnd = 20.dp, bottomEnd = 20.dp)
+private val NO_RADIUS = RoundedCornerShape(0.dp)
 
 @Composable
 fun StatusProcessStepper(
 	fetch: ApiStatusResponseProcessBlocklistFieldStatus,
 	parse: ApiStatusResponseProcessBlocklistFieldStatus,
+	delete: ApiStatusResponseProcessBlocklistFieldStatus? = null,
 	imp: ApiStatusResponseProcessBlocklistFieldStatus,
+	joinedMode: Boolean = false,
 	modifier: Modifier = Modifier
 ) {
-	Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-		StepPill(step = ApiStatusResponseProcessBlocklistStep.FETCH, status = fetch)
-		StepDivider()
-		StepPill(step = ApiStatusResponseProcessBlocklistStep.PARSE, status = parse)
-		StepDivider()
-		StepPill(step = ApiStatusResponseProcessBlocklistStep.IMPORT, status = imp)
+	val spacing = if (joinedMode) 2.dp else 6.dp
+
+	Row(
+		modifier = modifier.fillMaxWidth(),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally)
+	) {
+		StepPill(
+			step = ApiStatusResponseProcessBlocklistStep.FETCH,
+			status = fetch,
+			shape = if (joinedMode) LEFT_RADIUS else RoundedCornerShape(20.dp),
+			joinedMode = joinedMode
+		)
+
+		StepPill(
+			step = ApiStatusResponseProcessBlocklistStep.PARSE,
+			status = parse,
+			shape = if (joinedMode) NO_RADIUS else RoundedCornerShape(20.dp),
+			joinedMode = joinedMode
+		)
+
+		if (delete != null) {
+			StepPill(
+				step = ApiStatusResponseProcessBlocklistStep.DELETE,
+				status = delete,
+				shape = if (joinedMode) NO_RADIUS else RoundedCornerShape(20.dp),
+				joinedMode = joinedMode
+			)
+		}
+
+		StepPill(
+			step = ApiStatusResponseProcessBlocklistStep.IMPORT,
+			status = imp,
+			shape = if (joinedMode) RIGHT_RADIUS else RoundedCornerShape(20.dp),
+			joinedMode = joinedMode
+		)
 	}
 }
 
 @Composable
-private fun StepPill(step: ApiStatusResponseProcessBlocklistStep, status: ApiStatusResponseProcessBlocklistFieldStatus) {
+private fun StepPill(
+	step: ApiStatusResponseProcessBlocklistStep,
+	status: ApiStatusResponseProcessBlocklistFieldStatus,
+	shape: RoundedCornerShape,
+	joinedMode: Boolean
+) {
 	val color = when (status) {
 		ApiStatusResponseProcessBlocklistFieldStatus.PENDING -> Color.Gray
 		ApiStatusResponseProcessBlocklistFieldStatus.RUNNING -> Color(0xFF2196F3) // blue
@@ -61,28 +100,31 @@ private fun StepPill(step: ApiStatusResponseProcessBlocklistStep, status: ApiSta
 	val label = when (step) {
 		ApiStatusResponseProcessBlocklistStep.FETCH -> stringResource(R.string.step_fetch)
 		ApiStatusResponseProcessBlocklistStep.PARSE -> stringResource(R.string.step_parse)
+		ApiStatusResponseProcessBlocklistStep.DELETE -> stringResource(R.string.step_delete)
 		ApiStatusResponseProcessBlocklistStep.IMPORT -> stringResource(R.string.step_import)
 	}
 
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.spacedBy(6.dp),
 		modifier = Modifier
-			.clip(RoundedCornerShape(20.dp))
+			.clip(shape)
 			.background(color)
 			.padding(horizontal = 8.dp, vertical = 4.dp)
 	) {
 		when (status) {
 			ApiStatusResponseProcessBlocklistFieldStatus.RUNNING -> {
 				CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = Color.White)
-				Spacer(modifier = Modifier.width(6.dp))
 			}
 			ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL -> {
-				Icon(imageVector = Icons.Rounded.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-				Spacer(modifier = Modifier.width(4.dp))
+				if (!joinedMode) {
+					Icon(imageVector = Icons.Rounded.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+				}
 			}
 			ApiStatusResponseProcessBlocklistFieldStatus.FAILED -> {
-				Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-				Spacer(modifier = Modifier.width(4.dp))
+				if (!joinedMode) {
+					Icon(imageVector = Icons.Rounded.Cancel, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+				}
 			}
 			else -> { /* pending: no icon */ }
 		}
@@ -91,22 +133,11 @@ private fun StepPill(step: ApiStatusResponseProcessBlocklistStep, status: ApiSta
 			text = label,
 			color = Color.White,
 			style = MaterialTheme.typography.bodySmall,
-			fontWeight = FontWeight.Medium
+			fontWeight = FontWeight.SemiBold,
+			maxLines = 1
 		)
 	}
 }
-
-@Composable
-private fun RowScope.StepDivider() {
-	Box(
-		modifier = Modifier
-			.weight(1f)
-			.height(2.dp)
-			.padding(horizontal = 4.dp)
-			.background(Color.Gray, shape = RoundedCornerShape(20.dp))
-	)
-}
-
 
 @Preview(showBackground = true)
 @Composable
@@ -203,5 +234,25 @@ fun Preview_StatusProcessStepper_ImportSuccess() {
 			.padding(16.dp)
 	) {
 		StatusProcessStepper(fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL, imp = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL)
+	}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview_StatusProcessStepper_WithDelete() {
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.surfaceVariant)
+			.padding(16.dp)
+	) {
+		StatusProcessStepper(
+			fetch = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL,
+			parse = ApiStatusResponseProcessBlocklistFieldStatus.SUCCESSFUL,
+			delete = ApiStatusResponseProcessBlocklistFieldStatus.RUNNING,
+			imp = ApiStatusResponseProcessBlocklistFieldStatus.PENDING,
+			joinedMode = true
+		)
 	}
 }
