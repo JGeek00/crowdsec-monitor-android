@@ -51,6 +51,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.event.EventItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
+import com.jgeek00.crowdsecmonitor.utils.parseScenario
 import com.jgeek00.crowdsecmonitor.utils.reverseGeocode
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -113,9 +114,9 @@ fun AlertDetailsContent(
                 SectionHeader(text = stringResource(R.string.scenario))
             }
             item {
-                val scenarioParts = data.scenario.split("/")
-                val author = scenarioParts.getOrNull(0) ?: data.scenario
-                val name = scenarioParts.getOrNull(1) ?: ""
+                val parts = parseScenario(data.scenario)
+                val author = parts.author
+                val name = parts.name
                 val hubUrl = URLs.crowdsecHubScenario(data.scenario)
 
                 val scenarioGroupSize = buildList {

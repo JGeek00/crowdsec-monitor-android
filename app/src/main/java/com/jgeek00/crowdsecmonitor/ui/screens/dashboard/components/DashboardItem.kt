@@ -34,6 +34,7 @@ import java.util.Locale
 import kotlin.math.roundToInt
 import androidx.compose.ui.platform.LocalLocale
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
+import com.jgeek00.crowdsecmonitor.utils.parseScenario
 import com.jgeek00.crowdsecmonitor.ui.theme.LocalDarkTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -111,9 +112,9 @@ fun DashboardItem(
                         }
 
                         Enums.DashboardItemType.SCENARIO -> {
-                            val parts = label.split("/")
-                            val type = parts.getOrNull(0)?.trim() ?: label
-                            val name = parts.getOrNull(1)?.trim() ?: ""
+                            val parts = parseScenario(label)
+                            val type = parts.author.trim()
+                            val name = parts.name.trim()
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()

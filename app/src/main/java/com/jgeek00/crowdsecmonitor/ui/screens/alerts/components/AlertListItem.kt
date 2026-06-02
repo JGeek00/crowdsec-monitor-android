@@ -42,6 +42,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
 import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
 import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
+import com.jgeek00.crowdsecmonitor.utils.parseScenario
 import com.jgeek00.crowdsecmonitor.viewmodel.AlertsListViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -137,7 +138,7 @@ private fun Content(
     alert: AlertsListResponseAlert,
 ) {
     val context = LocalContext.current
-    val scenarioSplit = alert.scenario.split("/")
+    val parts = parseScenario(alert.scenario)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -145,17 +146,19 @@ private fun Content(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
+            if (parts.name.isNotBlank()) {
+                Text(
+                    text = parts.author,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+            }
             Text(
-                text = scenarioSplit[0],
-                fontWeight = FontWeight.Medium,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = scenarioSplit[1],
+                text = parts.name.ifBlank { parts.author },
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,

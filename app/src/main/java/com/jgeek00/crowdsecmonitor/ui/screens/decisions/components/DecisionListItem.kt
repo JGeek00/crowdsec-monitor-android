@@ -44,6 +44,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
 import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
 import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItemRole
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
+import com.jgeek00.crowdsecmonitor.utils.parseScenario
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 import uk.co.bocajsolutions.cardshape.Shape
 import uk.co.bocajsolutions.cardshape.ShapeStyle
@@ -63,8 +64,8 @@ fun DecisionListItem(
     var showExpireError by remember { mutableStateOf(false) }
 
     val scenarioLabel = remember(decision.scenario) {
-        val parts = decision.scenario.split("/")
-        if (parts.size >= 2) parts.last() else decision.scenario
+        val parts = parseScenario(decision.scenario)
+        parts.name.ifBlank { parts.author }
     }
 
         if (onNavigateToDetails != null) {

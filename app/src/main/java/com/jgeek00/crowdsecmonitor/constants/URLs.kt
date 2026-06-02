@@ -1,5 +1,7 @@
 package com.jgeek00.crowdsecmonitor.constants
 
+import com.jgeek00.crowdsecmonitor.utils.parseScenario
+
 object URLs {
     const val API_PACKAGE = "https://github.com/jgeek00/crowdsec-monitor-api/releases"
     const val API_REPO = "https://github.com/JGeek00/crowdsec-monitor-api"
@@ -8,9 +10,9 @@ object URLs {
     const val PAYPAL = "https://www.paypal.com/donate/?hosted_button_id=T63UK6AVL3MG8"
 
     fun crowdsecHubScenario(scenario: String): String {
-        val parts = scenario.split("/")
-        return if (parts.size >= 2) {
-            "https://hub.crowdsec.net/author/${parts[0]}/configurations/${parts[1]}"
+        val parts = parseScenario(scenario)
+        return if (parts.name.isNotBlank()) {
+            "https://hub.crowdsec.net/author/${parts.author}/configurations/${parts.name}"
         } else {
             "https://hub.crowdsec.net"
         }

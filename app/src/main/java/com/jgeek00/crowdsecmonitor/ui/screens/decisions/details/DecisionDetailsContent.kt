@@ -50,6 +50,7 @@ import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.alerts.components.AlertListItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionTimer
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionTypeChip
+import com.jgeek00.crowdsecmonitor.utils.parseScenario
 import com.jgeek00.crowdsecmonitor.utils.reverseGeocode
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -77,9 +78,9 @@ fun DecisionDetailsContent(
         }
     }
 
-    val scenarioParts = remember(data.scenario) { data.scenario.split("/") }
-    val scenarioAuthor = scenarioParts.getOrNull(0) ?: data.scenario
-    val scenarioName = scenarioParts.getOrNull(1) ?: ""
+    val scenarioParts = remember(data.scenario) { parseScenario(data.scenario) }
+    val scenarioAuthor = scenarioParts.author
+    val scenarioName = scenarioParts.name
     val hubUrl = remember(data.scenario) { URLs.crowdsecHubScenario(data.scenario) }
 
     PullToRefreshBox(
