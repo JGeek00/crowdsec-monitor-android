@@ -296,4 +296,5 @@
     <string name="header_value">Header value</string>
     <string name="add_custom_header">Add header</string>
     <string name="remove_custom_header">Remove header</string>
+    <string name="last_refresh_attempt_failed">Last refresh attempt failed</string>
 </resources>

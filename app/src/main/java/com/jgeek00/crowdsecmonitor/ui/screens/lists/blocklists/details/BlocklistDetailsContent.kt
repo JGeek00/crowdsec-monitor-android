@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -38,6 +39,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Defaults
@@ -45,14 +47,12 @@ import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistDataResponseData
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistType
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
-import com.jgeek00.crowdsecmonitor.extensions.toInstant
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.getBlocklistActiveProcess
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.getProcessType
 import com.jgeek00.crowdsecmonitor.viewmodel.ServiceStatusViewModel
-import kotlin.math.abs
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -200,14 +200,19 @@ fun BlocklistDetailsContent(
                         index = tileIdx, totalItems = infoCount,
                     ) {
                         ListItemContent(
-                            headlineText = stringResource(R.string.last_refresh_attempt),
-                            trailingContent = {
+                            headlineText = if (!data.lastRefreshFailed) stringResource(R.string.last_refresh_attempt) else stringResource(R.string.last_refresh_attempt_failed),
+                            subHeadlineComponent = {
                                 Text(
-                                    text = data.lastRefreshAttempt.toFormattedDateTime(),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.error
+                                    data.lastRefreshAttempt.toFormattedDateTime(),
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontSize = 14.sp
                                 )
-                            }
+                            },
+                            trailingContent = { if (data.lastRefreshFailed) Icon(
+                                imageVector = Icons.Rounded.Error,
+                                contentDescription = stringResource(R.string.blocklist_refresh_failed),
+                                tint = MaterialTheme.colorScheme.error
+                            ) }
                         )
                     }
                 }

@@ -291,4 +291,5 @@
     <string name="header_value">Valor de la cabecera</string>
     <string name="add_custom_header">Añadir cabecera</string>
     <string name="remove_custom_header">Eliminar cabecera</string>
+    <string name="last_refresh_attempt_failed">Último intento de refresco fallido</string>
 </resources>
