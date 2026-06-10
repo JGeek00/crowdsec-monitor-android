@@ -55,14 +55,20 @@ class DecisionsListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
+            defaultRequest = buildDefaultRequest(showOnlyActive)
+            filters = defaultRequest.filters
+        }
+        viewModelScope.launch {
             snapshotFlow { sessionManager.apiClient }.collect { client ->
-                reset()
+                resetWithPreference()
                 if (client != null) fetchDecisions(showLoading = true)
             }
         }
         viewModelScope.launch {
             preferencesRepository.showDefaultActiveDecisions.collect { showOnlyActive ->
                 defaultRequest = buildDefaultRequest(showOnlyActive)
+                filters = defaultRequest.filters
             }
         }
         viewModelScope.launch {
@@ -75,6 +81,17 @@ class DecisionsListViewModel @Inject constructor(
                 refreshDecisionsInternal()
             }
         }
+    }
+
+    private suspend fun resetWithPreference() {
+        val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
+        defaultRequest = buildDefaultRequest(showOnlyActive)
+        state = LoadingResult.Loading
+        requestParams = defaultRequest
+        filters = defaultRequest.filters
+        expiringDecisionProcess = false
+        isRefreshing = false
+        isLoadingMore = false
     }
 
     fun reset() {
@@ -104,11 +121,7 @@ class DecisionsListViewModel @Inject constructor(
     fun initialFetchDecisions() {
         if (state.data != null || state.isLoading) return
         viewModelScope.launch {
-            val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
-            val req = buildDefaultRequest(showOnlyActive)
-            defaultRequest = req
-            requestParams = req
-            filters = req.filters
+            resetWithPreference()
             fetchDecisions(showLoading = true)
         }
     }
@@ -172,9 +185,12 @@ class DecisionsListViewModel @Inject constructor(
     }
 
     fun resetFilters() {
-        filters = defaultRequest.filters
-        requestParams = requestParams.copy(filters = defaultRequest.filters)
         viewModelScope.launch {
+            val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
+            val req = buildDefaultRequest(showOnlyActive)
+            defaultRequest = req
+            filters = defaultRequest.filters
+            requestParams = requestParams.copy(filters = defaultRequest.filters)
             fetchDecisions(showLoading = true, params = defaultRequest)
         }
     }

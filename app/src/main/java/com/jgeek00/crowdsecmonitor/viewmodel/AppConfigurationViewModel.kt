@@ -9,6 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.constants.Defaults
 import com.jgeek00.crowdsecmonitor.data.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +21,9 @@ import javax.inject.Inject
 class AppConfigurationViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
+
+    private val saveJob = SupervisorJob()
+    private val saveScope = CoroutineScope(Dispatchers.IO + saveJob)
 
     var topItemsDashboard by mutableIntStateOf(Defaults.TOP_ITEMS_DASHBOARD)
         private set
@@ -38,22 +45,27 @@ class AppConfigurationViewModel @Inject constructor(
     fun updateTopItemsDashboard(value: Int) {
         val clamped = value.coerceIn(Defaults.TOP_ITEMS_DASHBOARD_MIN, Defaults.TOP_ITEMS_DASHBOARD_MAX)
         topItemsDashboard = clamped
-        viewModelScope.launch {
+        saveScope.launch {
             preferencesRepository.setTopItemsDashboard(clamped)
         }
     }
 
     fun updateShowDefaultActiveDecisions(value: Boolean) {
         showDefaultActiveDecisions = value
-        viewModelScope.launch {
+        saveScope.launch {
             preferencesRepository.setShowDefaultActiveDecisions(value)
         }
     }
 
     fun updateDisableDecisionTimerAnimation(value: Boolean) {
         disableDecisionTimerAnimation = value
-        viewModelScope.launch {
+        saveScope.launch {
             preferencesRepository.setDisableDecisionTimerAnimation(value)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        saveJob.cancel()
     }
 }
