@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,21 +71,26 @@ fun DecisionsFiltersSheet(
                 .padding(horizontal = 16.dp, vertical = 16.dp)
                 .fillMaxWidth()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            RoundedCornersListTile(
+                index = 0,
+                totalItems = 1,
             ) {
-                Text(
-                    text = stringResource(R.string.only_active),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = viewModel.filters.onlyActive == true,
-                    onCheckedChange = { checked ->
-                        viewModel.updateFilters(viewModel.filters.copy(onlyActive = checked))
-                    }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.only_active),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = viewModel.filters.onlyActive == true,
+                        onCheckedChange = { checked ->
+                            viewModel.updateFilters(viewModel.filters.copy(onlyActive = checked))
+                        }
+                    )
+                }
             }
         }
     }
