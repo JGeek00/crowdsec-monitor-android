@@ -10,6 +10,7 @@ import com.jgeek00.crowdsecmonitor.data.models.BlocklistsCheckIPsResponse
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistsListResponse
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistsRequest
 import com.jgeek00.crowdsecmonitor.data.models.EmptyResponse
+import com.jgeek00.crowdsecmonitor.data.models.RefreshBlocklistsResponse
 import com.jgeek00.crowdsecmonitor.data.models.HttpClientException
 import com.jgeek00.crowdsecmonitor.data.models.HttpResponse
 import com.jgeek00.crowdsecmonitor.data.models.ToggleBlocklistRequest
@@ -150,6 +151,46 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
         }
     }
 
+    suspend fun refreshAllBlocklists(): HttpResponse<RefreshBlocklistsResponse> {
+        return try {
+            val response = service.refreshAllBlocklists()
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                HttpResponse(successful = true, statusCode = response.code(), body = body)
+            } else {
+                httpClient.handleHttpError(response)
+            }
+        } catch (e: HttpClientException) {
+            throw e
+        } catch (e: SerializationException) {
+            throw HttpClientException.DecodingError(e)
+        } catch (e: IOException) {
+            throw HttpClientException.NetworkError(e)
+        } catch (e: Exception) {
+            throw HttpClientException.NetworkError(e)
+        }
+    }
+
+    suspend fun refreshBlocklist(blocklistId: String): HttpResponse<RefreshBlocklistsResponse> {
+        return try {
+            val response = service.refreshBlocklist(blocklistId)
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                HttpResponse(successful = true, statusCode = response.code(), body = body)
+            } else {
+                httpClient.handleHttpError(response)
+            }
+        } catch (e: HttpClientException) {
+            throw e
+        } catch (e: SerializationException) {
+            throw HttpClientException.DecodingError(e)
+        } catch (e: IOException) {
+            throw HttpClientException.NetworkError(e)
+        } catch (e: Exception) {
+            throw HttpClientException.NetworkError(e)
+        }
+    }
+
     suspend fun checkIps(body: BlocklistsCheckIPsRequest): HttpResponse<BlocklistsCheckIPsResponse> {
         return try {
             val response = service.checkIps(body)
@@ -222,6 +263,14 @@ class BlocklistsApiClient internal constructor(private val httpClient: HttpClien
         suspend fun deleteBlocklist(
             @Path("id") blocklistId: String
         ): Response<EmptyResponse>
+
+        @POST("api/v1/lists/refresh")
+        suspend fun refreshAllBlocklists(): Response<RefreshBlocklistsResponse>
+
+        @POST("api/v1/lists/blocklists/{id}/refresh")
+        suspend fun refreshBlocklist(
+            @Path("id") blocklistId: String
+        ): Response<RefreshBlocklistsResponse>
 
         @POST("api/v1/blocklists/check")
         suspend fun checkIps(

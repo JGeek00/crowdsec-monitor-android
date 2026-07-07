@@ -53,16 +53,25 @@ fun ProcessBlocklistDeleteDisableStatus(process: ApiStatusResponseProcess) {
 		if (process.successful == null) {
 			val total = status.ipsToDelete
 			val processed = status.processedIps
-			val progress = if (total > 0) processed.toDouble() / total.toDouble() else 0.0
 
-			Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-				Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-					Text(text = stringResource(R.string.processed_progress_fmt, processed, total), style = MaterialTheme.typography.bodySmall)
-					Spacer(modifier = Modifier.weight(1f))
-					val percent = if (total > 0) ((processed.toDouble() / total.toDouble()) * 100).toInt() else 0
-					Text(text = "$percent%", style = MaterialTheme.typography.bodySmall)
+			if (processed > total) {
+				Text(
+					text = stringResource(R.string.progress_not_available),
+					style = MaterialTheme.typography.bodySmall,
+					color = MaterialTheme.colorScheme.onSurfaceVariant
+				)
+			} else {
+				val progress = if (total > 0) processed.toDouble() / total.toDouble() else 0.0
+
+				Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+					Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+						Text(text = stringResource(R.string.processed_progress_fmt, processed, total), style = MaterialTheme.typography.bodySmall)
+						Spacer(modifier = Modifier.weight(1f))
+						val percent = if (total > 0) ((processed.toDouble() / total.toDouble()) * 100).toInt() else 0
+						Text(text = "$percent%", style = MaterialTheme.typography.bodySmall)
+					}
+					LinearProgressIndicator(progress = { progress.toFloat() }, modifier = Modifier.fillMaxWidth())
 				}
-				LinearProgressIndicator(progress = { progress.toFloat() }, modifier = Modifier.fillMaxWidth())
 			}
 		}
 		if (process.successful == false) {

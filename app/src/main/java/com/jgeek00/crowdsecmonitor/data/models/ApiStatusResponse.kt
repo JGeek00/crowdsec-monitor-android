@@ -43,7 +43,8 @@ data class ApiStatusResponseProcess(
     val blocklistEnable: ApiStatusResponseProcessBlocklist? = null,
     val blocklistDisable: ApiStatusResponseProcessBlocklistIps? = null,
     val blocklistDelete: ApiStatusResponseProcessBlocklistIps? = null,
-    val blocklistRefresh: ApiStatusResponseProcessBlocklistRefresh? = null
+    val blocklistRefresh: ApiStatusResponseProcessBlocklistRefresh? = null,
+    val blocklistSingleRefresh: ApiStatusResponseProcessBlocklistSingleRefresh? = null
 )
 
 @Serializable
@@ -102,6 +103,18 @@ data class ApiStatusResponseProcessBlocklistRefreshBlocklist(
     val number: Int,
     val name: String,
     val steps: ApiStatusResponseProcessBlocklistRefreshBlocklistSteps
+)
+
+@Serializable
+data class ApiStatusResponseProcessBlocklistSingleRefresh(
+    val blocklistId: Int,
+    val blocklistName: String,
+    val step: ApiStatusResponseProcessBlocklistStep,
+    val fetched: ApiStatusResponseProcessBlocklistFieldStatus,
+    val parsed: ApiStatusResponseProcessBlocklistFieldStatus,
+    val deleted: ApiStatusResponseProcessBlocklistFieldStatus,
+    val imported: ApiStatusResponseProcessBlocklistFieldStatus,
+    val processIps: ApiStatusResponseProcessBlocklistProgress
 )
 
 @Serializable

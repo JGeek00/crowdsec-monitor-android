@@ -204,6 +204,9 @@ private fun ProcessSummary(
             if (process.blocklistRefresh != null) {
                 ProcessBlocklistRefreshStatus(process = process)
             }
+            if (process.blocklistSingleRefresh != null) {
+                ProcessBlocklistSingleRefreshStatus(process = process)
+            }
         }
     }
 }

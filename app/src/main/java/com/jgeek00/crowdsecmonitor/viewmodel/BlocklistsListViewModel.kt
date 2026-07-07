@@ -56,6 +56,9 @@ class BlocklistsListViewModel @Inject constructor(
     var blocklistDeletedSuccessfully by mutableStateOf(false)
         private set
 
+    var errorRefreshBlocklist by mutableStateOf(false)
+        private set
+
     fun reset() {
         state = LoadingResult.Loading
         requestParams = defaultRequest
@@ -67,6 +70,7 @@ class BlocklistsListViewModel @Inject constructor(
         errorEnableBlocklist = false
         errorDeleteBlocklist = false
         blocklistDeletedSuccessfully = false
+        errorRefreshBlocklist = false
     }
 
     init {
@@ -83,6 +87,7 @@ class BlocklistsListViewModel @Inject constructor(
     fun clearErrorEnableBlocklist() { errorEnableBlocklist = false }
     fun clearErrorDeleteBlocklist() { errorDeleteBlocklist = false }
     fun clearBlocklistDeletedSuccessfully() { blocklistDeletedSuccessfully = false }
+    fun clearErrorRefreshBlocklist() { errorRefreshBlocklist = false }
 
     private suspend fun fetchData(showLoading: Boolean = false, params: BlocklistsRequest? = null) {
         val apiClient = sessionManager.apiClient ?: return
@@ -172,10 +177,27 @@ class BlocklistsListViewModel @Inject constructor(
         }
     }
 
+    fun refreshBlocklists(blocklistId: String? = null) {
+        val apiClient = sessionManager.apiClient ?: return
+        viewModelScope.launch {
+            processingModal = true
+            try {
+                if (blocklistId != null) {
+                    apiClient.blocklists.refreshBlocklist(blocklistId)
+                } else {
+                    apiClient.blocklists.refreshAllBlocklists()
+                }
+                processingModal = false
+            } catch (_: Exception) {
+                processingModal = false
+                errorRefreshBlocklist = true
+            }
+        }
+    }
+
     private suspend fun refreshInternal() {
         val req = defaultRequest
         requestParams = req
         fetchData(params = req)
     }
 }
-

@@ -297,4 +297,14 @@
     <string name="add_custom_header">Add header</string>
     <string name="remove_custom_header">Remove header</string>
     <string name="last_refresh_attempt_failed">Last refresh attempt failed</string>
+    <string name="refresh_lists">Refresh lists</string>
+    <string name="refresh_lists_confirm">Refreshing a blocklist is a computing expensive task that can take up to a few minutes. Don\'t refresh too often. Do you want to continue?</string>
+    <string name="refresh_blocklist">Refresh</string>
+    <string name="refreshing_blocklist">Refreshing blocklist</string>
+    <string name="error_refresh_blocklist">The blocklist could not be refreshed</string>
+    <string name="error_toggle_blocklist">The blocklist could not be updated</string>
+    <string name="continue_label">Continue</string>
+    <string name="progress_not_available">Progress not available</string>
+    <string name="copy_url">Copy URL</string>
+    <string name="refresh_blocklist_fmt">Refresh blocklist %s</string>
 </resources>

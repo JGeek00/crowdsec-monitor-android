@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,6 +64,7 @@ fun BlocklistListItem(
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showRefreshConfirm by remember { mutableStateOf(false) }
 
     val serviceStatus = serviceStatusViewModel.status.collectAsState().value
     val blocklistProcess = getBlocklistActiveProcess(serviceStatus.data, blocklist.id)
@@ -157,7 +159,15 @@ fun BlocklistListItem(
 
         if (blocklist.type == BlocklistType.API) {
             OptionsMenuBottomSheet(
-                options = listOf(
+                options = listOfNotNull(
+                    if (blocklist.enabled != false) {
+                        OptionsMenuBottomSheetItem(
+                            title = stringResource(R.string.refresh_blocklist),
+                            icon = Icons.Rounded.Refresh,
+                            onClick = { showRefreshConfirm = true },
+                            disabled = blocklistProcess != null
+                        )
+                    } else null,
                     OptionsMenuBottomSheetItem(
                         title = if (blocklist.enabled == true) stringResource(R.string.disable_blocklist) else stringResource(
                             R.string.enable_blocklist
@@ -203,6 +213,27 @@ fun BlocklistListItem(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showRefreshConfirm) {
+        AlertDialog(
+            onDismissRequest = { showRefreshConfirm = false },
+            title = { Text(stringResource(R.string.refresh_blocklist)) },
+            text = { Text(stringResource(R.string.refresh_lists_confirm)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showRefreshConfirm = false
+                    viewModel.refreshBlocklists(blocklistId = blocklist.id)
+                }) {
+                    Text(stringResource(R.string.continue_label))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRefreshConfirm = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }

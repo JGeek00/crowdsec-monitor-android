@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +30,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
@@ -82,10 +84,13 @@ fun ListsListPane(
     val errorEnableMsg = stringResource(R.string.error_enable_blocklist)
     val errorDisableMsg = stringResource(R.string.error_disable_blocklist)
     val errorDeleteMsg = stringResource(R.string.error_delete_blocklist)
+    val errorRefreshMsg = stringResource(R.string.error_refresh_blocklist)
 
     var dropdownMenuOpen by remember { mutableStateOf(false) }
     var showIPsChecker by remember { mutableStateOf(false) }
     var showCheckDomainReachable by remember { mutableStateOf(false) }
+
+    var showRefreshConfirmation by remember { mutableStateOf(false) }
 
     LaunchedEffect(blocklistsViewModel.blocklistDeletedSuccessfully) {
         if (blocklistsViewModel.blocklistDeletedSuccessfully) {
@@ -136,6 +141,35 @@ fun ListsListPane(
         )
     }
 
+    if (showRefreshConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showRefreshConfirmation = false },
+            title = { Text(stringResource(R.string.refresh_lists)) },
+            text = { Text(stringResource(R.string.refresh_lists_confirm)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showRefreshConfirmation = false
+                    blocklistsViewModel.refreshBlocklists()
+                }) {
+                    Text(stringResource(R.string.continue_label))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRefreshConfirmation = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    // Error snackbar for refresh
+    LaunchedEffect(blocklistsViewModel.errorRefreshBlocklist) {
+        if (blocklistsViewModel.errorRefreshBlocklist) {
+            scope.launch { snackbarHostState.showSnackbar(errorRefreshMsg) }
+            blocklistsViewModel.clearErrorRefreshBlocklist()
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -175,6 +209,13 @@ fun ListsListPane(
                             onDismissRequest = { dropdownMenuOpen = false },
                             expanded = dropdownMenuOpen,
                         ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.refresh_lists)) },
+                                onClick = {
+                                    dropdownMenuOpen = false
+                                    showRefreshConfirmation = true
+                                }
+                            )
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.ip_addresses_checker)) },
                                 onClick = {

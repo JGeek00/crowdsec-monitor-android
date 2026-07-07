@@ -292,4 +292,14 @@
     <string name="add_custom_header">Añadir cabecera</string>
     <string name="remove_custom_header">Eliminar cabecera</string>
     <string name="last_refresh_attempt_failed">Último intento de refresco fallido</string>
+    <string name="refresh_lists">Refrescar listas</string>
+    <string name="refresh_lists_confirm">Refrescar una lista de bloqueo es una tarea computacionalmente costosa que puede llevar varios minutos. No la refresques con demasiada frecuencia. ¿Quieres continuar?</string>
+    <string name="refresh_blocklist">Refrescar</string>
+    <string name="refreshing_blocklist">Refrescando lista de bloqueo</string>
+    <string name="error_refresh_blocklist">La lista de bloqueo no se pudo refrescar</string>
+    <string name="error_toggle_blocklist">La lista de bloqueo no se pudo actualizar</string>
+    <string name="continue_label">Continuar</string>
+    <string name="progress_not_available">Progreso no disponible</string>
+    <string name="copy_url">Copiar URL</string>
+    <string name="refresh_blocklist_fmt">Refrescar lista de bloqueo %s</string>
 </resources>

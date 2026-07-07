@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -27,8 +28,11 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
@@ -48,6 +52,8 @@ import com.jgeek00.crowdsecmonitor.data.models.BlocklistDataResponseData
 import com.jgeek00.crowdsecmonitor.data.models.BlocklistType
 import com.jgeek00.crowdsecmonitor.extensions.toFormattedDateTime
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheet
+import com.jgeek00.crowdsecmonitor.ui.components.OptionsMenuBottomSheetItem
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.screens.lists.blocklists.getBlocklistActiveProcess
@@ -74,8 +80,13 @@ fun BlocklistDetailsContent(
     val clipboardManager = LocalClipboardManager.current
     val coroutineScope = rememberCoroutineScope()
     val urlCopiedMessage = stringResource(R.string.url_copied_to_clipboard)
+    var showUrlContextMenu by remember { mutableStateOf(false) }
 
-    val infoCount = remember(data, data.lastRefreshFailed) {
+    val infoCount = remember(
+        data,
+        data.lastRefreshFailed,
+        blocklistProcess,
+    ) {
         var count = 2
         if (data.url != null) count++
         count++
@@ -83,6 +94,7 @@ fun BlocklistDetailsContent(
         if (data.addedDate != null) count++
         if (data.lastSuccessfulRefresh != null) count++
         if (data.lastRefreshFailed == true && data.lastRefreshAttempt != null) count++
+        if (blocklistProcess != null) count++
         count
     }
 
@@ -122,19 +134,38 @@ fun BlocklistDetailsContent(
                     )
                 }
                 if (data.url != null) {
-                    RoundedCornersListTile(
-                        index =  tileIdx++,
-                        totalItems = infoCount,
-                        onClick = {
-                            clipboardManager.setText(AnnotatedString(data.url))
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(urlCopiedMessage)
-                            }
-                        },
-                    ) {
-                        ListItemContent(
-                            headlineText = stringResource(R.string.url),
-                            subHeadlineText = data.url
+                    Box {
+                        RoundedCornersListTile(
+                            index =  tileIdx++,
+                            totalItems = infoCount,
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(data.url))
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(urlCopiedMessage)
+                                }
+                            },
+                            onLongClick = { showUrlContextMenu = true },
+                        ) {
+                            ListItemContent(
+                                headlineText = stringResource(R.string.url),
+                                subHeadlineText = data.url
+                            )
+                        }
+                        OptionsMenuBottomSheet(
+                            showMenu = showUrlContextMenu,
+                            onDismiss = { showUrlContextMenu = false },
+                            options = listOf(
+                                OptionsMenuBottomSheetItem(
+                                    title = stringResource(R.string.copy_url),
+                                    icon = Icons.Rounded.ContentCopy,
+                                    onClick = {
+                                        clipboardManager.setText(AnnotatedString(data.url))
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar(urlCopiedMessage)
+                                        }
+                                    }
+                                )
+                            )
                         )
                     }
                 }
@@ -197,7 +228,7 @@ fun BlocklistDetailsContent(
                 }
                 if (data.lastRefreshFailed == true && data.lastRefreshAttempt != null) {
                     RoundedCornersListTile(
-                        index = tileIdx, totalItems = infoCount,
+                        index = tileIdx++, totalItems = infoCount,
                     ) {
                         ListItemContent(
                             headlineText = if (!data.lastRefreshFailed) stringResource(R.string.last_refresh_attempt) else stringResource(R.string.last_refresh_attempt_failed),
