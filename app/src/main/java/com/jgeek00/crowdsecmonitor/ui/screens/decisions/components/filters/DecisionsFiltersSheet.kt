@@ -73,7 +73,7 @@ fun DecisionsFiltersSheet(
         ) {
             RoundedCornersListTile(
                 index = 0,
-                totalItems = 1,
+                totalItems = 2,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -88,6 +88,27 @@ fun DecisionsFiltersSheet(
                         checked = viewModel.filters.onlyActive == true,
                         onCheckedChange = { checked ->
                             viewModel.updateFilters(viewModel.filters.copy(onlyActive = checked))
+                        }
+                    )
+                }
+            }
+            RoundedCornersListTile(
+                index = 1,
+                totalItems = 2,
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.show_decisions_grouped_by_ip),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = viewModel.filters.groupByIP == true,
+                        onCheckedChange = { checked ->
+                            viewModel.updateFilters(viewModel.filters.copy(groupByIP = checked))
                         }
                     )
                 }

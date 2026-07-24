@@ -125,6 +125,12 @@
     <string name="expire_decision_error_title">Error al expirar decisión</string>
     <string name="expire_decision_error_msg">Ocurrió un error al hacer expirar la decisión. Por favor, prueba de nuevo.</string>
     <string name="expired">Expirada</string>
+    <string name="show_decisions_grouped_by_ip">Mostrar decisiones agrupadas por IP</string>
+    <string name="show_default_decisions_grouped_by_ip">Mostrar por defecto decisiones agrupadas por IP</string>
+    <string name="select_ip">Selecciona una IP</string>
+    <string name="range">Rango</string>
+    <string name="owner">Propietario</string>
+    <string name="no_active">Sin activas</string>
     <string name="only_active">Sólo activas</string>
     <string name="create_decision">Crear decisión</string>
     <string name="expiration">Expiración</string>
@@ -302,4 +308,16 @@
     <string name="progress_not_available">Progreso no disponible</string>
     <string name="copy_url">Copiar URL</string>
     <string name="refresh_blocklist_fmt">Refrescar lista de bloqueo %s</string>
+    <plurals name="active_decisions_count">
+        <item quantity="one">%d decisión activa</item>
+        <item quantity="other">%d decisiones activas</item>
+    </plurals>
+    <plurals name="decisions_count">
+        <item quantity="one">%d decisión</item>
+        <item quantity="other">%d decisiones</item>
+    </plurals>
+    <plurals name="active_count">
+        <item quantity="one">%d activa</item>
+        <item quantity="other">%d activas</item>
+    </plurals>
 </resources>

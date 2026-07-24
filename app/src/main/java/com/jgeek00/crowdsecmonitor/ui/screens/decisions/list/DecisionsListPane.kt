@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.ui.components.LargeTopAppBarWithRefresh
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionIPGroupItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.DecisionListItem
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.NoDecisions
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.components.filters.DecisionsFiltersSheet
@@ -57,7 +58,7 @@ import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 @Composable
 fun DecisionsListPane(
     viewModel: DecisionsListViewModel,
-    onNavigateToDetails: (Int) -> Unit
+    onNavigateToDetails: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
     var showFiltersSheet by remember { mutableStateOf(false) }
@@ -80,7 +81,12 @@ fun DecisionsListPane(
                     )
                 }
             }
-            if (viewModel.state is LoadingResult.Success) {
+            val showFiltersButton = if (viewModel.isGroupedByIP) {
+                viewModel.stateByIP is LoadingResult.Success
+            } else {
+                viewModel.state is LoadingResult.Success
+            }
+            if (showFiltersButton) {
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
                     tooltip = { PlainTooltip { Text(stringResource(R.string.filters)) } },
@@ -99,100 +105,18 @@ fun DecisionsListPane(
             }
         }
     ) {
-        AnimatedContent(
-            targetState = viewModel.state,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-            contentKey = { it::class },
-            label = "DecisionsListState"
-        ) { state ->
-            when (state) {
-                is LoadingResult.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                is LoadingResult.Success -> {
-                    val data = state.value
-                    if (data.items.isEmpty()) {
-                        NoDecisions(
-                            showingOnlyActive = viewModel.filters.onlyActive == true
-                        )
-                    } else {
-                        LazyColumn(
-                            state = listState,
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            items(data.items, key = { it.id }) { decision ->
-                                val index = data.items.indexOf(decision)
-                                DecisionListItem(
-                                    index = index,
-                                    totalListAmount = data.items.size,
-                                    decision = decision,
-                                    viewModel = viewModel,
-                                    disableTimerAnimation = viewModel.disableDecisionTimerAnimation,
-                                    onNavigateToDetails = { onNavigateToDetails(decision.id) }
-                                )
-                                LaunchedEffect(decision.id) {
-                                    if (decision == data.items.last()) {
-                                        viewModel.fetchMore()
-                                    }
-                                }
-                            }
-                            if (viewModel.isLoadingMore) {
-                                item {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 16.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(28.dp),
-                                            strokeWidth = 3.dp
-                                        )
-                                    }
-                                }
-                            }
-                            item { Spacer(modifier = Modifier.height(16.dp)) }
-                        }
-                    }
-                }
-
-                is LoadingResult.Failure -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Icon(
-                                Icons.Rounded.Error,
-                                contentDescription = null,
-                                modifier = Modifier.size(56.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = stringResource(R.string.error_fetching_data),
-                                style = MaterialTheme.typography.bodyLarge,
-                                textAlign = TextAlign.Center
-                            )
-                            IconButton(onClick = { viewModel.initialFetchDecisions() }) {
-                                Icon(Icons.Rounded.Refresh, contentDescription = null)
-                            }
-                        }
-                    }
-                }
-            }
+        if (viewModel.isGroupedByIP) {
+            GroupedContent(
+                viewModel = viewModel,
+                onNavigateToDetails = onNavigateToDetails,
+                listState = listState
+            )
+        } else {
+            IndividualContent(
+                viewModel = viewModel,
+                onNavigateToDetails = onNavigateToDetails,
+                listState = listState
+            )
         }
     }
 
@@ -207,5 +131,209 @@ fun DecisionsListPane(
         CreateDecisionFormScreen(
             onClose = { showCreateDecisionForm = false }
         )
+    }
+}
+
+@Composable
+private fun IndividualContent(
+    viewModel: DecisionsListViewModel,
+    onNavigateToDetails: (String) -> Unit,
+    listState: androidx.compose.foundation.lazy.LazyListState
+) {
+    AnimatedContent(
+        targetState = viewModel.state,
+        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        contentKey = { it::class },
+        label = "DecisionsListState"
+    ) { state ->
+        when (state) {
+            is LoadingResult.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is LoadingResult.Success -> {
+                val data = state.value
+                if (data.items.isEmpty()) {
+                    NoDecisions(
+                        showingOnlyActive = viewModel.filters.onlyActive == true
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        items(data.items, key = { it.id }) { decision ->
+                            val index = data.items.indexOf(decision)
+                            DecisionListItem(
+                                index = index,
+                                totalListAmount = data.items.size,
+                                decision = decision,
+                                viewModel = viewModel,
+                                disableTimerAnimation = viewModel.disableDecisionTimerAnimation,
+                                onNavigateToDetails = { onNavigateToDetails(decision.id.toString()) }
+                            )
+                            LaunchedEffect(decision.id) {
+                                if (decision == data.items.last()) {
+                                    viewModel.fetchMore()
+                                }
+                            }
+                        }
+                        if (viewModel.isLoadingMore) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(28.dp),
+                                        strokeWidth = 3.dp
+                                    )
+                                }
+                            }
+                        }
+                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                    }
+                }
+            }
+
+            is LoadingResult.Failure -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.Error,
+                            contentDescription = null,
+                            modifier = Modifier.size(56.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = stringResource(R.string.error_fetching_data),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                        IconButton(onClick = { viewModel.initialFetchDecisions() }) {
+                            Icon(Icons.Rounded.Refresh, contentDescription = null)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupedContent(
+    viewModel: DecisionsListViewModel,
+    onNavigateToDetails: (String) -> Unit,
+    listState: androidx.compose.foundation.lazy.LazyListState
+) {
+    AnimatedContent(
+        targetState = viewModel.stateByIP,
+        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        contentKey = { it::class },
+        label = "DecisionsGroupedState"
+    ) { state ->
+        when (state) {
+            is LoadingResult.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is LoadingResult.Success -> {
+                val data = state.value
+                if (data.groups.isEmpty()) {
+                    NoDecisions(
+                        showingOnlyActive = viewModel.filters.onlyActive == true
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        items(data.groups, key = { it.ip }) { group ->
+                            val index = data.groups.indexOf(group)
+                            DecisionIPGroupItem(
+                                index = index,
+                                totalListAmount = data.groups.size,
+                                group = group,
+                                onClick = { onNavigateToDetails(group.ip) }
+                            )
+                            LaunchedEffect(group.ip) {
+                                if (group == data.groups.last()) {
+                                    viewModel.fetchMore()
+                                }
+                            }
+                        }
+                        if (viewModel.isLoadingMore) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(28.dp),
+                                        strokeWidth = 3.dp
+                                    )
+                                }
+                            }
+                        }
+                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                    }
+                }
+            }
+
+            is LoadingResult.Failure -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.Error,
+                            contentDescription = null,
+                            modifier = Modifier.size(56.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = stringResource(R.string.error_fetching_data),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                        IconButton(onClick = { viewModel.initialFetchDecisions() }) {
+                            Icon(Icons.Rounded.Refresh, contentDescription = null)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

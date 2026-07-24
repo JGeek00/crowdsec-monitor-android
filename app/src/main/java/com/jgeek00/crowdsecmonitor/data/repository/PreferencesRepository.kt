@@ -21,6 +21,7 @@ class PreferencesRepository @Inject constructor(
     private val themeKey = stringPreferencesKey(StorageKeys.THEME)
     private val showDefaultActiveDecisionsKey = booleanPreferencesKey(StorageKeys.SHOW_DEFAULT_ACTIVE_DECISIONS)
     private val disableDecisionTimerAnimationKey = booleanPreferencesKey(StorageKeys.DISABLE_DECISION_TIMER_ANIMATION)
+    private val showDefaultDecisionsGroupedByIPKey = booleanPreferencesKey(StorageKeys.SHOW_DEFAULT_DECISIONS_GROUPED_BY_IP)
 
     val topItemsDashboard: Flow<Int> = dataStore.data.map { prefs ->
         prefs[topItemsDashboardKey] ?: Defaults.TOP_ITEMS_DASHBOARD
@@ -38,6 +39,10 @@ class PreferencesRepository @Inject constructor(
         prefs[disableDecisionTimerAnimationKey] ?: Defaults.DISABLE_DECISION_TIMER_ANIMATION
     }
 
+    val showDefaultDecisionsGroupedByIP: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[showDefaultDecisionsGroupedByIPKey] ?: Defaults.SHOW_DEFAULT_DECISIONS_GROUPED_BY_IP
+    }
+
     suspend fun setTopItemsDashboard(value: Int) {
         dataStore.edit { prefs -> prefs[topItemsDashboardKey] = value }
     }
@@ -52,6 +57,10 @@ class PreferencesRepository @Inject constructor(
 
     suspend fun setDisableDecisionTimerAnimation(value: Boolean) {
         dataStore.edit { prefs -> prefs[disableDecisionTimerAnimationKey] = value }
+    }
+
+    suspend fun setShowDefaultDecisionsGroupedByIP(value: Boolean) {
+        dataStore.edit { prefs -> prefs[showDefaultDecisionsGroupedByIPKey] = value }
     }
 }
 

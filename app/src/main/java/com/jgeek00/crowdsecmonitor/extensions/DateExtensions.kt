@@ -7,6 +7,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 
 fun String.toFormattedDate(style: FormatStyle = FormatStyle.MEDIUM): String {
     return try {
@@ -61,6 +62,19 @@ fun String.toFormattedTime(): String {
         val instant = Instant.parse(this)
         DateTimeFormatter
             .ofPattern("HH:mm:ss")
+            .withZone(ZoneId.systemDefault())
+            .format(instant)
+    } catch (_: Exception) {
+        this
+    }
+}
+
+fun String.toFormattedDateTimeCustom(): String {
+    return try {
+        val instant = Instant.parse(this)
+        DateTimeFormatter
+            .ofPattern("dd MMM. yyyy HH:mm:ss")
+            .withLocale(Locale.ENGLISH)
             .withZone(ZoneId.systemDefault())
             .format(instant)
     } catch (_: Exception) {

@@ -34,11 +34,15 @@ class AppConfigurationViewModel @Inject constructor(
     var disableDecisionTimerAnimation by mutableStateOf(Defaults.DISABLE_DECISION_TIMER_ANIMATION)
         private set
 
+    var showDefaultDecisionsGroupedByIP by mutableStateOf(Defaults.SHOW_DEFAULT_DECISIONS_GROUPED_BY_IP)
+        private set
+
     init {
         viewModelScope.launch {
             topItemsDashboard = preferencesRepository.topItemsDashboard.first()
             showDefaultActiveDecisions = preferencesRepository.showDefaultActiveDecisions.first()
             disableDecisionTimerAnimation = preferencesRepository.disableDecisionTimerAnimation.first()
+            showDefaultDecisionsGroupedByIP = preferencesRepository.showDefaultDecisionsGroupedByIP.first()
         }
     }
 
@@ -61,6 +65,13 @@ class AppConfigurationViewModel @Inject constructor(
         disableDecisionTimerAnimation = value
         saveScope.launch {
             preferencesRepository.setDisableDecisionTimerAnimation(value)
+        }
+    }
+
+    fun updateShowDefaultDecisionsGroupedByIP(value: Boolean) {
+        showDefaultDecisionsGroupedByIP = value
+        saveScope.launch {
+            preferencesRepository.setShowDefaultDecisionsGroupedByIP(value)
         }
     }
 

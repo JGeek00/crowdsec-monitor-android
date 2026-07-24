@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jgeek00.crowdsecmonitor.constants.Defaults
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsByIPResponse
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponse
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequest
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequestFilters
@@ -35,6 +36,11 @@ class DecisionsListViewModel @Inject constructor(
     var state by mutableStateOf<LoadingResult<DecisionsListResponse>>(LoadingResult.Loading)
         private set
 
+    var stateByIP by mutableStateOf<LoadingResult<DecisionsByIPResponse>>(LoadingResult.Loading)
+        private set
+
+    val isGroupedByIP: Boolean get() = requestParams.filters.groupByIP == true
+
     var isRefreshing by mutableStateOf(false)
         private set
 
@@ -56,7 +62,10 @@ class DecisionsListViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
-            defaultRequest = buildDefaultRequest(showOnlyActive)
+            val showDefaultGroupedByIP = preferencesRepository.showDefaultDecisionsGroupedByIP.first()
+            defaultRequest = buildDefaultRequest(showOnlyActive).copy(
+                filters = defaultRequest.filters.copy(groupByIP = showDefaultGroupedByIP)
+            )
             filters = defaultRequest.filters
         }
         viewModelScope.launch {
@@ -67,7 +76,17 @@ class DecisionsListViewModel @Inject constructor(
         }
         viewModelScope.launch {
             preferencesRepository.showDefaultActiveDecisions.collect { showOnlyActive ->
-                defaultRequest = buildDefaultRequest(showOnlyActive)
+                defaultRequest = buildDefaultRequest(showOnlyActive).copy(
+                    filters = defaultRequest.filters.copy(groupByIP = defaultRequest.filters.groupByIP)
+                )
+                filters = defaultRequest.filters
+            }
+        }
+        viewModelScope.launch {
+            preferencesRepository.showDefaultDecisionsGroupedByIP.collect { showDefaultGroupedByIP ->
+                defaultRequest = defaultRequest.copy(
+                    filters = defaultRequest.filters.copy(groupByIP = showDefaultGroupedByIP)
+                )
                 filters = defaultRequest.filters
             }
         }
@@ -85,8 +104,12 @@ class DecisionsListViewModel @Inject constructor(
 
     private suspend fun resetWithPreference() {
         val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
-        defaultRequest = buildDefaultRequest(showOnlyActive)
+        val showDefaultGroupedByIP = preferencesRepository.showDefaultDecisionsGroupedByIP.first()
+        defaultRequest = buildDefaultRequest(showOnlyActive).copy(
+            filters = defaultRequest.filters.copy(groupByIP = showDefaultGroupedByIP)
+        )
         state = LoadingResult.Loading
+        stateByIP = LoadingResult.Loading
         requestParams = defaultRequest
         filters = defaultRequest.filters
         expiringDecisionProcess = false
@@ -96,6 +119,7 @@ class DecisionsListViewModel @Inject constructor(
 
     fun reset() {
         state = LoadingResult.Loading
+        stateByIP = LoadingResult.Loading
         requestParams = defaultRequest
         filters = defaultRequest.filters
         expiringDecisionProcess = false
@@ -105,21 +129,43 @@ class DecisionsListViewModel @Inject constructor(
 
     private suspend fun fetchDecisions(showLoading: Boolean = false, params: DecisionsRequest? = null) {
         val apiClient = sessionManager.apiClient ?: return
+        val request = params ?: requestParams
 
         if (showLoading) {
-            state = LoadingResult.Loading
+            if (request.filters.groupByIP == true) {
+                stateByIP = LoadingResult.Loading
+            } else {
+                state = LoadingResult.Loading
+            }
         }
 
         try {
-            val result = apiClient.decisions.fetchDecisions(params ?: requestParams)
-            state = LoadingResult.Success(result.body)
+            if (request.filters.groupByIP == true) {
+                val result = apiClient.decisions.fetchDecisionsByIP(
+                    onlyActive = request.filters.onlyActive,
+                    offset = request.pagination.offset,
+                    limit = request.pagination.limit
+                )
+                stateByIP = LoadingResult.Success(result.body)
+            } else {
+                val result = apiClient.decisions.fetchDecisions(request)
+                state = LoadingResult.Success(result.body)
+            }
         } catch (e: Exception) {
-            state = LoadingResult.Failure(e)
+            if (request.filters.groupByIP == true) {
+                stateByIP = LoadingResult.Failure(e)
+            } else {
+                state = LoadingResult.Failure(e)
+            }
         }
     }
 
     fun initialFetchDecisions() {
-        if (state.data != null || state.isLoading) return
+        if (isGroupedByIP) {
+            if (stateByIP.data != null || stateByIP.isLoading) return
+        } else {
+            if (state.data != null || state.isLoading) return
+        }
         viewModelScope.launch {
             resetWithPreference()
             fetchDecisions(showLoading = true)
@@ -149,33 +195,68 @@ class DecisionsListViewModel @Inject constructor(
 
     fun fetchMore() {
         val apiClient = sessionManager.apiClient ?: return
-        val data = state.data ?: return
 
-        if ((data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH) >= data.pagination.total) return
+        if (isGroupedByIP) {
+            val data = stateByIP.data ?: return
+            if ((data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH) >= data.pagination.total) return
 
-        val previousItems = data.items
-        val newOffset = data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH
-        requestParams = requestParams.copy(
-            pagination = requestParams.pagination.copy(offset = newOffset)
-        )
+            val previousGroups = data.groups
+            val newOffset = data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH
+            requestParams = requestParams.copy(
+                pagination = requestParams.pagination.copy(offset = newOffset)
+            )
 
-        viewModelScope.launch {
-            try {
-                isLoadingMore = true
-                val result = apiClient.decisions.fetchDecisions(requestParams)
-                val existingIds = previousItems.map { it.id }.toHashSet()
-                val uniqueNewItems = result.body.items.filter { it.id !in existingIds }
-                val mergedItems = previousItems + uniqueNewItems
-                val newResponse = DecisionsListResponse(
-                    filtering = result.body.filtering,
-                    items = mergedItems,
-                    pagination = result.body.pagination
-                )
-                state = LoadingResult.Success(newResponse)
-            } catch (e: Exception) {
-                state = LoadingResult.Failure(e)
-            } finally {
-                isLoadingMore = false
+            viewModelScope.launch {
+                try {
+                    isLoadingMore = true
+                    val result = apiClient.decisions.fetchDecisionsByIP(
+                        onlyActive = requestParams.filters.onlyActive,
+                        offset = requestParams.pagination.offset,
+                        limit = requestParams.pagination.limit
+                    )
+                    val existingIps = previousGroups.map { it.ip }.toHashSet()
+                    val uniqueNewGroups = result.body.groups.filter { it.ip !in existingIps }
+                    val mergedGroups = previousGroups + uniqueNewGroups
+                    val newResponse = DecisionsByIPResponse(
+                        filtering = result.body.filtering,
+                        groups = mergedGroups,
+                        pagination = result.body.pagination
+                    )
+                    stateByIP = LoadingResult.Success(newResponse)
+                } catch (e: Exception) {
+                    stateByIP = LoadingResult.Failure(e)
+                } finally {
+                    isLoadingMore = false
+                }
+            }
+        } else {
+            val data = state.data ?: return
+            if ((data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH) >= data.pagination.total) return
+
+            val previousItems = data.items
+            val newOffset = data.pagination.page * Defaults.DECISIONS_AMOUNT_BATCH
+            requestParams = requestParams.copy(
+                pagination = requestParams.pagination.copy(offset = newOffset)
+            )
+
+            viewModelScope.launch {
+                try {
+                    isLoadingMore = true
+                    val result = apiClient.decisions.fetchDecisions(requestParams)
+                    val existingIds = previousItems.map { it.id }.toHashSet()
+                    val uniqueNewItems = result.body.items.filter { it.id !in existingIds }
+                    val mergedItems = previousItems + uniqueNewItems
+                    val newResponse = DecisionsListResponse(
+                        filtering = result.body.filtering,
+                        items = mergedItems,
+                        pagination = result.body.pagination
+                    )
+                    state = LoadingResult.Success(newResponse)
+                } catch (e: Exception) {
+                    state = LoadingResult.Failure(e)
+                } finally {
+                    isLoadingMore = false
+                }
             }
         }
     }
@@ -187,7 +268,10 @@ class DecisionsListViewModel @Inject constructor(
     fun resetFilters() {
         viewModelScope.launch {
             val showOnlyActive = preferencesRepository.showDefaultActiveDecisions.first()
-            val req = buildDefaultRequest(showOnlyActive)
+            val showDefaultGroupedByIP = preferencesRepository.showDefaultDecisionsGroupedByIP.first()
+            val req = buildDefaultRequest(showOnlyActive).copy(
+                filters = defaultRequest.filters.copy(groupByIP = showDefaultGroupedByIP)
+            )
             defaultRequest = req
             filters = defaultRequest.filters
             requestParams = requestParams.copy(filters = defaultRequest.filters)

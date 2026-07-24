@@ -2,6 +2,8 @@ package com.jgeek00.crowdsecmonitor.data.api
 
 import com.jgeek00.crowdsecmonitor.data.models.CreateDecisionRequest
 import com.jgeek00.crowdsecmonitor.data.models.DecisionItemResponse
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsByIPDetailResponse
+import com.jgeek00.crowdsecmonitor.data.models.DecisionsByIPResponse
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsListResponse
 import com.jgeek00.crowdsecmonitor.data.models.DecisionsRequest
 import com.jgeek00.crowdsecmonitor.data.models.EmptyResponse
@@ -24,7 +26,7 @@ class DecisionsApiClient internal constructor(private val httpClient: HttpClient
     suspend fun fetchDecisions(requestParams: DecisionsRequest): HttpResponse<DecisionsListResponse> {
         return try {
             val response = service.fetchDecisions(
-                onlyActive = requestParams.filters.onlyActive,
+                onlyActive = if (requestParams.filters.onlyActive == true) true else null,
                 offset = requestParams.pagination.offset,
                 limit = requestParams.pagination.limit
             )
@@ -85,6 +87,53 @@ class DecisionsApiClient internal constructor(private val httpClient: HttpClient
         }
     }
 
+    suspend fun fetchDecisionsByIP(onlyActive: Boolean?, offset: Int, limit: Int): HttpResponse<DecisionsByIPResponse> {
+        return try {
+            val response = service.fetchDecisionsByIP(
+                onlyActive = if (onlyActive == true) true else null,
+                offset = offset,
+                limit = limit
+            )
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                HttpResponse(successful = true, statusCode = response.code(), body = body)
+            } else {
+                httpClient.handleHttpError(response)
+            }
+        } catch (e: HttpClientException) {
+            throw e
+        } catch (e: SerializationException) {
+            throw HttpClientException.DecodingError(e)
+        } catch (e: IOException) {
+            throw HttpClientException.NetworkError(e)
+        } catch (e: Exception) {
+            throw HttpClientException.NetworkError(e)
+        }
+    }
+
+    suspend fun fetchDecisionsByIPDetail(ip: String, onlyActive: Boolean?): HttpResponse<DecisionsByIPDetailResponse> {
+        return try {
+            val response = service.fetchDecisionsByIPDetail(
+                ip = ip,
+                onlyActive = if (onlyActive == true) true else null
+            )
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                HttpResponse(successful = true, statusCode = response.code(), body = body)
+            } else {
+                httpClient.handleHttpError(response)
+            }
+        } catch (e: HttpClientException) {
+            throw e
+        } catch (e: SerializationException) {
+            throw HttpClientException.DecodingError(e)
+        } catch (e: IOException) {
+            throw HttpClientException.NetworkError(e)
+        } catch (e: Exception) {
+            throw HttpClientException.NetworkError(e)
+        }
+    }
+
     suspend fun deleteDecision(decisionId: Int): HttpResponse<EmptyResponse> {
         return try {
             val response = service.deleteDecision(decisionId)
@@ -112,6 +161,19 @@ class DecisionsApiClient internal constructor(private val httpClient: HttpClient
             @Query("offset") offset: Int,
             @Query("limit") limit: Int
         ): Response<DecisionsListResponse>
+
+        @GET("api/v1/decisions/by-ip")
+        suspend fun fetchDecisionsByIP(
+            @Query("only_active") onlyActive: Boolean?,
+            @Query("offset") offset: Int,
+            @Query("limit") limit: Int
+        ): Response<DecisionsByIPResponse>
+
+        @GET("api/v1/decisions/by-ip/{ip}")
+        suspend fun fetchDecisionsByIPDetail(
+            @Path("ip") ip: String,
+            @Query("only_active") onlyActive: Boolean?
+        ): Response<DecisionsByIPDetailResponse>
 
         @GET("api/v1/decisions/{id}")
         suspend fun fetchDecisionDetails(

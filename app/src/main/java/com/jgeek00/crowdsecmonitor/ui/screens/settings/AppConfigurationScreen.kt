@@ -133,7 +133,7 @@ fun AppConfigurationScreen(
                 SectionHeader(stringResource(R.string.decisions))
             }
             item {
-                RoundedCornersListTile(index = 0, totalItems = 2) {
+                RoundedCornersListTile(index = 0, totalItems = 3) {
                     ListItemContent(
                         headlineText = stringResource(R.string.show_only_active_decisions),
                         trailingContent = {
@@ -146,13 +146,26 @@ fun AppConfigurationScreen(
                 }
             }
             item {
-                RoundedCornersListTile(index = 1, totalItems = 2) {
+                RoundedCornersListTile(index = 1, totalItems = 3) {
                     ListItemContent(
                         headlineText = stringResource(R.string.disable_timer_animation),
                         trailingContent = {
                             Switch(
                                 checked = viewModel.disableDecisionTimerAnimation,
                                 onCheckedChange = { viewModel.updateDisableDecisionTimerAnimation(it) }
+                            )
+                        }
+                    )
+                }
+            }
+            item {
+                RoundedCornersListTile(index = 2, totalItems = 3) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.show_default_decisions_grouped_by_ip),
+                        trailingContent = {
+                            Switch(
+                                checked = viewModel.showDefaultDecisionsGroupedByIP,
+                                onCheckedChange = { viewModel.updateShowDefaultDecisionsGroupedByIP(it) }
                             )
                         }
                     )

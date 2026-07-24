@@ -6,7 +6,8 @@ data class DecisionsRequest(
 )
 
 data class DecisionsRequestFilters(
-    var onlyActive: Boolean? = null
+    var onlyActive: Boolean? = null,
+    var groupByIP: Boolean? = null
 )
 
 data class DecisionsRequestPagination(

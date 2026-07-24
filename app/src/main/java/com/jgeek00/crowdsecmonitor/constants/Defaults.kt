@@ -8,6 +8,7 @@ object Defaults {
     const val IPS_AMOUNT_BATCH = 50
     const val SHOW_DEFAULT_ACTIVE_DECISIONS = true
     const val DISABLE_DECISION_TIMER_ANIMATION = false
+    const val SHOW_DEFAULT_DECISIONS_GROUPED_BY_IP = false
     const val TOP_ITEMS_DASHBOARD_MIN = 5
     const val TOP_ITEMS_DASHBOARD_MAX = 10
     const val ONBOARDING_COMPLETED = false

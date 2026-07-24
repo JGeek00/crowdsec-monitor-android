@@ -25,6 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.DecisionsListViewModel
 import com.jgeek00.crowdsecmonitor.ui.screens.decisions.details.DecisionDetailPane
+import com.jgeek00.crowdsecmonitor.ui.screens.decisions.details.DecisionIPGroupDetailPane
 import com.jgeek00.crowdsecmonitor.ui.navigation.detailPaneEnterTransition
 import com.jgeek00.crowdsecmonitor.ui.navigation.detailPaneExitTransition
 import com.jgeek00.crowdsecmonitor.ui.navigation.listPaneEnterTransition
@@ -37,17 +38,17 @@ import kotlinx.coroutines.launch
 fun DecisionsListScreen(
     viewModel: DecisionsListViewModel = hiltViewModel()
 ) {
-    val navigator = rememberListDetailPaneScaffoldNavigator<Int>()
+    val navigator = rememberListDetailPaneScaffoldNavigator<String>()
     val scope = rememberCoroutineScope()
 
-    val currentDecisionId = navigator.currentDestination?.contentKey
-    var activeDecisionId by remember { mutableStateOf<Int?>(null) }
-    LaunchedEffect(currentDecisionId) {
-        if (currentDecisionId != null) {
-            activeDecisionId = currentDecisionId
+    val currentContentKey = navigator.currentDestination?.contentKey
+    var activeContentKey by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(currentContentKey) {
+        if (currentContentKey != null) {
+            activeContentKey = currentContentKey
         } else {
             delay(350)
-            activeDecisionId = null
+            activeContentKey = null
         }
     }
 
@@ -71,9 +72,9 @@ fun DecisionsListScreen(
             ) {
                 DecisionsListPane(
                     viewModel = viewModel,
-                    onNavigateToDetails = { decisionId ->
+                    onNavigateToDetails = { contentKey ->
                         scope.launch {
-                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, decisionId)
+                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, contentKey)
                         }
                     }
                 )
@@ -84,11 +85,19 @@ fun DecisionsListScreen(
                 enterTransition = detailPaneEnterTransition,
                 exitTransition = detailPaneExitTransition
             ) {
-                DecisionDetailPane(
-                    decisionId = activeDecisionId,
-                    showBackButton = isSinglePane && activeDecisionId != null,
-                    onNavigateBack = { scope.launch { navigator.navigateBack() } }
-                )
+                if (activeContentKey != null && viewModel.isGroupedByIP) {
+                    DecisionIPGroupDetailPane(
+                        ip = activeContentKey!!,
+                        showBackButton = isSinglePane,
+                        onNavigateBack = { scope.launch { navigator.navigateBack() } }
+                    )
+                } else {
+                    DecisionDetailPane(
+                        decisionId = activeContentKey?.toIntOrNull(),
+                        showBackButton = isSinglePane && activeContentKey != null,
+                        onNavigateBack = { scope.launch { navigator.navigateBack() } }
+                    )
+                }
             }
         }
     )
