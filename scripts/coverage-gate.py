@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""coverage-gate.sh — Parse JaCoCo XML, apply REQ-008 exclusions, report coverage.
+"""coverage-gate.py — Parse JaCoCo XML, apply REQ-008 exclusions, report coverage.
 Soft warning (exit 0) unless the report file is missing (exit 1).
-Usage: ./scripts/coverage-gate.sh [path-to-jacoco-xml]
+Usage: ./scripts/coverage-gate.py [path-to-jacoco-xml]
 """
 import sys
-import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -16,7 +15,6 @@ if not report_path.exists():
     print("Run ./gradlew jacocoTestReport first.")
     sys.exit(1)
 
-# REQ-008 exclusion patterns
 EXCLUDE_PATTERNS = [
     'ui/screens/', 'ui/components/', 'ui/theme/',
     'ui/navigation/AppNavGraph', 'ui/navigation/NavigationAnimations',
@@ -31,48 +29,33 @@ EXCLUDE_PATTERNS = [
 
 tree = ET.parse(report_path)
 root = tree.getroot()
-
-# Handle namespaced XML
 ns_prefix = ''
 if root.tag.startswith('{'):
     ns_prefix = root.tag.split('}')[0] + '}'
-
-tag_cls = ns_prefix + 'class' if ns_prefix else 'class'
-tag_ctr = ns_prefix + 'counter' if ns_prefix else 'counter'
+tag_cls = ns_prefix + 'class'
+tag_ctr = ns_prefix + 'counter'
 
 print("=== Coverage Gate (REQ-008 exclusions applied) ===")
 
-METRICS = {
-    'INSTRUCTION': 'Instruction',
-    'BRANCH': 'Branch',
-    'LINE': 'Line',
-    'METHOD': 'Method',
-}
-
+METRICS = {'INSTRUCTION': 'Instruction', 'BRANCH': 'Branch', 'LINE': 'Line', 'METHOD': 'Method'}
 all_pass = True
 
 for metric, label in METRICS.items():
     total_covered = 0
     total_missed = 0
-
     for cls in root.iter(tag_cls):
         name = cls.get('name', '')
-        excluded = any(p in name for p in EXCLUDE_PATTERNS)
-        if excluded:
+        if any(p in name for p in EXCLUDE_PATTERNS):
             continue
         for counter in cls.iter(tag_ctr):
             if counter.get('type') == metric:
                 total_covered += int(counter.get('covered', 0))
                 total_missed += int(counter.get('missed', 0))
-
     total = total_covered + total_missed
-
     if total == 0:
         print(f"  {label}: No data (all excluded or zero)")
         continue
-
     pct = round(100.0 * total_covered / total, 1)
-
     if pct < 80.0:
         print(f"  ⚠ {label}: {pct}% ({total_covered}/{total}) — BELOW 80% threshold")
         all_pass = False

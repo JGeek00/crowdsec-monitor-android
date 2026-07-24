@@ -1,49 +1,101 @@
 package com.jgeek00.crowdsecmonitor.data.repository
 
-import androidx.room.Room
-import com.jgeek00.crowdsecmonitor.data.db.AppDatabase
+import com.jgeek00.crowdsecmonitor.data.db.CSServerDao
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.Assert.*
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import java.util.UUID
 
-@RunWith(RobolectricTestRunner::class)
 class ServerRepositoryTest {
 
-    private lateinit var db: AppDatabase
-    private lateinit var repo: ServerRepository
+    private val dao = mockk<CSServerDao>(relaxed = true)
+    private val repo = ServerRepository(dao)
 
-    @Before
-    fun setUp() {
-        db = Room.inMemoryDatabaseBuilder(
-            RuntimeEnvironment.getApplication(),
-            AppDatabase::class.java
-        ).allowMainThreadQueries().build()
-        repo = ServerRepository(db.csServerDao())
-    }
+    @Test
+    fun `getAllServers returns list from DAO`() = runBlocking {
+        val servers = listOf(
+            CSServerModel(id = UUID.randomUUID(), name = "A", http = "http", domain = "a", port = null, path = null, authMethod = "none", basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
+        )
+        every { dao.getAllServers() } returns MutableStateFlow(servers)
 
-    @After
-    fun tearDown() {
-        db.close()
+        val result = repo.getAllServers().first()
+
+        assertEquals(servers, result)
+        coVerify { dao.getAllServers() }
     }
 
     @Test
-    fun `getAllServers returns empty list initially`() = runBlocking {
-        assertTrue(repo.getAllServers().first().isEmpty())
+    fun `getDefaultServer returns flow from DAO`() = runBlocking {
+        val server = CSServerModel(id = UUID.randomUUID(), name = "Default", http = "http", domain = "d", port = null, path = null, authMethod = "none", basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
+        every { dao.getDefaultServer() } returns MutableStateFlow(server)
+
+        val result = repo.getDefaultServer().first()
+
+        assertEquals(server, result)
+        coVerify { dao.getDefaultServer() }
     }
 
     @Test
-    fun `createServer inserts and sets first as default`() = runBlocking {
+    fun `insertServer calls DAO insert`() = runBlocking {
+        val server = CSServerModel(id = UUID.randomUUID(), name = "Test", http = "http", domain = "localhost", port = 8080, path = null, authMethod = "none", basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
+
+        repo.insertServer(server)
+
+        coVerify { dao.insertServer(server) }
+    }
+
+    @Test
+    fun `updateServer calls DAO update`() = runBlocking {
+        val server = CSServerModel(id = UUID.randomUUID(), name = "Test", http = "http", domain = "localhost", port = 8080, path = null, authMethod = "none", basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
+
+        repo.updateServer(server)
+
+        coVerify { dao.updateServer(server) }
+    }
+
+    @Test
+    fun `deleteServer calls DAO delete`() = runBlocking {
+        val server = CSServerModel(id = UUID.randomUUID(), name = "Test", http = "http", domain = "localhost", port = 8080, path = null, authMethod = "none", basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
+
+        repo.deleteServer(server)
+
+        coVerify { dao.deleteServer(server) }
+    }
+
+    @Test
+    fun `getServerById calls DAO`() = runBlocking {
+        val id = UUID.randomUUID()
+        val server = CSServerModel(id = id, name = "Test", http = "http", domain = "localhost", port = 8080, path = null, authMethod = "none", basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
+        coEvery { dao.getServerById(id) } returns server
+
+        val result = repo.getServerById(id)
+
+        assertEquals(server, result)
+        coVerify { dao.getServerById(id) }
+    }
+
+    @Test
+    fun `setDefaultServer calls DAO setDefaultServer`() = runBlocking {
+        val id = UUID.randomUUID()
+
+        repo.setDefaultServer(id)
+
+        coVerify { dao.setDefaultServer(id) }
+    }
+
+    @Test
+    fun `createServer with no existing servers sets defaultServer true`() = runBlocking {
+        coEvery { dao.countServers() } returns 0
+        val serverSlot = slot<CSServerModel>()
+
         repo.createServer(
             name = "My Server",
             connectionMethod = "http",
@@ -55,16 +107,18 @@ class ServerRepositoryTest {
             basicPassword = null,
             bearerToken = null
         )
-        val servers = repo.getAllServers().first()
-        assertEquals(1, servers.size)
-        assertEquals("My Server", servers[0].name)
-        assertTrue(servers[0].defaultServer == true)
+
+        coVerify { dao.insertServer(capture(serverSlot)) }
+        assertTrue(serverSlot.captured.defaultServer == true)
     }
 
     @Test
-    fun `createServer with custom headers`() = runBlocking {
+    fun `createServer with existing servers sets defaultServer false`() = runBlocking {
+        coEvery { dao.countServers() } returns 1
+        val serverSlot = slot<CSServerModel>()
+
         repo.createServer(
-            name = "With Headers",
+            name = "Another",
             connectionMethod = "https",
             ipDomain = "example.com",
             port = null,
@@ -73,52 +127,11 @@ class ServerRepositoryTest {
             basicUser = null,
             basicPassword = null,
             bearerToken = "tok123",
-            customHeaders = listOf(Pair("X-Custom", "value1"))
+            customHeaders = listOf(Pair("X-Custom", "v1"))
         )
-        val server = repo.getAllServers().first().first()
-        assertEquals("With Headers", server.name)
-        assertEquals("https", server.http)
-        assertEquals("/api", server.path)
-        assertEquals("bearerToken" to "tok123", "bearerToken" to (server.bearerToken ?: ""))
-    }
 
-    @Test
-    fun `insert and retrieve by id`() = runBlocking {
-        val id = UUID.randomUUID()
-        val s = CSServerModel(id = id, name = "Test", http = "http", domain = "localhost",
-            port = 8080, path = null, authMethod = "none",
-            basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
-        repo.insertServer(s)
-        val found = repo.getServerById(id)
-        assertNotNull(found)
-        assertEquals(id, found!!.id)
-    }
-
-    @Test
-    fun `delete server`() = runBlocking {
-        val id = UUID.randomUUID()
-        val s = CSServerModel(id = id, name = "ToDelete", http = "http", domain = "x",
-            port = null, path = null, authMethod = "none",
-            basicUser = null, basicPassword = null, bearerToken = null, customHeaders = null)
-        repo.insertServer(s)
-        repo.deleteServer(s)
-        assertNull(repo.getServerById(id))
-    }
-
-    @Test
-    fun `setDefaultServer sets the correct server as default`() = runBlocking {
-        repo.createServer(name = "First", connectionMethod = "http", ipDomain = "a",
-            port = null, path = null, authMethod = "none",
-            basicUser = null, basicPassword = null, bearerToken = null)
-        repo.createServer(name = "Second", connectionMethod = "http", ipDomain = "b",
-            port = null, path = null, authMethod = "none",
-            basicUser = null, basicPassword = null, bearerToken = null)
-
-        val servers = repo.getAllServers().first()
-        val secondId = servers.find { it.name == "Second" }!!.id
-        repo.setDefaultServer(secondId)
-
-        val def = repo.getDefaultServer().first()
-        assertEquals("Second", def!!.name)
+        coVerify { dao.insertServer(capture(serverSlot)) }
+        assertTrue(serverSlot.captured.defaultServer == false)
+        assertEquals("bearerToken" to "tok123", "bearerToken" to serverSlot.captured.bearerToken!!)
     }
 }

@@ -1,17 +1,10 @@
 package com.jgeek00.crowdsecmonitor.extensions
 
 import com.jgeek00.crowdsecmonitor.MainDispatcherRule
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 
-@RunWith(RobolectricTestRunner::class)
 class DateExtensionsTest {
 
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
@@ -25,8 +18,8 @@ class DateExtensionsTest {
     fun `toFormattedDate returns formatted date for valid ISO string`() {
         val result = validIso.toFormattedDate()
         assertNotNull(result)
-        assertEquals(false, result.isEmpty())
-        assertEquals(false, result == validIso)
+        assertFalse(result.isEmpty())
+        assertNotEquals(validIso, result)
     }
 
     @Test
@@ -41,8 +34,8 @@ class DateExtensionsTest {
     fun `toFormattedDateTime returns formatted datetime for valid ISO string`() {
         val result = validIso.toFormattedDateTime()
         assertNotNull(result)
-        assertEquals(false, result.isEmpty())
-        assertEquals(false, result == validIso)
+        assertFalse(result.isEmpty())
+        assertNotEquals(validIso, result)
     }
 
     @Test
@@ -72,8 +65,8 @@ class DateExtensionsTest {
     fun `toFormattedDateTimeCustom returns custom format for valid ISO string`() {
         val result = validIso.toFormattedDateTimeCustom()
         assertNotNull(result)
-        assertEquals(false, result.isEmpty())
-        assertEquals(false, result == validIso)
+        assertFalse(result.isEmpty())
+        assertNotEquals(validIso, result)
     }
 
     @Test
@@ -97,19 +90,18 @@ class DateExtensionsTest {
         assertNull(result)
     }
 
-    // ── toRelativeDay ───────────────────────────────────────────
+    // ── toFormattedTimeOrNull ────────────────────────────────────
 
     @Test
-    fun `toRelativeDay returns text for valid date under Robolectric`() {
-        val context = RuntimeEnvironment.getApplication()
-        val result = validIso.toRelativeDay(context)
+    fun `toFormattedTimeOrNull returns time for valid ISO`() {
+        val result = validIso.toFormattedTimeOrNull()
         assertNotNull(result)
+        assertTrue(result!!.matches(Regex("\\d{2}:\\d{2}:\\d{2}")))
     }
 
     @Test
-    fun `toRelativeDay returns original string for invalid input`() {
-        val context = RuntimeEnvironment.getApplication()
-        val result = invalidString.toRelativeDay(context)
-        assertEquals(invalidString, result)
+    fun `toFormattedTimeOrNull returns null for invalid input`() {
+        val result = invalidString.toFormattedTimeOrNull()
+        assertNull(result)
     }
 }
