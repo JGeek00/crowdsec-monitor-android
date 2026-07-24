@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    jacoco
 }
 
 android {
@@ -41,12 +41,72 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
+// ponytail: never collect coverage from Robolectric's instrumented framework classes.
+// JaCoCo matches internal class names (with '/', not '.') — android/*, not android.*.
+// https://issuetracker.google.com/issues/319010149
+tasks.withType<Test>().configureEach {
+    extensions.configure<JacocoTaskExtension>("jacoco") {
+        excludes = listOf("android/*", "androidx/*", "org/robolectric/*")
+    }
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    // AGP 9.x — compiled class files for the debug variant
+    // Con built-in Kotlin: intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes/
+    classDirectories.setFrom(
+        fileTree("${layout.buildDirectory.get()}/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes") {
+            exclude(
+                "**/R.class",
+                "**/R$*.class",
+                "**/BuildConfig.*",
+                "**/Manifest*.*",
+                "**/*Test*.*",
+                "**/ui/screens/**",
+                "**/ui/components/**",
+                "**/ui/theme/**",
+                "**/ui/navigation/**",
+                "**/di/**",
+                "**/CrowdSecApplication*",
+                "**/MainActivity*",
+                "**/AppDatabase*",
+                "**/CSServerModel*",
+                "**/CSServerDao*",
+                "**/PreferencesRepository*",
+                "**/ServerRepository*",
+                "**/ChartColors*",
+                "**/Defaults*",
+                "**/StorageKeys*",
+                "**/DashboardItemModels*"
+            )
+        }
+    )
+    sourceDirectories.setFrom(files("src/main/java"))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("jacoco/testDebugUnitTest.exec")
+    })
 }
 
 dependencies {
@@ -97,7 +157,13 @@ dependencies {
     implementation(libs.androidx.browser)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
