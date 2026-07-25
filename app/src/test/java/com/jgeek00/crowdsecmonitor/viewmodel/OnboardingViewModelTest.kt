@@ -1,32 +1,27 @@
 package com.jgeek00.crowdsecmonitor.viewmodel
 
-import android.content.Context
-import androidx.core.content.edit
-import com.jgeek00.crowdsecmonitor.constants.StorageKeys
 import com.jgeek00.crowdsecmonitor.MainDispatcherRule
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 
-@RunWith(RobolectricTestRunner::class)
 class OnboardingViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val context: Context = RuntimeEnvironment.getApplication()
+    private val onboardingStorage = mockk<OnboardingStorage>(relaxed = true)
     private lateinit var vm: OnboardingViewModel
 
     @Before
     fun setUp() {
-        val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-        prefs.edit { clear() }
-        vm = OnboardingViewModel(context)
+        every { onboardingStorage.isOnboardingCompleted() } returns false
+        vm = OnboardingViewModel(onboardingStorage)
     }
 
     @Test
@@ -36,10 +31,9 @@ class OnboardingViewModelTest {
 
     @Test
     fun `showOnboarding is false when onboarding already completed`() {
-        val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-        prefs.edit { putBoolean(StorageKeys.ONBOARDING_COMPLETED, true) }
+        every { onboardingStorage.isOnboardingCompleted() } returns true
 
-        val vm2 = OnboardingViewModel(context)
+        val vm2 = OnboardingViewModel(onboardingStorage)
 
         assertFalse(vm2.showOnboarding)
     }
@@ -49,7 +43,6 @@ class OnboardingViewModelTest {
         vm.finishOnboarding()
 
         assertFalse(vm.showOnboarding)
-        val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-        assertTrue(prefs.getBoolean(StorageKeys.ONBOARDING_COMPLETED, false))
+        verify { onboardingStorage.setOnboardingCompleted() }
     }
 }

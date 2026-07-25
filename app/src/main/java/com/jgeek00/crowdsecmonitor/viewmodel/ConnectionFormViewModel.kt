@@ -1,7 +1,6 @@
 package com.jgeek00.crowdsecmonitor.viewmodel
 
 import android.content.Context
-import android.util.Patterns
 import java.util.regex.Pattern
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -120,7 +119,10 @@ class ConnectionFormViewModel @Inject constructor(
             "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         )
         val isIp = ipPattern.matcher(value).matches()
-        val isDomain = Patterns.DOMAIN_NAME.matcher(value).matches()
+        // ponytail: plain Java regex instead of android.util.Patterns.DOMAIN_NAME so tests
+        // don't need Robolectric. Covers basic domain names (example.com, sub.example.co.uk).
+        val domainPattern = Pattern.compile("^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}\$")
+        val isDomain = domainPattern.matcher(value).matches()
         ipDomain.error = when {
             value.isBlank() -> "IP/Domain field is required"
             !isIp && !isDomain -> "IP/Domain value is not valid"

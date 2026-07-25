@@ -1,6 +1,6 @@
 package com.jgeek00.crowdsecmonitor.data.api
 
-import android.util.Base64
+import java.util.Base64
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import com.jgeek00.crowdsecmonitor.data.models.ApiErrorResponse
 import com.jgeek00.crowdsecmonitor.data.models.HttpClientException
@@ -38,7 +38,7 @@ class HttpClient(private val server: CSServerModel) {
                     when (server.authMethod) {
                         "basic" -> {
                             val credentials = "${server.basicUser}:${server.basicPassword}"
-                            val base64 = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+                            val base64 = Base64.getEncoder().encodeToString(credentials.toByteArray())
                             requestBuilder.addHeader("Authorization", "Basic $base64")
                         }
                         "bearer" -> {

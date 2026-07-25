@@ -1,6 +1,6 @@
 package com.jgeek00.crowdsecmonitor.data.api
 
-import android.util.Base64
+import java.util.Base64
 import com.jgeek00.crowdsecmonitor.data.db.CSServerModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -76,7 +76,7 @@ class WebSocketClient(private val server: CSServerModel) {
         when (server.authMethod) {
             "basic" -> {
                 val credentials = "${server.basicUser}:${server.basicPassword}"
-                val base64 = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+                val base64 = Base64.getEncoder().encodeToString(credentials.toByteArray())
                 builder.addHeader("Authorization", "Basic $base64")
             }
             "bearer" -> {

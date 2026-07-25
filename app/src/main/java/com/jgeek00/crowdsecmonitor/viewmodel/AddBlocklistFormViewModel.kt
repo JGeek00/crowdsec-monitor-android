@@ -1,6 +1,5 @@
 package com.jgeek00.crowdsecmonitor.viewmodel
 
-import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,7 +32,9 @@ class AddBlocklistFormViewModel @Inject constructor(
             return
         }
 
-        if (!Patterns.WEB_URL.matcher(url.trim()).matches()) {
+        // ponytail: plain Java URL.parse instead of android.util.Patterns.WEB_URL
+        // so tests don't need Robolectric. URL will throw on malformed input.
+        if (!isValidUrl(url.trim())) {
             invalidUrlError = true
             return
         }
@@ -52,6 +53,13 @@ class AddBlocklistFormViewModel @Inject constructor(
                 isSaving = false
             }
         }
+    }
+
+    private fun isValidUrl(url: String): Boolean = try {
+        java.net.URI(url).toURL()
+        true
+    } catch (_: Exception) {
+        false
     }
 
     fun reset() {

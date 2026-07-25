@@ -12,12 +12,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import retrofit2.Response
 import retrofit2.http.GET
 
-@RunWith(RobolectricTestRunner::class)
 class HttpClientTest {
 
     private lateinit var mockWebServer: MockWebServer
