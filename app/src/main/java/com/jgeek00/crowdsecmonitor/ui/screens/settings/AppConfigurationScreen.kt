@@ -1,5 +1,8 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.settings
 
+import android.app.LocaleManager
+import android.os.Build
+import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,8 +26,13 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Defaults
 import com.jgeek00.crowdsecmonitor.constants.Enums
+import com.jgeek00.crowdsecmonitor.constants.Languages
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
@@ -45,6 +54,7 @@ fun AppConfigurationScreen(
     viewModel: AppConfigurationViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val canPickLanguage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -169,6 +179,55 @@ fun AppConfigurationScreen(
                             )
                         }
                     )
+                }
+            }
+
+            if (canPickLanguage) {
+                item {
+                    SectionHeader(
+                        stringResource(R.string.language_section)
+                    )
+                }
+                item {
+                    val context = LocalContext.current
+                    val localeManager = remember {
+                        context.getSystemService(LocaleManager::class.java)
+                    }
+                    var selectedTag by remember {
+                        mutableStateOf(
+                            localeManager.applicationLocales.toLanguageTags().takeIf { it.isNotEmpty() }
+                        )
+                    }
+                    val totalItems = Languages.available.size + 1
+
+                    RoundedCornersListTile(
+                        index = 0,
+                        totalItems = totalItems,
+                        selected = selectedTag == null,
+                        onClick = {
+                            localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                            selectedTag = null
+                        }
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.language_system_default)
+                        )
+                    }
+
+                    Languages.available.forEachIndexed { index, language ->
+                        RoundedCornersListTile(
+                            index = index + 1,
+                            totalItems = totalItems,
+                            selected = selectedTag?.startsWith(language.tag) == true,
+                            onClick = {
+                                localeManager.applicationLocales =
+                                    LocaleList.forLanguageTags(language.tag)
+                                selectedTag = language.tag
+                            }
+                        ) {
+                            ListItemContent(headlineText = language.name)
+                        }
+                    }
                 }
             }
         }
