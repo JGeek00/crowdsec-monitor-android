@@ -189,9 +189,8 @@ fun AppConfigurationScreen(
                     val localeManager = context.getSystemService(LocaleManager::class.java)
                     val selectedTag =
                         localeManager.applicationLocales.toLanguageTags().takeIf { it.isNotEmpty() }
-                    val currentLanguage = selectedTag?.let { tag ->
-                        Languages.available.find { tag.startsWith(it.tag) }?.name ?: tag
-                    } ?: stringResource(R.string.language_system_default)
+                    val currentLanguage = Languages.displayNameFor(selectedTag)
+                        ?: stringResource(R.string.language_system_default)
 
                     RoundedCornersListTile(
                         index = 0,
