@@ -14,6 +14,9 @@
 
 <hr>
 
+## Installation
+The app is available on Google Play as a closed test, which is why it does not show up in search or on the developer profile. The steps to join the testing group and install it are in [this Reddit post](https://www.reddit.com/r/CrowdSec/s/t8dEGia7wG).
+
 ## Required API
 CrowdSec Monitor gets it's data from an intermediate API between the app and CrowdSec's LAPI. This API caches the data and offers it with more filtering options. In order to use this app, you have to deploy this API next to your CrowdSec instance, on the same machine.
 
