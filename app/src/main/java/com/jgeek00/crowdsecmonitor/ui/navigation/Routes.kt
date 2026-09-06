@@ -39,6 +39,7 @@ sealed interface Route {
     @Serializable data object SettingsGraph : Route
     @Serializable data object Settings : Route
     @Serializable data object AppConfiguration : Route
+    @Serializable data object LanguageSelection : Route
     @Serializable data object ServerConfiguration : Route
 }
 

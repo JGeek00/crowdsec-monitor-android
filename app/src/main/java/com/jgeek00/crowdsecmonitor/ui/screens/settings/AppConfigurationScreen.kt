@@ -2,7 +2,6 @@ package com.jgeek00.crowdsecmonitor.ui.screens.settings
 
 import android.app.LocaleManager
 import android.os.Build
-import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,10 +25,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +46,7 @@ import com.jgeek00.crowdsecmonitor.viewmodel.AppConfigurationViewModel
 @Composable
 fun AppConfigurationScreen(
     onBack: () -> Unit,
+    onNavigateToLanguageSelection: () -> Unit,
     viewModel: AppConfigurationViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -185,48 +181,27 @@ fun AppConfigurationScreen(
             if (canPickLanguage) {
                 item {
                     SectionHeader(
-                        stringResource(R.string.language_section)
+                        stringResource(R.string.general)
                     )
                 }
                 item {
                     val context = LocalContext.current
-                    val localeManager = remember {
-                        context.getSystemService(LocaleManager::class.java)
-                    }
-                    var selectedTag by remember {
-                        mutableStateOf(
-                            localeManager.applicationLocales.toLanguageTags().takeIf { it.isNotEmpty() }
-                        )
-                    }
-                    val totalItems = Languages.available.size + 1
+                    val localeManager = context.getSystemService(LocaleManager::class.java)
+                    val selectedTag =
+                        localeManager.applicationLocales.toLanguageTags().takeIf { it.isNotEmpty() }
+                    val currentLanguage = selectedTag?.let { tag ->
+                        Languages.available.find { tag.startsWith(it.tag) }?.name ?: tag
+                    } ?: stringResource(R.string.language_system_default)
 
                     RoundedCornersListTile(
                         index = 0,
-                        totalItems = totalItems,
-                        selected = selectedTag == null,
-                        onClick = {
-                            localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
-                            selectedTag = null
-                        }
+                        totalItems = 1,
+                        onClick = onNavigateToLanguageSelection
                     ) {
                         ListItemContent(
-                            headlineText = stringResource(R.string.language_system_default)
+                            headlineText = stringResource(R.string.language_section),
+                            subHeadlineText = currentLanguage
                         )
-                    }
-
-                    Languages.available.forEachIndexed { index, language ->
-                        RoundedCornersListTile(
-                            index = index + 1,
-                            totalItems = totalItems,
-                            selected = selectedTag?.startsWith(language.tag) == true,
-                            onClick = {
-                                localeManager.applicationLocales =
-                                    LocaleList.forLanguageTags(language.tag)
-                                selectedTag = language.tag
-                            }
-                        ) {
-                            ListItemContent(headlineText = language.name)
-                        }
                     }
                 }
             }

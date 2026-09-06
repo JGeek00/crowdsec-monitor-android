@@ -213,6 +213,8 @@
     <string name="created_by">Creado en  🇪🇸 por JGeek00</string>
     <string name="donate">Donar</string>
     <string name="donate_description">Si te gusta CrowdSec Monitor, considera darme una propina</string>
+    <string name="language_section">Idioma</string>
+    <string name="language_system_default">Predeterminado del sistema</string>
     <string name="dashboard_section">Tablero</string>
     <string name="amount_items_dashboard_label">Número de elementos en listas del tablero</string>
     <string name="amount_items_dashboard_description">Número de elementos por lista</string>
@@ -308,6 +310,7 @@
     <string name="progress_not_available">Progreso no disponible</string>
     <string name="copy_url">Copiar URL</string>
     <string name="refresh_blocklist_fmt">Refrescar lista de bloqueo %s</string>
+    <string name="general">General</string>
     <plurals name="active_decisions_count">
         <item quantity="one">%d decisión activa</item>
         <item quantity="other">%d decisiones activas</item>

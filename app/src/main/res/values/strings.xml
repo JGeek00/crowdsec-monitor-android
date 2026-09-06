@@ -315,6 +315,7 @@
     <string name="progress_not_available">Progress not available</string>
     <string name="copy_url">Copy URL</string>
     <string name="refresh_blocklist_fmt">Refresh blocklist %s</string>
+    <string name="general">General</string>
     <plurals name="active_decisions_count">
         <item quantity="one">%d active decision</item>
         <item quantity="other">%d active decisions</item>

@@ -20,6 +20,7 @@ import com.jgeek00.crowdsecmonitor.ui.screens.settings.SettingsScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.dashboard.FullListDashboardScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.noServer.NoServerScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.LanguageSelectionScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
@@ -130,7 +131,15 @@ fun AppNavGraph(
                 )
             }
             composable<Route.AppConfiguration> {
-                AppConfigurationScreen(onBack = { navController.popBackStack() })
+                AppConfigurationScreen(
+                    onBack = { navController.popBackStack() },
+                    onNavigateToLanguageSelection = {
+                        navController.navigate(Route.LanguageSelection)
+                    }
+                )
+            }
+            composable<Route.LanguageSelection> {
+                LanguageSelectionScreen(onBack = { navController.popBackStack() })
             }
             composable<Route.ServerConfiguration> {
                 ServerConfigurationScreen(onBack = { navController.popBackStack() })

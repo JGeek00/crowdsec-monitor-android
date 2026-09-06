@@ -310,6 +310,7 @@
     <string name="progress_not_available">Kein Fortschritt verfügbar</string>
     <string name="copy_url">URL kopieren</string>
     <string name="refresh_blocklist_fmt">Sperrliste %s aktualisieren</string>
+    <string name="general">Allgemein</string>
     <plurals name="active_decisions_count">
         <item quantity="one">%d aktive Sperre</item>
         <item quantity="other">%d aktive Sperren</item>
