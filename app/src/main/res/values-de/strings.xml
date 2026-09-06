@@ -213,6 +213,8 @@
     <string name="created_by">Erstellt in  🇪🇸 von JGeek00</string>
     <string name="donate">Spenden</string>
     <string name="donate_description">Wenn dir CrowdSec Monitor gefällt, gib mir gern ein Trinkgeld</string>
+    <string name="language_section">Sprache</string>
+    <string name="language_system_default">Systemvorgabe</string>
     <string name="dashboard_section">Dashboard</string>
     <string name="amount_items_dashboard_label">Einträge in den Dashboard-Listen</string>
     <string name="amount_items_dashboard_description">Anzahl der Einträge je Liste auf dem Dashboard (%d)</string>
