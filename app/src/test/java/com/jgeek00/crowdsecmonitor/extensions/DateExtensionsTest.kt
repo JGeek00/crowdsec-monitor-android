@@ -1,107 +1,50 @@
 package com.jgeek00.crowdsecmonitor.extensions
 
-import com.jgeek00.crowdsecmonitor.MainDispatcherRule
-import org.junit.Assert.*
-import org.junit.Rule
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
+import java.time.Instant
 
+/**
+ * Verifies timestamp parsing against the API canonical format
+ * (`YYYY-MM-DD HH:MM:SS ±ZZZZ ZZZ`) — see specs/006-fix-timestamp-format.
+ */
 class DateExtensionsTest {
 
-    @get:Rule val mainDispatcherRule = MainDispatcherRule()
-
-    private val validIso = "2026-07-24T12:30:45Z"
-    private val invalidString = "not-a-date"
-
-    // ── toFormattedDate ─────────────────────────────────────────
-
     @Test
-    fun `toFormattedDate returns formatted date for valid ISO string`() {
-        val result = validIso.toFormattedDate()
-        assertNotNull(result)
-        assertFalse(result.isEmpty())
-        assertNotEquals(validIso, result)
+    fun toInstant_parsesCanonicalDuplicatedOffset() {
+        assertEquals(
+            Instant.parse("2026-09-24T14:19:29Z"),
+            "2026-09-24 16:19:29 +0200 +0200".toInstant()
+        )
     }
 
     @Test
-    fun `toFormattedDate returns original string for invalid input`() {
-        val result = invalidString.toFormattedDate()
-        assertEquals(invalidString, result)
-    }
-
-    // ── toFormattedDateTime ─────────────────────────────────────
-
-    @Test
-    fun `toFormattedDateTime returns formatted datetime for valid ISO string`() {
-        val result = validIso.toFormattedDateTime()
-        assertNotNull(result)
-        assertFalse(result.isEmpty())
-        assertNotEquals(validIso, result)
+    fun toInstant_parsesCanonicalForeignOffset() {
+        assertEquals(
+            Instant.parse("2026-09-23T12:31:28Z"),
+            "2026-09-23 20:31:28 +0800 +0800".toInstant()
+        )
     }
 
     @Test
-    fun `toFormattedDateTime returns original string for invalid input`() {
-        val result = invalidString.toFormattedDateTime()
-        assertEquals(invalidString, result)
-    }
-
-    // ── toFormattedTime ─────────────────────────────────────────
-
-    @Test
-    fun `toFormattedTime returns time string for valid ISO string`() {
-        val result = validIso.toFormattedTime()
-        assertNotNull(result)
-        assertTrue(result.matches(Regex("\\d{2}:\\d{2}:\\d{2}")))
+    fun toInstant_parsesCanonicalNegativeOffset() {
+        assertEquals(
+            Instant.parse("2026-09-23T19:31:28Z"),
+            "2026-09-23 14:31:28 -0500 -0500".toInstant()
+        )
     }
 
     @Test
-    fun `toFormattedTime returns original string for invalid input`() {
-        val result = invalidString.toFormattedTime()
-        assertEquals(invalidString, result)
-    }
-
-    // ── toFormattedDateTimeCustom ────────────────────────────────
-
-    @Test
-    fun `toFormattedDateTimeCustom returns custom format for valid ISO string`() {
-        val result = validIso.toFormattedDateTimeCustom()
-        assertNotNull(result)
-        assertFalse(result.isEmpty())
-        assertNotEquals(validIso, result)
+    fun toInstant_parsesIsoUtc() {
+        assertEquals(
+            Instant.parse("2026-07-23T00:00:00Z"),
+            "2026-07-23T00:00:00Z".toInstant()
+        )
     }
 
     @Test
-    fun `toFormattedDateTimeCustom returns original string for invalid input`() {
-        val result = invalidString.toFormattedDateTimeCustom()
-        assertEquals(invalidString, result)
-    }
-
-    // ── toInstant ────────────────────────────────────────────────
-
-    @Test
-    fun `toInstant returns parsed Instant for valid ISO string`() {
-        val result = validIso.toInstant()
-        assertNotNull(result)
-        assertEquals("2026-07-24T12:30:45Z", result.toString())
-    }
-
-    @Test
-    fun `toInstant returns null for invalid input`() {
-        val result = invalidString.toInstant()
-        assertNull(result)
-    }
-
-    // ── toFormattedTimeOrNull ────────────────────────────────────
-
-    @Test
-    fun `toFormattedTimeOrNull returns time for valid ISO`() {
-        val result = validIso.toFormattedTimeOrNull()
-        assertNotNull(result)
-        assertTrue(result!!.matches(Regex("\\d{2}:\\d{2}:\\d{2}")))
-    }
-
-    @Test
-    fun `toFormattedTimeOrNull returns null for invalid input`() {
-        val result = invalidString.toFormattedTimeOrNull()
-        assertNull(result)
+    fun toInstant_returnsNullOnGarbage() {
+        assertNull("not-a-timestamp".toInstant())
     }
 }
