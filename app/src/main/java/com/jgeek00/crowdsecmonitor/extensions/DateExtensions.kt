@@ -77,6 +77,27 @@ fun String.toFormattedTime(): String {
         .format(instant)
 }
 
+/**
+ * Returns the creation moment for display: "Today, 14:32:17" when the date is today,
+ * "Yesterday, 14:32:17" when it was yesterday, and "14 febrero 2026 14:32:17"
+ * (localized month name) otherwise. Returns the original string when it cannot be parsed.
+ */
+fun String.toRelativeDateTime(context: Context): String {
+    val instant = toInstant() ?: return this
+    val zone = ZoneId.systemDefault()
+    val date = instant.atZone(zone).toLocalDate()
+    val today = LocalDate.now(zone)
+    val time = toFormattedTime()
+    return when (date) {
+        today -> "${context.getString(R.string.today)}, $time"
+        today.minusDays(1) -> "${context.getString(R.string.yesterday)}, $time"
+        else -> DateTimeFormatter
+            .ofPattern("d MMMM yyyy HH:mm:ss")
+            .withLocale(Locale.getDefault())
+            .format(instant.atZone(zone))
+    }
+}
+
 fun String.toFormattedDateTimeCustom(): String {
     val instant = toInstant() ?: return this
     return DateTimeFormatter

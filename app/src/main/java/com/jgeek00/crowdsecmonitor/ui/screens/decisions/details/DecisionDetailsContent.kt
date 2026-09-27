@@ -43,6 +43,7 @@ import com.jgeek00.crowdsecmonitor.constants.URLs
 import com.jgeek00.crowdsecmonitor.data.models.DecisionItemResponse
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.toAlertsListResponseAlert
+import com.jgeek00.crowdsecmonitor.extensions.toRelativeDateTime
 import com.jgeek00.crowdsecmonitor.ui.components.CountryFlag
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
@@ -163,12 +164,29 @@ fun DecisionDetailsContent(
 
                     RoundedCornersListTile(
                         index = 2,
-                        totalItems = 3,
+                        totalItems = 4,
                     ) {
                         ListItemContent(
                                 headlineText = stringResource(R.string.remaining_time),
                                 trailingContent = { DecisionTimer(expiration = data.expiration, disableAnimation = disableTimerAnimation) }
                             )
+                    }
+
+                    RoundedCornersListTile(
+                        index = 3,
+                        totalItems = 4,
+                    ) {
+                        ListItemContent(
+                            headlineText = stringResource(R.string.created),
+                            trailingContent = {
+                                Text(
+                                    text = data.crowdsecCreatedAt.toRelativeDateTime(context),
+                                    fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        )
                     }
                 }
 
