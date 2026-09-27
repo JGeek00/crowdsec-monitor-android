@@ -178,14 +178,7 @@ fun DecisionDetailsContent(
                     ) {
                         ListItemContent(
                             headlineText = stringResource(R.string.created),
-                            trailingContent = {
-                                Text(
-                                    text = data.crowdsecCreatedAt.toRelativeDateTime(context),
-                                    fontWeight = MaterialTheme.typography.bodyMedium.fontWeight,
-                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                            subHeadlineText = data.crowdsecCreatedAt.toRelativeDateTime(context)
                         )
                     }
                 }
