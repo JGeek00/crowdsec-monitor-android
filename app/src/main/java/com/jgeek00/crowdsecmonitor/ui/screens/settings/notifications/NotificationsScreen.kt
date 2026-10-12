@@ -109,6 +109,14 @@ fun NotificationsScreen(
         channelsViewModel.initialFetch()
     }
 
+    // A10: the details screens edit notifications/channels in place; when this
+    // screen becomes active again after editing, silently refresh both lists
+    // (mirrors the iOS onSaved callback). No-op while a list has not loaded yet.
+    LaunchedEffect(Unit) {
+        if (notificationsViewModel.state.data != null) notificationsViewModel.refresh()
+        if (channelsViewModel.state.data != null) channelsViewModel.refresh()
+    }
+
     LaunchedEffect(notificationsViewModel.errorToggle) {
         if (notificationsViewModel.errorToggle) {
             scope.launch { snackbarHostState.showSnackbar(errorToggleMsg) }

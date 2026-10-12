@@ -18,8 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Circle
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Close
@@ -48,15 +46,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.isImeVisible
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.data.models.NotificationChannelType
 import com.jgeek00.crowdsecmonitor.data.models.UserNotification
 import com.jgeek00.crowdsecmonitor.data.models.UserNotificationChannel
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
-import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.constants.Enums
@@ -78,7 +71,6 @@ private const val STEP_REVIEW = 4
  * handles save/save-error state. `onClose(true)` means the notification was
  * saved; the caller refreshes its list.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NotificationWizard(
     viewModel: NotificationFormViewModel,
@@ -101,14 +93,7 @@ fun NotificationWizard(
     }
 
     // Keyboard staging for the rule editor presentation (gotcha 2).
-    val imeVisible = WindowInsets.isImeVisible
-    LaunchedEffect(imeVisible) {
-        if (imeVisible) {
-            viewModel.keyboardWillShow()
-        } else {
-            viewModel.keyboardDidHide()
-        }
-    }
+    RuleEditorKeyboardStaging(viewModel = viewModel)
 
     FullScreenDialog(
         onClose = { onClose(false) },
@@ -132,7 +117,7 @@ fun NotificationWizard(
                     STEP_INFO -> WizardInfoStep(viewModel)
                     STEP_CONDITION -> ConditionEditor(viewModel)
                     STEP_MESSAGE -> WizardMessageStep(viewModel)
-                    STEP_CHANNELS -> WizardChannelsStep(viewModel)
+                    STEP_CHANNELS -> ChannelsSelectorSection(viewModel)
                     STEP_REVIEW -> WizardReviewStep(viewModel)
                 }
             }
@@ -428,66 +413,8 @@ private fun channelsBySupport(channels: List<UserNotificationChannel>) =
             .thenBy { it.id }
     )
 
-// MARK: - Step 3: Channels
-
-@Composable
-private fun WizardChannelsStep(viewModel: NotificationFormViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-    ) {
-        FormInfoBox(label = stringResource(R.string.channels_step_info))
-        SectionHeader(text = stringResource(R.string.channels), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
-        if (viewModel.channels.isEmpty()) {
-            RoundedCornersListTile(index = 0, totalItems = 1) {
-                Text(
-                    text = stringResource(R.string.no_channels_configured),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            val channels = viewModel.channels
-            channels.forEachIndexed { index, channel ->
-                val selected = viewModel.selectedChannelIds.contains(channel.id)
-                RoundedCornersListTile(index = index, totalItems = channels.size, onClick = {
-                    viewModel.selectedChannelIds = if (selected) {
-                        viewModel.selectedChannelIds - channel.id
-                    } else {
-                        viewModel.selectedChannelIds + channel.id
-                    }
-                }) {
-                    ListItemContent(
-                        headlineText = channel.name,
-                        subHeadlineText = stringResource(
-                            if (channel.type == NotificationChannelType.EMAIL) {
-                                R.string.channel_type_email
-                            } else {
-                                R.string.channel_type_ntfy
-                            }
-                        ),
-                        trailingContent = {
-                            Icon(
-                                imageVector = if (selected) Icons.Rounded.CheckCircle else Icons.Rounded.Circle,
-                                contentDescription = null,
-                                tint = if (selected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                }
-                            )
-                        }
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-    }
-}
+// MARK: - Step 3: Channels (shared ChannelsSelectorSection in
+// NotificationChannelsSelector.kt, also used by the details edit form)
 
 // MARK: - Step 4: Review
 

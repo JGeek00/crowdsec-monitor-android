@@ -478,4 +478,13 @@
     <string name="priority_high">Hoch</string>
     <string name="priority_urgent">Dringend</string>
     <string name="priority_max">Maximal</string>
+    <!-- Details screens with in-place editing (A10) -->
+    <string name="notification_saved">Benachrichtigung gespeichert</string>
+    <string name="channel_saved">Kanal gespeichert</string>
+    <string name="not_configured">Nicht konfiguriert</string>
+    <string name="provider">Anbieter</string>
+    <string name="channel_section">Kanal</string>
+    <string name="no_configuration_values">Keine Konfigurationswerte</string>
+    <string name="common_yes">Ja</string>
+    <string name="common_no">Nein</string>
 </resources>

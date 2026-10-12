@@ -22,8 +22,8 @@ import com.jgeek00.crowdsecmonitor.ui.screens.noServer.NoServerScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.LanguageSelectionScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
-import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.ChannelDetailsPlaceholder
-import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationDetailsPlaceholder
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.ChannelDetailsScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationDetailsScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationsScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
@@ -163,16 +163,14 @@ fun AppNavGraph(
             }
             composable<Route.NotificationDetails> { backStackEntry ->
                 val route = backStackEntry.toRoute<Route.NotificationDetails>()
-                // TODO A10: replace with the notification details screen (in-place editing).
-                NotificationDetailsPlaceholder(
+                NotificationDetailsScreen(
                     notificationId = route.id,
                     onBack = { navController.popBackStack() }
                 )
             }
             composable<Route.ChannelDetails> { backStackEntry ->
                 val route = backStackEntry.toRoute<Route.ChannelDetails>()
-                // TODO A10: replace with the channel details screen (in-place editing).
-                ChannelDetailsPlaceholder(
+                ChannelDetailsScreen(
                     channelId = route.id,
                     onBack = { navController.popBackStack() }
                 )
