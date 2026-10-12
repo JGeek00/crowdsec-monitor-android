@@ -141,13 +141,14 @@ class NotificationFormViewModel @Inject constructor(
         }
     }
 
-    fun commitRuleSheet() {
+    fun commitRuleSheet(editedDraft: EditableLeaf? = null) {
         val sheet = ruleSheet ?: return
+        val draft = editedDraft ?: sheet.draft
         val index = sheet.index
         if (index != null && rules.indices.contains(index)) {
-            rules = rules.toMutableList().also { it[index] = sheet.draft }
+            rules = rules.toMutableList().also { it[index] = draft }
         } else {
-            rules = rules + sheet.draft
+            rules = rules + draft
         }
         ruleSheet = null
     }

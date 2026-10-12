@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,7 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationWizard
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationChannelsListViewModel
+import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationsListViewModel
 import kotlinx.coroutines.launch
 
@@ -75,8 +78,14 @@ fun NotificationsScreen(
 
     var selectedTab by rememberSaveable { mutableIntStateOf(TAB_NOTIFICATIONS) }
 
-    // TODO A8: present the notification wizard (fullscreen) and refresh the list on save.
-    val onAddNotification: () -> Unit = { }
+    // A8: present the notification wizard (identity-fresh view model per
+    // presentation) and refresh the list after a successful save.
+    var showNotificationWizard by rememberSaveable { mutableStateOf(false) }
+    var wizardPresentationId by remember { mutableIntStateOf(0) }
+    val onAddNotification: () -> Unit = {
+        wizardPresentationId++
+        showNotificationWizard = true
+    }
     // TODO A9: present the channel wizard (fullscreen) and refresh the list on save.
     val onAddChannel: () -> Unit = { }
 
@@ -234,5 +243,20 @@ fun NotificationsScreen(
                 }
             }
         }
+    }
+
+    if (showNotificationWizard) {
+        val wizardViewModel: NotificationFormViewModel = hiltViewModel(
+            key = "notification-wizard-$wizardPresentationId"
+        )
+        NotificationWizard(
+            viewModel = wizardViewModel,
+            onClose = { saved ->
+                showNotificationWizard = false
+                if (saved) {
+                    notificationsViewModel.refresh()
+                }
+            }
+        )
     }
 }
