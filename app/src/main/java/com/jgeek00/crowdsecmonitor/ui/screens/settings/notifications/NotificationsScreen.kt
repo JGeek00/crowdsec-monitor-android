@@ -45,7 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.ChannelWizard
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationWizard
+import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationChannelsListViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationsListViewModel
@@ -86,8 +88,14 @@ fun NotificationsScreen(
         wizardPresentationId++
         showNotificationWizard = true
     }
-    // TODO A9: present the channel wizard (fullscreen) and refresh the list on save.
-    val onAddChannel: () -> Unit = { }
+    // A9: present the channel wizard (identity-fresh view model per
+    // presentation) and refresh the list after a successful save.
+    var showChannelWizard by rememberSaveable { mutableStateOf(false) }
+    var channelWizardPresentationId by remember { mutableIntStateOf(0) }
+    val onAddChannel: () -> Unit = {
+        channelWizardPresentationId++
+        showChannelWizard = true
+    }
 
     val errorToggleMsg = stringResource(R.string.error_toggle_notification)
     val errorDeleteNotificationMsg = stringResource(R.string.error_delete_notification)
@@ -255,6 +263,21 @@ fun NotificationsScreen(
                 showNotificationWizard = false
                 if (saved) {
                     notificationsViewModel.refresh()
+                }
+            }
+        )
+    }
+
+    if (showChannelWizard) {
+        val channelWizardViewModel: ChannelFormViewModel = hiltViewModel(
+            key = "channel-wizard-$channelWizardPresentationId"
+        )
+        ChannelWizard(
+            viewModel = channelWizardViewModel,
+            onClose = { saved ->
+                showChannelWizard = false
+                if (saved) {
+                    channelsViewModel.refresh()
                 }
             }
         )

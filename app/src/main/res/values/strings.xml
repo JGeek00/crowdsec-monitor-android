@@ -438,4 +438,49 @@
         <item quantity="one">%1$d second</item>
         <item quantity="other">%1$d seconds</item>
     </plurals>
+    <!-- Channel wizard (A9) -->
+    <string name="channel_wizard_new_title">New channel</string>
+    <string name="channel_wizard_edit_title">Edit channel</string>
+    <string name="error_save_channel">The channel could not be saved. Try again later.</string>
+    <string name="error_load_providers">Provider configuration could not be loaded.</string>
+    <string name="channel_wizard_info_box">A notification channel defines how the backend delivers a notification: through ntfy or by email. Configure the provider access once here, then pick one or more channels in each notification.</string>
+    <string name="choose_provider_section">Choose the provider for this channel.</string>
+    <string name="no_providers_available">No providers available</string>
+    <string name="provider_form_no_provider">Go back and choose a provider first.</string>
+    <string name="channel_final_step_info">Give the channel a name, optionally send a test notification, then finish to save it.</string>
+    <string name="send_test_notification">Send test notification</string>
+    <string name="test">Test</string>
+    <string name="test_notification_sent">Test notification sent</string>
+    <string name="test_failed_fmt">Test failed: %1$s</string>
+
+    <!-- Backend-provided provider definition keys (A9): resolved at runtime
+         through resources.getIdentifier (see BackendStrings.kt). These names
+         MUST match the backend constants (api/src/constants/notification-providers.ts). -->
+    <string name="provider_ntfy">ntfy</string>
+    <string name="provider_ntfy_description">Messages are published to https://ntfy.sh/&lt;topic&gt; or your own server. The topic works as a password on public servers: use a hard to guess value with letters, numbers, - and _ (max 64).</string>
+    <string name="provider_email">Email</string>
+    <string name="provider_email_description">Messages are sent through your SMTP server.</string>
+    <string name="section_topic">Topic</string>
+    <string name="section_authentication">Authentication</string>
+    <string name="section_appearance">Appearance</string>
+    <string name="section_server">Server</string>
+    <string name="section_addresses">Addresses</string>
+    <string name="field_topic">Topic</string>
+    <string name="field_server">Server</string>
+    <string name="field_username">Username</string>
+    <string name="field_password">Password</string>
+    <string name="field_token">Access token</string>
+    <string name="field_priority">Priority</string>
+    <string name="field_tags">Tags</string>
+    <string name="field_host">Host</string>
+    <string name="field_port">Port</string>
+    <string name="field_secure">Use implicit TLS</string>
+    <string name="field_from">From</string>
+    <string name="field_to">To</string>
+    <string name="priority_min">Min</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_default">Default</string>
+    <string name="priority_high">High</string>
+    <string name="priority_urgent">Urgent</string>
+    <string name="priority_max">Max</string>
 </resources>

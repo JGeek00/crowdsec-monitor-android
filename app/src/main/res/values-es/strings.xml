@@ -433,4 +433,49 @@
         <item quantity="one">%1$d segundo</item>
         <item quantity="other">%1$d segundos</item>
     </plurals>
+    <!-- Asistente de canal (A9) -->
+    <string name="channel_wizard_new_title">Nuevo canal</string>
+    <string name="channel_wizard_edit_title">Editar canal</string>
+    <string name="error_save_channel">No se pudo guardar el canal. Inténtalo más tarde.</string>
+    <string name="error_load_providers">No se pudo cargar la configuración del proveedor.</string>
+    <string name="channel_wizard_info_box">Un canal define cómo envía el backend una notificación: por ntfy o por email. Configura el acceso al proveedor una vez aquí y luego elige uno o varios canales en cada notificación.</string>
+    <string name="choose_provider_section">Elige el proveedor de este canal.</string>
+    <string name="no_providers_available">No hay proveedores disponibles</string>
+    <string name="provider_form_no_provider">Vuelve atrás y elige primero un proveedor.</string>
+    <string name="channel_final_step_info">Ponle un nombre al canal, opcionalmente envía una notificación de prueba y finaliza para guardarlo.</string>
+    <string name="send_test_notification">Enviar notificación de prueba</string>
+    <string name="test">Prueba</string>
+    <string name="test_notification_sent">Notificación de prueba enviada</string>
+    <string name="test_failed_fmt">La prueba falló: %1$s</string>
+
+    <!-- Claves de definición de proveedores del backend (A9): se resuelven en
+         tiempo de ejecución con resources.getIdentifier (ver BackendStrings.kt).
+         Estos nombres DEBEN coincidir con las constantes del backend. -->
+    <string name="provider_ntfy">ntfy</string>
+    <string name="provider_ntfy_description">Los mensajes se publican en https://ntfy.sh/&lt;tema&gt; o en tu propio servidor. El tema funciona como contraseña en servidores públicos: usa un valor difícil de adivinar con letras, números, - y _ (máx. 64).</string>
+    <string name="provider_email">Email</string>
+    <string name="provider_email_description">Los mensajes se envían a través de tu servidor SMTP.</string>
+    <string name="section_topic">Tema</string>
+    <string name="section_authentication">Autenticación</string>
+    <string name="section_appearance">Apariencia</string>
+    <string name="section_server">Servidor</string>
+    <string name="section_addresses">Direcciones</string>
+    <string name="field_topic">Tema</string>
+    <string name="field_server">Servidor</string>
+    <string name="field_username">Usuario</string>
+    <string name="field_password">Contraseña</string>
+    <string name="field_token">Token de acceso</string>
+    <string name="field_priority">Prioridad</string>
+    <string name="field_tags">Etiquetas</string>
+    <string name="field_host">Servidor</string>
+    <string name="field_port">Puerto</string>
+    <string name="field_secure">Usar TLS implícito</string>
+    <string name="field_from">Remitente</string>
+    <string name="field_to">Destinatarios</string>
+    <string name="priority_min">Mínima</string>
+    <string name="priority_low">Baja</string>
+    <string name="priority_default">Por defecto</string>
+    <string name="priority_high">Alta</string>
+    <string name="priority_urgent">Urgente</string>
+    <string name="priority_max">Máxima</string>
 </resources>

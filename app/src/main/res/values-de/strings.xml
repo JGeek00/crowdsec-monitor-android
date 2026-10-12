@@ -433,4 +433,49 @@
         <item quantity="one">%1$d Sekunde</item>
         <item quantity="other">%1$d Sekunden</item>
     </plurals>
+    <!-- Kanal-Assistent (A9) -->
+    <string name="channel_wizard_new_title">Neuer Kanal</string>
+    <string name="channel_wizard_edit_title">Kanal bearbeiten</string>
+    <string name="error_save_channel">Der Kanal konnte nicht gespeichert werden. Versuche es später erneut.</string>
+    <string name="error_load_providers">Die Anbieterkonfiguration konnte nicht geladen werden.</string>
+    <string name="channel_wizard_info_box">Ein Kanal legt fest, wie das Backend eine Benachrichtigung zustellt: über ntfy oder per E-Mail. Konfiguriere den Anbieterzugang hier einmalig und wähle dann in jeder Benachrichtigung einen oder mehrere Kanäle.</string>
+    <string name="choose_provider_section">Wähle den Anbieter für diesen Kanal.</string>
+    <string name="no_providers_available">Keine Anbieter verfügbar</string>
+    <string name="provider_form_no_provider">Gehe zurück und wähle zuerst einen Anbieter.</string>
+    <string name="channel_final_step_info">Gib dem Kanal einen Namen, sende optional eine Testbenachrichtigung und schließe ab, um ihn zu speichern.</string>
+    <string name="send_test_notification">Testbenachrichtigung senden</string>
+    <string name="test">Test</string>
+    <string name="test_notification_sent">Testbenachrichtigung gesendet</string>
+    <string name="test_failed_fmt">Test fehlgeschlagen: %1$s</string>
+
+    <!-- Vom Backend gelieferte Provider-Schlüssel (A9): werden zur Laufzeit
+         über resources.getIdentifier aufgelöst (siehe BackendStrings.kt).
+         Diese Namen MÜSSEN mit den Backend-Konstanten übereinstimmen. -->
+    <string name="provider_ntfy">ntfy</string>
+    <string name="provider_ntfy_description">Nachrichten werden an https://ntfy.sh/&lt;Thema&gt; oder deinen eigenen Server veröffentlicht. Das Thema funktioniert auf öffentlichen Servern wie ein Passwort: verwende einen schwer zu erratenden Wert mit Buchstaben, Zahlen, - und _ (max. 64).</string>
+    <string name="provider_email">E-Mail</string>
+    <string name="provider_email_description">Nachrichten werden über deinen SMTP-Server gesendet.</string>
+    <string name="section_topic">Thema</string>
+    <string name="section_authentication">Authentifizierung</string>
+    <string name="section_appearance">Erscheinungsbild</string>
+    <string name="section_server">Server</string>
+    <string name="section_addresses">Adressen</string>
+    <string name="field_topic">Thema</string>
+    <string name="field_server">Server</string>
+    <string name="field_username">Benutzername</string>
+    <string name="field_password">Passwort</string>
+    <string name="field_token">Zugriffstoken</string>
+    <string name="field_priority">Priorität</string>
+    <string name="field_tags">Tags</string>
+    <string name="field_host">Host</string>
+    <string name="field_port">Port</string>
+    <string name="field_secure">Implizites TLS verwenden</string>
+    <string name="field_from">Von</string>
+    <string name="field_to">An</string>
+    <string name="priority_min">Minimal</string>
+    <string name="priority_low">Niedrig</string>
+    <string name="priority_default">Standard</string>
+    <string name="priority_high">Hoch</string>
+    <string name="priority_urgent">Dringend</string>
+    <string name="priority_max">Maximal</string>
 </resources>
