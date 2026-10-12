@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,12 +33,19 @@ data class OptionsMenuBottomSheetItem(
     val disabled: Boolean = false,
 )
 
+/**
+ * Renders one flat list of options, or a list of sections when [sections] is provided.
+ * Options within a section share the grouped rounded-corner shape; sections are
+ * visually separated by spacing so that destructive actions (e.g. delete) can be
+ * isolated from regular actions (e.g. toggle).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsMenuBottomSheet(
     options: List<OptionsMenuBottomSheetItem>,
     showMenu: Boolean,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    sections: List<List<OptionsMenuBottomSheetItem>> = emptyList()
 ) {
     val sheetState = rememberModalBottomSheetState()
 
@@ -62,10 +70,15 @@ fun OptionsMenuBottomSheet(
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                options.forEach { option ->
+                val effectiveSections = if (sections.isNotEmpty()) sections else listOf(options)
+                effectiveSections.forEachIndexed { sectionIndex, section ->
+                    if (sectionIndex > 0) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    section.forEach { option ->
                     RoundedCornersListTile(
-                        index = options.indexOf(option),
-                        totalItems = options.size,
+                        index = section.indexOf(option),
+                        totalItems = section.size,
                         onClick = {
                             if (!option.disabled) {
                                 option.onClick()
@@ -106,6 +119,7 @@ fun OptionsMenuBottomSheet(
                                 MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             }
                         )
+                    }
                     }
                 }
                 Spacer(modifier = Modifier.navigationBarsPadding())

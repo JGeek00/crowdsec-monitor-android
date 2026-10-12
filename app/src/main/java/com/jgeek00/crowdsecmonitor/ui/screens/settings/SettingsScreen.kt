@@ -52,7 +52,8 @@ fun SettingsScreen(
     themeMode: Enums.ThemeMode,
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
     onNavigateToAppConfiguration: () -> Unit,
-    onNavigateToServerConfiguration: () -> Unit
+    onNavigateToServerConfiguration: () -> Unit,
+    onNavigateToNotifications: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -75,6 +76,7 @@ fun SettingsScreen(
             onThemeModeChange = onThemeModeChange,
             onNavigateToAppConfiguration = onNavigateToAppConfiguration,
             onNavigateToServerConfiguration = onNavigateToServerConfiguration,
+            onNavigateToNotifications = onNavigateToNotifications,
             innerPadding = innerPadding,
             modifier = Modifier.fillMaxSize()
         )
@@ -88,6 +90,7 @@ private fun SettingsContent(
     onThemeModeChange: (Enums.ThemeMode) -> Unit,
     onNavigateToAppConfiguration: () -> Unit,
     onNavigateToServerConfiguration: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -129,7 +132,7 @@ private fun SettingsContent(
         item {
             RoundedCornersListTile(
                 index = 0,
-                totalItems = 2,
+                totalItems = 3,
                 onClick = onNavigateToAppConfiguration,
             ) {
                 Text(stringResource(R.string.app_configuration))
@@ -139,10 +142,20 @@ private fun SettingsContent(
         item {
             RoundedCornersListTile(
                 index = 1,
-                totalItems = 2,
+                totalItems = 3,
                 onClick = onNavigateToServerConfiguration,
             ) {
                 Text(stringResource(R.string.server_configuration))
+            }
+        }
+
+        item {
+            RoundedCornersListTile(
+                index = 2,
+                totalItems = 3,
+                onClick = onNavigateToNotifications,
+            ) {
+                Text(stringResource(R.string.notifications))
             }
         }
 

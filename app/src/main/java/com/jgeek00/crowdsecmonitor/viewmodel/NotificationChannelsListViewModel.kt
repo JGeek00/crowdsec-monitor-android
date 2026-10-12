@@ -24,6 +24,9 @@ class NotificationChannelsListViewModel @Inject constructor(
     var state by mutableStateOf<LoadingResult<List<UserNotificationChannel>>>(LoadingResult.Loading)
         private set
 
+    var isRefreshing by mutableStateOf(false)
+        private set
+
     var providers by mutableStateOf<List<NotificationProvider>>(emptyList())
         private set
 
@@ -47,6 +50,7 @@ class NotificationChannelsListViewModel @Inject constructor(
 
     fun reset() {
         state = LoadingResult.Loading
+        isRefreshing = false
         providers = emptyList()
         errorDelete = false
         channelInUse = false
@@ -97,7 +101,9 @@ class NotificationChannelsListViewModel @Inject constructor(
 
     fun refresh() {
         viewModelScope.launch {
+            isRefreshing = true
             fetchData()
+            isRefreshing = false
         }
     }
 

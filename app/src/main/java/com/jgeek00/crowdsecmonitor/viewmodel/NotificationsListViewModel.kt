@@ -23,6 +23,9 @@ class NotificationsListViewModel @Inject constructor(
     var state by mutableStateOf<LoadingResult<List<UserNotification>>>(LoadingResult.Loading)
         private set
 
+    var isRefreshing by mutableStateOf(false)
+        private set
+
     var errorToggle by mutableStateOf(false)
         private set
 
@@ -43,6 +46,7 @@ class NotificationsListViewModel @Inject constructor(
 
     fun reset() {
         state = LoadingResult.Loading
+        isRefreshing = false
         errorToggle = false
         errorDelete = false
         didDelete = false
@@ -84,7 +88,9 @@ class NotificationsListViewModel @Inject constructor(
 
     fun refresh() {
         viewModelScope.launch {
+            isRefreshing = true
             fetchData()
+            isRefreshing = false
         }
     }
 

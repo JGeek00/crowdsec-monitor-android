@@ -22,6 +22,9 @@ import com.jgeek00.crowdsecmonitor.ui.screens.noServer.NoServerScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.LanguageSelectionScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.ChannelDetailsPlaceholder
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationDetailsPlaceholder
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationsScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
 private fun NavDestination.topLevelAncestorRoute(): String? {
@@ -127,6 +130,9 @@ fun AppNavGraph(
                     },
                     onNavigateToServerConfiguration = {
                         navController.navigate(Route.ServerConfiguration)
+                    },
+                    onNavigateToNotifications = {
+                        navController.navigate(Route.Notifications)
                     }
                 )
             }
@@ -143,6 +149,33 @@ fun AppNavGraph(
             }
             composable<Route.ServerConfiguration> {
                 ServerConfigurationScreen(onBack = { navController.popBackStack() })
+            }
+            composable<Route.Notifications> {
+                NotificationsScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenNotification = { id ->
+                        navController.navigate(Route.NotificationDetails(id))
+                    },
+                    onOpenChannel = { id ->
+                        navController.navigate(Route.ChannelDetails(id))
+                    }
+                )
+            }
+            composable<Route.NotificationDetails> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.NotificationDetails>()
+                // TODO A10: replace with the notification details screen (in-place editing).
+                NotificationDetailsPlaceholder(
+                    notificationId = route.id,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable<Route.ChannelDetails> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.ChannelDetails>()
+                // TODO A10: replace with the channel details screen (in-place editing).
+                ChannelDetailsPlaceholder(
+                    channelId = route.id,
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }
