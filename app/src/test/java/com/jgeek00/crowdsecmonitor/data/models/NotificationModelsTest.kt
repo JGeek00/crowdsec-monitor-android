@@ -132,7 +132,7 @@ class NotificationModelsTest {
               "condition": {"type":"leaf","field":"scenario","operator":"equals","value":"crowdsec/ssh-bf"},
               "message": "Alert",
               "includeAlertInfo": false,
-              "channel_ids": [1, 2],
+              "channelIds": [1, 2],
               "created_at": "2026-01-01T00:00:00Z",
               "updated_at": "2026-01-02T00:00:00Z"
             }
@@ -158,10 +158,10 @@ class NotificationModelsTest {
               "name": "n",
               "enabled": false,
               "condition": {"type":"and","children":[]},
-              "threshold": {"count": 3, "window_seconds": 10, "cooldown_seconds": 60},
+              "threshold": {"count": 3, "windowSeconds": 10, "cooldownSeconds": 60},
               "message": "m",
               "includeAlertInfo": true,
-              "channel_ids": []
+              "channelIds": []
             }
         """.trimIndent()
 
@@ -183,10 +183,10 @@ class NotificationModelsTest {
               "data": [
                 {
                   "id": "h1",
-                  "notification_id": 1,
-                  "notification_name": "ssh alerts",
+                  "notificationId": 1,
+                  "notificationName": "ssh alerts",
                   "message": "Alert fired",
-                  "triggered_at": "2026-01-01T00:00:00Z",
+                  "triggeredAt": "2026-01-01T00:00:00Z",
                   "channels": [
                     {"type": "ntfy", "ok": true, "detail": "sent"},
                     {"type": "email", "ok": false}
@@ -231,7 +231,7 @@ class NotificationModelsTest {
         assertEquals(true, obj["enabled"]?.jsonPrimitive?.content.toBoolean())
         assertNull("description must be omitted, not null", obj["description"])
         assertNull("threshold must be omitted, not null", obj["threshold"])
-        assertEquals(1, obj["channel_ids"]?.jsonArray?.size)
+        assertEquals(1, obj["channelIds"]?.jsonArray?.size)
     }
 
     @Test
@@ -251,8 +251,8 @@ class NotificationModelsTest {
         val threshold = obj["threshold"] as? JsonObject
 
         assertEquals(3, threshold?.get("count")?.jsonPrimitive?.content?.toInt())
-        assertEquals(10, threshold?.get("window_seconds")?.jsonPrimitive?.content?.toInt())
-        assertNull("cooldown_seconds must be omitted, not null", threshold?.get("cooldown_seconds"))
+        assertEquals(10, threshold?.get("windowSeconds")?.jsonPrimitive?.content?.toInt())
+        assertNull("cooldownSeconds must be omitted, not null", threshold?.get("cooldownSeconds"))
     }
 
     @Test
@@ -278,7 +278,7 @@ class NotificationModelsTest {
         assertEquals("new message", obj["message"]?.jsonPrimitive?.content)
         assertNull("name must be omitted", obj["name"])
         assertNull("condition must be omitted", obj["condition"])
-        assertNull("channel_ids must be omitted", obj["channel_ids"])
+        assertNull("channelIds must be omitted", obj["channelIds"])
     }
 
     @Test

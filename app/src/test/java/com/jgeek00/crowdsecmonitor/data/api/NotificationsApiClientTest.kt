@@ -53,7 +53,7 @@ class NotificationsApiClientTest {
                 "condition": {"type":"leaf","field":"scenario","operator":"equals","value":"crowdsec/ssh-bf"},
                 "message": "Alert",
                 "includeAlertInfo": false,
-                "channel_ids": [1]
+                "channelIds": [1]
               }
             }
         """.trimIndent()
@@ -193,10 +193,10 @@ class NotificationsApiClientTest {
                       "data": [
                         {
                           "id": "h1",
-                          "notification_id": 1,
-                          "notification_name": "ssh alerts",
+                          "notificationId": 1,
+                          "notificationName": "ssh alerts",
                           "message": "Alert fired",
-                          "triggered_at": "2026-01-01T00:00:00Z",
+                          "triggeredAt": "2026-01-01T00:00:00Z",
                           "channels": [{"type": "ntfy", "ok": true}]
                         }
                       ],

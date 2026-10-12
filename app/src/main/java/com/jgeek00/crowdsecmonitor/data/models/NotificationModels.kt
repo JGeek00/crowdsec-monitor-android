@@ -173,8 +173,8 @@ object NotificationConditionNodeSerializer : KSerializer<NotificationConditionNo
 @Serializable
 data class NotificationThreshold(
     val count: Int,
-    @SerialName("window_seconds") val windowSeconds: Int,
-    @SerialName("cooldown_seconds") val cooldownSeconds: Int? = null
+    val windowSeconds: Int,
+    val cooldownSeconds: Int? = null
 )
 
 // MARK: - User notification
@@ -189,7 +189,9 @@ data class UserNotification(
     val threshold: NotificationThreshold? = null,
     val message: String,
     val includeAlertInfo: Boolean,
-    @SerialName("channel_ids") val channelIds: List<Int>,
+    val channelIds: List<Int>,
+    // Only these two are snake_case on the wire (Sequelize column-named properties);
+    // everything else is camelCase (channelIds, includeAlertInfo...).
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
 )
@@ -206,10 +208,10 @@ data class NotificationHistoryChannel(
 @Serializable
 data class NotificationHistoryEntry(
     val id: String,
-    @SerialName("notification_id") val notificationId: Int,
-    @SerialName("notification_name") val notificationName: String,
+    val notificationId: Int,
+    val notificationName: String,
     val message: String,
-    @SerialName("triggered_at") val triggeredAt: String,
+    val triggeredAt: String,
     val channels: List<NotificationHistoryChannel>
 )
 
@@ -254,7 +256,7 @@ data class CreateNotificationRequest(
     val threshold: NotificationThreshold? = null,
     val message: String,
     val includeAlertInfo: Boolean,
-    @SerialName("channel_ids") val channelIds: List<Int>
+    val channelIds: List<Int>
 )
 
 @Serializable
@@ -266,7 +268,7 @@ data class UpdateNotificationRequest(
     val threshold: NotificationThreshold? = null,
     val message: String? = null,
     val includeAlertInfo: Boolean? = null,
-    @SerialName("channel_ids") val channelIds: List<Int>? = null
+    val channelIds: List<Int>? = null
 )
 
 @Serializable
