@@ -1,6 +1,7 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications
 
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.utils.ConditionFormatting
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

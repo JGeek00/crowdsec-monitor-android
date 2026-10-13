@@ -1,8 +1,9 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,7 +58,10 @@ import com.jgeek00.crowdsecmonitor.data.models.UserNotificationChannel
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-import androidx.compose.foundation.layout.Arrangement
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.EditorErrorAlert
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.FormInfoBox
+import com.jgeek00.crowdsecmonitor.utils.ChannelDetailsSummary
+import com.jgeek00.crowdsecmonitor.utils.backendString
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelDetailsViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import kotlinx.coroutines.launch

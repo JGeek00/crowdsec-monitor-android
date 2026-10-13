@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -45,8 +45,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.ChannelWizard
-import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.NotificationWizard
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels.ChannelWizard
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels.ChannelsListPane
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications.NotificationWizard
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications.NotificationsListPane
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationChannelsListViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel

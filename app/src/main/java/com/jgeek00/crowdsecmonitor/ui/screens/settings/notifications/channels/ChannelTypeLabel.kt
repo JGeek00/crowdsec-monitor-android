@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource

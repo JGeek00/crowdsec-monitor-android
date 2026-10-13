@@ -1,7 +1,9 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels
 
 import android.content.Context
 import com.jgeek00.crowdsecmonitor.R
+import com.jgeek00.crowdsecmonitor.utils.backendStringResId
+import com.jgeek00.crowdsecmonitor.utils.resolveBackendString
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

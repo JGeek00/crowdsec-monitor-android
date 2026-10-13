@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.utils
 
 import com.jgeek00.crowdsecmonitor.data.models.NotificationChannelType
 import com.jgeek00.crowdsecmonitor.data.models.NotificationProvider

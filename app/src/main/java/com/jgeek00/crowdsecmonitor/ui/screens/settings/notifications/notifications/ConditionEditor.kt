@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,7 +47,8 @@ import com.jgeek00.crowdsecmonitor.constants.NotificationDefaults
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.FormInfoBox
+import com.jgeek00.crowdsecmonitor.utils.ConditionFormatting
 import com.jgeek00.crowdsecmonitor.viewmodel.ConditionField
 import com.jgeek00.crowdsecmonitor.viewmodel.ConditionOperator
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel

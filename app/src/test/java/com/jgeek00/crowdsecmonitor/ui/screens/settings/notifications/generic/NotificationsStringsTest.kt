@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic
 
 import com.jgeek00.crowdsecmonitor.R
 import org.junit.Assert.assertEquals

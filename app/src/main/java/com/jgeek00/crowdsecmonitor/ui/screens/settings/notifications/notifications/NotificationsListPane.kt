@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn

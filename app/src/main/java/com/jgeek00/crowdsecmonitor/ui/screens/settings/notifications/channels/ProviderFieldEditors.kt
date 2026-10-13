@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.data.models.ProviderField
 import com.jgeek00.crowdsecmonitor.data.models.ProviderFieldOption
+import com.jgeek00.crowdsecmonitor.utils.backendString
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import kotlinx.serialization.json.JsonPrimitive
 

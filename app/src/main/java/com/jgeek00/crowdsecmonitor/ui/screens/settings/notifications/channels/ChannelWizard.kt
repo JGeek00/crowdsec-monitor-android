@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -53,14 +53,17 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.NotificationProvider
 import com.jgeek00.crowdsecmonitor.data.models.ProviderField
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.FormInfoBox
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.WizardStepIndicator
+import com.jgeek00.crowdsecmonitor.utils.backendString
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelTestState
 import kotlinx.coroutines.launch

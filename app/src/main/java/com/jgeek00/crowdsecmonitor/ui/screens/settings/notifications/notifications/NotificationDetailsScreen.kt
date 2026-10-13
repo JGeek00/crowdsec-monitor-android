@@ -1,4 +1,4 @@
-package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
+package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -56,6 +56,8 @@ import com.jgeek00.crowdsecmonitor.data.models.UserNotification
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.EditorErrorAlert
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.RuleEditorKeyboardStaging
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationDetailsViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import kotlinx.coroutines.launch
@@ -303,18 +305,24 @@ private fun NotificationDetailsSummary(
     notification: UserNotification
 ) {
     SectionHeader(text = stringResource(R.string.condition))
+    val conditionCount = if (viewModel.noCondition || viewModel.advancedCondition != null) {
+        1
+    } else {
+        viewModel.rules.size
+    }
+    val conditionTotal = conditionCount + 2
     if (viewModel.noCondition) {
-        SummaryTile(text = stringResource(R.string.any_alert), index = 0, totalItems = 1)
+        SummaryTile(text = stringResource(R.string.any_alert), index = 0, totalItems = conditionTotal)
     } else if (viewModel.advancedCondition != null) {
         SummaryTile(
             text = stringResource(R.string.advanced_condition_warning),
             index = 0,
-            totalItems = 1,
+            totalItems = conditionTotal,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else {
         viewModel.rules.forEachIndexed { index, rule ->
-            RoundedCornersListTile(index = index, totalItems = viewModel.rules.size) {
+            RoundedCornersListTile(index = index, totalItems = conditionTotal) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(
@@ -337,8 +345,8 @@ private fun NotificationDetailsSummary(
         label = stringResource(R.string.frequency),
         value = notification.threshold?.let { frequencyLabel(it.count, it.windowSeconds) }
             ?: stringResource(R.string.not_configured),
-        index = 0,
-        totalItems = 2
+        index = conditionCount,
+        totalItems = conditionTotal
     )
     SummaryLabeledRow(
         label = stringResource(R.string.cooldown),
@@ -346,11 +354,16 @@ private fun NotificationDetailsSummary(
             notification.threshold?.cooldownSeconds
                 ?: NotificationDefaults.DEFAULT_COOLDOWN_SECONDS
         ),
-        index = 1,
-        totalItems = 2
+        index = conditionCount + 1,
+        totalItems = conditionTotal
     )
     SectionHeader(text = stringResource(R.string.content))
-    SummaryTile(text = viewModel.message, index = 0, totalItems = 2)
+    SummaryLabeledRow(
+        label = stringResource(R.string.message),
+        value = viewModel.message,
+        index = 0,
+        totalItems = 2
+    )
     SummaryLabeledRow(
         label = stringResource(R.string.channels),
         value = viewModel.channels
