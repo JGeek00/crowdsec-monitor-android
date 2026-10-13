@@ -25,45 +25,47 @@ import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
  */
 @Composable
 fun ChannelsSelectorSection(viewModel: NotificationFormViewModel) {
-    SectionHeader(text = stringResource(R.string.channels))
-    if (viewModel.channels.isEmpty()) {
-        RoundedCornersListTile(index = 0, totalItems = 1) {
-            Text(
-                text = stringResource(R.string.no_channels_configured),
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    } else {
-        val channels = viewModel.channels
-        channels.forEachIndexed { index, channel ->
-            val selected = viewModel.selectedChannelIds.contains(channel.id)
-            RoundedCornersListTile(
-                index = index,
-                totalItems = channels.size,
-                selected = selected,
-                onClick = {
-                    viewModel.selectedChannelIds = if (selected) {
-                        viewModel.selectedChannelIds - channel.id
-                    } else {
-                        viewModel.selectedChannelIds + channel.id
-                    }
-                }
-            ) {
-                ListItemContent(
-                    headlineText = channel.name,
-                    subHeadlineText = stringResource(
-                        if (channel.type == NotificationChannelType.EMAIL) {
-                            R.string.channel_type_email
-                        } else {
-                            R.string.channel_type_ntfy
-                        }
-                    )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        SectionHeader(text = stringResource(R.string.channels))
+        if (viewModel.channels.isEmpty()) {
+            RoundedCornersListTile(index = 0, totalItems = 1) {
+                Text(
+                    text = stringResource(R.string.no_channels_configured),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        } else {
+            val channels = viewModel.channels
+            channels.forEachIndexed { index, channel ->
+                val selected = viewModel.selectedChannelIds.contains(channel.id)
+                RoundedCornersListTile(
+                    index = index,
+                    totalItems = channels.size,
+                    selected = selected,
+                    onClick = {
+                        viewModel.selectedChannelIds = if (selected) {
+                            viewModel.selectedChannelIds - channel.id
+                        } else {
+                            viewModel.selectedChannelIds + channel.id
+                        }
+                    }
+                ) {
+                    ListItemContent(
+                        headlineText = channel.name,
+                        subHeadlineText = stringResource(
+                            if (channel.type == NotificationChannelType.EMAIL) {
+                                R.string.channel_type_email
+                            } else {
+                                R.string.channel_type_ntfy
+                            }
+                        )
+                    )
+                }
+            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        FormInfoBox(label = stringResource(R.string.channels_step_info))
+        Spacer(modifier = Modifier.height(24.dp))
     }
-    Spacer(modifier = Modifier.height(16.dp))
-    FormInfoBox(label = stringResource(R.string.channels_step_info))
-    Spacer(modifier = Modifier.height(24.dp))
 }

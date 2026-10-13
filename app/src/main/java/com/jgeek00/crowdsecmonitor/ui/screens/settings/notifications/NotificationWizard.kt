@@ -120,7 +120,14 @@ fun NotificationWizard(
                     STEP_INFO -> WizardInfoStep(viewModel)
                     STEP_CONDITION -> ConditionEditor(viewModel)
                     STEP_MESSAGE -> WizardMessageStep(viewModel)
-                    STEP_CHANNELS -> ChannelsSelectorSection(viewModel)
+                    STEP_CHANNELS -> Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        ChannelsSelectorSection(viewModel)
+                    }
                     STEP_REVIEW -> WizardReviewStep(viewModel)
                 }
             }
@@ -406,30 +413,32 @@ private fun WizardReviewStep(viewModel: NotificationFormViewModel) {
             .filter { viewModel.selectedChannelIds.contains(it.id) }
             .joinToString(", ") { it.name }
 
-        SummaryRow(label = stringResource(R.string.name), value = viewModel.name)
-        if (viewModel.notificationDescription.isNotEmpty()) {
-            SummaryRow(label = stringResource(R.string.description), value = viewModel.notificationDescription)
+        val summaryRows = buildList {
+            add(stringResource(R.string.name) to viewModel.name)
+            if (viewModel.notificationDescription.isNotEmpty()) {
+                add(stringResource(R.string.description) to viewModel.notificationDescription)
+            }
+            add(stringResource(R.string.condition_blocks) to viewModel.rules.size.toString())
+            add(
+                stringResource(R.string.frequency) to
+                    frequencyLabel(viewModel.count, viewModel.parsedWindowSeconds)
+            )
+            add(stringResource(R.string.message) to viewModel.message)
+            add(
+                stringResource(R.string.channels) to
+                    channelNames.ifEmpty { stringResource(R.string.review_none) }
+            )
         }
-        SummaryRow(
-            label = stringResource(R.string.condition_blocks),
-            value = viewModel.rules.size.toString()
-        )
-        SummaryRow(
-            label = stringResource(R.string.frequency),
-            value = frequencyLabel(viewModel.count, viewModel.parsedWindowSeconds)
-        )
-        SummaryRow(label = stringResource(R.string.message), value = viewModel.message)
-        SummaryRow(
-            label = stringResource(R.string.channels),
-            value = channelNames.ifEmpty { stringResource(R.string.review_none) }
-        )
+        summaryRows.forEachIndexed { index, (label, value) ->
+            SummaryRow(label = label, value = value, index = index, totalItems = summaryRows.size)
+        }
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun SummaryRow(label: String, value: String) {
-    RoundedCornersListTile(index = 0, totalItems = 1) {
+private fun SummaryRow(label: String, value: String, index: Int, totalItems: Int) {
+    RoundedCornersListTile(index = index, totalItems = totalItems) {
         ListItemContent(headlineText = label, subHeadlineText = value)
     }
 }
