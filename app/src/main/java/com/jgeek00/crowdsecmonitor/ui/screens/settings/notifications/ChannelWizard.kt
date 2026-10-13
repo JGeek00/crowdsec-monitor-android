@@ -115,7 +115,9 @@ fun ChannelWizard(
         allowClose = !viewModel.isSaving,
         actions = { }
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize()) {
+        // Apply the dialog Scaffold's inner padding so the pager content
+        // clears the top app bar and the footer clears the navigation bars.
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,

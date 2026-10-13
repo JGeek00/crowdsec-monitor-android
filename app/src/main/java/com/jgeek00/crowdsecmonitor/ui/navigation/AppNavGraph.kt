@@ -130,9 +130,6 @@ fun AppNavGraph(
                     },
                     onNavigateToServerConfiguration = {
                         navController.navigate(Route.ServerConfiguration)
-                    },
-                    onNavigateToNotifications = {
-                        navController.navigate(Route.Notifications)
                     }
                 )
             }
@@ -148,7 +145,12 @@ fun AppNavGraph(
                 LanguageSelectionScreen(onBack = { navController.popBackStack() })
             }
             composable<Route.ServerConfiguration> {
-                ServerConfigurationScreen(onBack = { navController.popBackStack() })
+                ServerConfigurationScreen(
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNotifications = {
+                        navController.navigate(Route.Notifications)
+                    }
+                )
             }
             composable<Route.Notifications> {
                 NotificationsScreen(
