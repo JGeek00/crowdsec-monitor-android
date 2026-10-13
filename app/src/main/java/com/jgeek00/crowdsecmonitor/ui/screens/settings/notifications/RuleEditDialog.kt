@@ -1,6 +1,5 @@
 package com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,7 +37,6 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.viewmodel.ConditionField
 import com.jgeek00.crowdsecmonitor.viewmodel.ConditionOperator
 import com.jgeek00.crowdsecmonitor.viewmodel.EditableLeaf
@@ -126,10 +123,7 @@ fun RuleEditDialog(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            SectionHeader(
-                text = stringResource(R.string.rule_section_field),
-                topPadding = Enums.SectionHeaderPaddingTop.NONE
-            )
+            SectionHeader(text = stringResource(R.string.rule_section_field))
             FieldDropdown(
                 label = stringResource(R.string.field_label),
                 selected = draft.field,
@@ -300,34 +294,24 @@ private fun MultiValueEditor(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else {
-        RoundedCornersListTile(index = 0, totalItems = 1) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+        options.forEachIndexed { index, option ->
+            val isSelected = draft.values.contains(option)
+            RoundedCornersListTile(
+                index = index,
+                totalItems = options.size,
+                selected = isSelected,
+                onClick = { onToggleOption(option) }
             ) {
-                options.forEach { option ->
-                    val isSelected = draft.values.contains(option)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onToggleOption(option) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = option,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(vertical = 12.dp)
-                        )
-                        if (isSelected) {
-                            Icon(
-                                imageVector = Icons.Rounded.Check,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
         }

@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Circle
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.NotificationChannelType
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
@@ -30,7 +25,6 @@ import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
  */
 @Composable
 fun ChannelsSelectorSection(viewModel: NotificationFormViewModel) {
-    FormInfoBox(label = stringResource(R.string.channels_step_info))
     SectionHeader(text = stringResource(R.string.channels))
     if (viewModel.channels.isEmpty()) {
         RoundedCornersListTile(index = 0, totalItems = 1) {
@@ -44,13 +38,18 @@ fun ChannelsSelectorSection(viewModel: NotificationFormViewModel) {
         val channels = viewModel.channels
         channels.forEachIndexed { index, channel ->
             val selected = viewModel.selectedChannelIds.contains(channel.id)
-            RoundedCornersListTile(index = index, totalItems = channels.size, onClick = {
-                viewModel.selectedChannelIds = if (selected) {
-                    viewModel.selectedChannelIds - channel.id
-                } else {
-                    viewModel.selectedChannelIds + channel.id
+            RoundedCornersListTile(
+                index = index,
+                totalItems = channels.size,
+                selected = selected,
+                onClick = {
+                    viewModel.selectedChannelIds = if (selected) {
+                        viewModel.selectedChannelIds - channel.id
+                    } else {
+                        viewModel.selectedChannelIds + channel.id
+                    }
                 }
-            }) {
+            ) {
                 ListItemContent(
                     headlineText = channel.name,
                     subHeadlineText = stringResource(
@@ -59,21 +58,12 @@ fun ChannelsSelectorSection(viewModel: NotificationFormViewModel) {
                         } else {
                             R.string.channel_type_ntfy
                         }
-                    ),
-                    trailingContent = {
-                        Icon(
-                            imageVector = if (selected) Icons.Rounded.CheckCircle else Icons.Rounded.Circle,
-                            contentDescription = null,
-                            tint = if (selected) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            }
-                        )
-                    }
+                    )
                 )
             }
         }
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    FormInfoBox(label = stringResource(R.string.channels_step_info))
     Spacer(modifier = Modifier.height(24.dp))
 }

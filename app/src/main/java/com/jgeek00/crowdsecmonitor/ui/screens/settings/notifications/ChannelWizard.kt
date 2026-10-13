@@ -57,7 +57,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.NotificationProvider
 import com.jgeek00.crowdsecmonitor.data.models.ProviderField
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
@@ -285,10 +284,7 @@ private fun ChannelWizardProviderStep(viewModel: ChannelFormViewModel) {
         if (viewModel.providers.isEmpty()) {
             FormInfoBox(label = stringResource(R.string.no_providers_available))
         } else {
-            SectionHeader(
-                text = stringResource(R.string.choose_provider_section),
-                topPadding = Enums.SectionHeaderPaddingTop.NONE
-            )
+            SectionHeader(text = stringResource(R.string.choose_provider_section))
             // Fixed 2-column rows built explicitly: no lazy grid inside this
             // scrollable form content.
             viewModel.providers.chunked(2).forEachIndexed { rowIndex, row ->
@@ -392,18 +388,9 @@ private fun ChannelWizardFormStep(viewModel: ChannelFormViewModel) {
             definition.descriptionKey?.let { descriptionKey ->
                 FormInfoBox(label = backendString(descriptionKey))
             }
-            var hasContentAbove = definition.descriptionKey != null
             viewModel.groupedFields().forEach { (section, fields) ->
                 if (section != null) {
-                    SectionHeader(
-                        text = backendString(section.labelKey),
-                        topPadding = if (hasContentAbove) {
-                            Enums.SectionHeaderPaddingTop.NORMAL
-                        } else {
-                            Enums.SectionHeaderPaddingTop.NONE
-                        }
-                    )
-                    hasContentAbove = true
+                    SectionHeader(text = backendString(section.labelKey))
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     fields.forEach { field ->

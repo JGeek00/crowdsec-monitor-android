@@ -50,7 +50,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.constants.NotificationDefaults
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.UserNotification
@@ -303,15 +302,14 @@ private fun NotificationDetailsSummary(
     viewModel: NotificationFormViewModel,
     notification: UserNotification
 ) {
-    SectionHeader(
-        text = stringResource(R.string.condition),
-        topPadding = Enums.SectionHeaderPaddingTop.NONE
-    )
+    SectionHeader(text = stringResource(R.string.condition))
     if (viewModel.noCondition) {
-        SummaryTile(text = stringResource(R.string.any_alert))
+        SummaryTile(text = stringResource(R.string.any_alert), index = 0, totalItems = 1)
     } else if (viewModel.advancedCondition != null) {
         SummaryTile(
             text = stringResource(R.string.advanced_condition_warning),
+            index = 0,
+            totalItems = 1,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else {
@@ -338,32 +336,40 @@ private fun NotificationDetailsSummary(
     SummaryLabeledRow(
         label = stringResource(R.string.frequency),
         value = notification.threshold?.let { frequencyLabel(it.count, it.windowSeconds) }
-            ?: stringResource(R.string.not_configured)
+            ?: stringResource(R.string.not_configured),
+        index = 0,
+        totalItems = 2
     )
     SummaryLabeledRow(
         label = stringResource(R.string.cooldown),
         value = cooldownLabel(
             notification.threshold?.cooldownSeconds
                 ?: NotificationDefaults.DEFAULT_COOLDOWN_SECONDS
-        )
+        ),
+        index = 1,
+        totalItems = 2
     )
     SectionHeader(text = stringResource(R.string.content))
-    SummaryTile(text = viewModel.message)
+    SummaryTile(text = viewModel.message, index = 0, totalItems = 2)
     SummaryLabeledRow(
         label = stringResource(R.string.channels),
         value = viewModel.channels
             .filter { viewModel.selectedChannelIds.contains(it.id) }
             .joinToString(", ") { it.name }
-            .ifEmpty { stringResource(R.string.review_none) }
+            .ifEmpty { stringResource(R.string.review_none) },
+        index = 1,
+        totalItems = 2
     )
 }
 
 @Composable
 private fun SummaryTile(
     text: String,
+    index: Int,
+    totalItems: Int,
     tint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface
 ) {
-    RoundedCornersListTile(index = 0, totalItems = 1) {
+    RoundedCornersListTile(index = index, totalItems = totalItems) {
         Text(
             text = text,
             modifier = Modifier.fillMaxWidth(),
@@ -374,8 +380,8 @@ private fun SummaryTile(
 }
 
 @Composable
-private fun SummaryLabeledRow(label: String, value: String) {
-    RoundedCornersListTile(index = 0, totalItems = 1) {
+private fun SummaryLabeledRow(label: String, value: String, index: Int, totalItems: Int) {
+    RoundedCornersListTile(index = index, totalItems = totalItems) {
         ListItemContent(headlineText = label, subHeadlineText = value)
     }
 }
@@ -386,10 +392,7 @@ private fun SummaryLabeledRow(label: String, value: String) {
  */
 @Composable
 private fun NotificationDetailsEditContent(viewModel: NotificationFormViewModel) {
-    SectionHeader(
-        text = stringResource(R.string.details),
-        topPadding = Enums.SectionHeaderPaddingTop.NONE
-    )
+    SectionHeader(text = stringResource(R.string.details))
     OutlinedTextField(
         value = viewModel.name,
         onValueChange = { viewModel.name = it },
@@ -414,6 +417,7 @@ private fun NotificationDetailsEditContent(viewModel: NotificationFormViewModel)
         maxLines = 8,
         modifier = Modifier.fillMaxWidth()
     )
+    Spacer(modifier = Modifier.height(24.dp))
     NotificationAlertInfoSections(viewModel = viewModel)
     ChannelsSelectorSection(viewModel = viewModel)
 }

@@ -53,7 +53,6 @@ import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import kotlinx.coroutines.launch
 
@@ -291,6 +290,7 @@ private fun WizardMessageStep(viewModel: NotificationFormViewModel) {
             maxLines = 8,
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(24.dp))
         NotificationAlertInfoSections(viewModel = viewModel)
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -330,55 +330,54 @@ fun NotificationAlertInfoSections(viewModel: NotificationFormViewModel) {
         }
     }
     if (viewModel.channels.isNotEmpty()) {
-        RoundedCornersListTile(index = 0, totalItems = 1) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.which_channels_support),
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+        Spacer(modifier = Modifier.height(24.dp))
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.which_channels_support),
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                IconButton(onClick = { showSupportingChannels = !showSupportingChannels }) {
+                    Icon(
+                        imageVector = if (showSupportingChannels) {
+                            Icons.Rounded.KeyboardArrowUp
+                        } else {
+                            Icons.Rounded.KeyboardArrowDown
+                        },
+                        contentDescription = null
                     )
-                    IconButton(onClick = { showSupportingChannels = !showSupportingChannels }) {
-                        Icon(
-                            imageVector = if (showSupportingChannels) {
-                                Icons.Rounded.KeyboardArrowUp
-                            } else {
-                                Icons.Rounded.KeyboardArrowDown
-                            },
-                            contentDescription = null
-                        )
-                    }
                 }
-                if (showSupportingChannels) {
-                    channelsBySupport(viewModel.channels).forEach { channel ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = if (channel.supportsAlertInfo) Icons.Rounded.Check else Icons.Rounded.Close,
-                                contentDescription = null,
-                                tint = if (channel.supportsAlertInfo) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.error
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = channel.name,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+            }
+            if (showSupportingChannels) {
+                channelsBySupport(viewModel.channels).forEach { channel ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (channel.supportsAlertInfo) Icons.Rounded.Check else Icons.Rounded.Close,
+                            contentDescription = null,
+                            tint = if (channel.supportsAlertInfo) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.error
+                            }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = channel.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
@@ -401,7 +400,7 @@ private fun WizardReviewStep(viewModel: NotificationFormViewModel) {
             .padding(horizontal = 16.dp)
     ) {
         FormInfoBox(label = stringResource(R.string.review_step_info))
-        SectionHeader(text = stringResource(R.string.summary), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
+        SectionHeader(text = stringResource(R.string.summary))
 
         val channelNames = viewModel.channels
             .filter { viewModel.selectedChannelIds.contains(it.id) }

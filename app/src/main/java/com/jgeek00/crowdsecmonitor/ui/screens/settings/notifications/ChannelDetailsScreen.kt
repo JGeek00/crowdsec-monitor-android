@@ -51,7 +51,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
-import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.NotificationProvider
 import com.jgeek00.crowdsecmonitor.data.models.UserNotificationChannel
@@ -311,10 +310,7 @@ private fun ChannelDetailsSummaryContent(
     val yesLabel = stringResource(R.string.common_yes)
     val noLabel = stringResource(R.string.common_no)
 
-    SectionHeader(
-        text = stringResource(R.string.channel_section),
-        topPadding = Enums.SectionHeaderPaddingTop.NONE
-    )
+    SectionHeader(text = stringResource(R.string.channel_section))
     RoundedCornersListTile(index = 0, totalItems = 1) {
         ListItemContent(
             headlineText = stringResource(R.string.provider),
@@ -365,10 +361,7 @@ private fun ChannelDetailsSummaryContent(
  */
 @Composable
 private fun ChannelDetailsEditContent(viewModel: ChannelFormViewModel) {
-    SectionHeader(
-        text = stringResource(R.string.name),
-        topPadding = Enums.SectionHeaderPaddingTop.NONE
-    )
+    SectionHeader(text = stringResource(R.string.name))
     OutlinedTextField(
         value = viewModel.name,
         onValueChange = { viewModel.name = it },
@@ -379,18 +372,9 @@ private fun ChannelDetailsEditContent(viewModel: ChannelFormViewModel) {
     if (viewModel.definition == null) {
         FormInfoBox(label = stringResource(R.string.error_load_providers))
     } else {
-        var hasContentAbove = true
         viewModel.groupedFields().forEach { (section, fields) ->
             if (section != null) {
-                SectionHeader(
-                    text = backendString(section.labelKey),
-                    topPadding = if (hasContentAbove) {
-                        Enums.SectionHeaderPaddingTop.NORMAL
-                    } else {
-                        Enums.SectionHeaderPaddingTop.NONE
-                    }
-                )
-                hasContentAbove = true
+                SectionHeader(text = backendString(section.labelKey))
             }
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                 fields.forEach { field ->

@@ -330,7 +330,7 @@ private fun FrequencySection(viewModel: NotificationFormViewModel) {
 
 @Composable
 private fun CooldownSection(viewModel: NotificationFormViewModel) {
-    SectionHeader(text = stringResource(R.string.cooldown))
+    Spacer(modifier = Modifier.height(24.dp))
     CooldownDropdown(
         selectedSeconds = viewModel.cooldownSeconds,
         onSelected = { viewModel.cooldownSeconds = it }
