@@ -30,6 +30,9 @@ class NotificationChannelsListViewModel @Inject constructor(
     var providers by mutableStateOf<List<NotificationProvider>>(emptyList())
         private set
 
+    var processingModal by mutableStateOf(false)
+        private set
+
     var errorDelete by mutableStateOf(false)
         private set
 
@@ -52,6 +55,7 @@ class NotificationChannelsListViewModel @Inject constructor(
         state = LoadingResult.Loading
         isRefreshing = false
         providers = emptyList()
+        processingModal = false
         errorDelete = false
         channelInUse = false
         didDelete = false
@@ -110,6 +114,7 @@ class NotificationChannelsListViewModel @Inject constructor(
     fun delete(channelId: Int) {
         val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
+            processingModal = true
             try {
                 apiClient.notificationChannels.deleteChannel(channelId)
                 val items = state.data
@@ -126,6 +131,7 @@ class NotificationChannelsListViewModel @Inject constructor(
                     errorDelete = true
                 }
             }
+            processingModal = false
         }
     }
 

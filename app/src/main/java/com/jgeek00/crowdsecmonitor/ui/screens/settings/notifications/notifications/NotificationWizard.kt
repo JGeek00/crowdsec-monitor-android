@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -224,10 +225,9 @@ private fun WizardFooter(
                 Button(onClick = onFinish, enabled = viewModel.canProceed(STEP_CHANNELS) && !viewModel.isSaving) {
                     if (viewModel.isSaving) {
                         CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(24.dp)
-                                .padding(4.dp),
-                            strokeWidth = 2.5.dp
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.5.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
                         Icon(imageVector = Icons.Rounded.Check, contentDescription = null)
@@ -421,7 +421,11 @@ private fun WizardReviewStep(viewModel: NotificationFormViewModel) {
             if (viewModel.notificationDescription.isNotEmpty()) {
                 add(stringResource(R.string.description) to viewModel.notificationDescription)
             }
-            add(stringResource(R.string.condition_blocks) to viewModel.rules.size.toString())
+            add(
+                stringResource(R.string.condition_blocks) to
+                    if (viewModel.noCondition) stringResource(R.string.any_alert)
+                    else viewModel.rules.size.toString()
+            )
             add(
                 stringResource(R.string.frequency) to
                     frequencyLabel(viewModel.count, viewModel.parsedWindowSeconds)

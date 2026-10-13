@@ -26,6 +26,9 @@ class NotificationsListViewModel @Inject constructor(
     var isRefreshing by mutableStateOf(false)
         private set
 
+    var processingModal by mutableStateOf(false)
+        private set
+
     var errorToggle by mutableStateOf(false)
         private set
 
@@ -47,6 +50,7 @@ class NotificationsListViewModel @Inject constructor(
     fun reset() {
         state = LoadingResult.Loading
         isRefreshing = false
+        processingModal = false
         errorToggle = false
         errorDelete = false
         didDelete = false
@@ -97,6 +101,7 @@ class NotificationsListViewModel @Inject constructor(
     fun toggle(notification: UserNotification) {
         val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
+            processingModal = true
             try {
                 val result = apiClient.notifications.toggleNotification(
                     notification.id,
@@ -111,12 +116,14 @@ class NotificationsListViewModel @Inject constructor(
             } catch (_: Exception) {
                 errorToggle = true
             }
+            processingModal = false
         }
     }
 
     fun delete(notificationId: Int) {
         val apiClient = sessionManager.apiClient ?: return
         viewModelScope.launch {
+            processingModal = true
             try {
                 apiClient.notifications.deleteNotification(notificationId)
                 val items = state.data
@@ -129,6 +136,7 @@ class NotificationsListViewModel @Inject constructor(
             } catch (_: Exception) {
                 errorDelete = true
             }
+            processingModal = false
         }
     }
 }

@@ -226,10 +226,9 @@ private fun ChannelWizardFooter(
                 ) {
                     if (viewModel.isSaving) {
                         CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(24.dp)
-                                .padding(4.dp),
-                            strokeWidth = 2.5.dp
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.5.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
                         Icon(imageVector = Icons.Rounded.Check, contentDescription = null)
