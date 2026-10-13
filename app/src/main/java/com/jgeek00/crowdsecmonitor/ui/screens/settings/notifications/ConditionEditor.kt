@@ -47,7 +47,6 @@ import com.jgeek00.crowdsecmonitor.constants.NotificationDefaults
 import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
-import com.jgeek00.crowdsecmonitor.constants.Enums
 
 import com.jgeek00.crowdsecmonitor.viewmodel.ConditionField
 import com.jgeek00.crowdsecmonitor.viewmodel.ConditionOperator
@@ -151,13 +150,11 @@ fun ConditionEditorSections(viewModel: NotificationFormViewModel) {
 
 @Composable
 private fun ConditionSection(viewModel: NotificationFormViewModel) {
-    SectionHeader(text = stringResource(R.string.condition), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
+    SectionHeader(text = stringResource(R.string.condition))
     val totalRows = if (viewModel.noCondition) 2 else 1
     RoundedCornersListTile(index = 0, totalItems = totalRows, onClick = { viewModel.noCondition = !viewModel.noCondition }) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -175,9 +172,7 @@ private fun ConditionSection(viewModel: NotificationFormViewModel) {
         RoundedCornersListTile(index = 1, totalItems = 2) {
             Text(
                 text = stringResource(R.string.any_alert_explainer),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -193,9 +188,7 @@ private fun AdvancedConditionSection(viewModel: NotificationFormViewModel) {
     Spacer(modifier = Modifier.height(12.dp))
     RoundedCornersListTile(index = 0, totalItems = 1) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -228,15 +221,13 @@ private fun AdvancedConditionSection(viewModel: NotificationFormViewModel) {
 
 @Composable
 private fun RulesSection(viewModel: NotificationFormViewModel) {
-    SectionHeader(text = stringResource(R.string.rules), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
+    SectionHeader(text = stringResource(R.string.rules))
     val rules = viewModel.rules
     if (rules.isEmpty()) {
         RoundedCornersListTile(index = 0, totalItems = 1) {
             Text(
                 text = stringResource(R.string.no_rules_yet),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -280,19 +271,17 @@ private fun RulesSection(viewModel: NotificationFormViewModel) {
             text = validationHint(issue),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
 
 @Composable
 private fun FrequencySection(viewModel: NotificationFormViewModel) {
-    SectionHeader(text = stringResource(R.string.frequency), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
-    RoundedCornersListTile(index = 0, totalItems = 2) {
+    SectionHeader(text = stringResource(R.string.frequency))
+    RoundedCornersListTile(index = 0, totalItems = 1) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -313,27 +302,15 @@ private fun FrequencySection(viewModel: NotificationFormViewModel) {
             }
         }
     }
-    RoundedCornersListTile(index = 1, totalItems = 2) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.time_window_seconds),
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            OutlinedTextField(
-                value = viewModel.windowSecondsText,
-                onValueChange = { viewModel.windowSecondsText = it.filter { ch -> ch.isDigit() } },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.width(120.dp)
-            )
-        }
-    }
+    Spacer(modifier = Modifier.height(16.dp))
+    OutlinedTextField(
+        value = viewModel.windowSecondsText,
+        onValueChange = { viewModel.windowSecondsText = it.filter { ch -> ch.isDigit() } },
+        label = { Text(stringResource(R.string.time_window_seconds)) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier.fillMaxWidth()
+    )
     if (viewModel.windowValid) {
         Text(
             text = stringResource(
@@ -343,44 +320,30 @@ private fun FrequencySection(viewModel: NotificationFormViewModel) {
             ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp)
         )
     } else {
         Text(
             text = stringResource(R.string.window_range_error),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
 
 @Composable
 private fun CooldownSection(viewModel: NotificationFormViewModel) {
-    SectionHeader(text = stringResource(R.string.cooldown), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
-    RoundedCornersListTile(index = 0, totalItems = 1) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.cooldown),
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            CooldownDropdown(
-                selectedSeconds = viewModel.cooldownSeconds,
-                onSelected = { viewModel.cooldownSeconds = it }
-            )
-        }
-    }
+    SectionHeader(text = stringResource(R.string.cooldown))
+    CooldownDropdown(
+        selectedSeconds = viewModel.cooldownSeconds,
+        onSelected = { viewModel.cooldownSeconds = it }
+    )
     Text(
         text = stringResource(R.string.cooldown_footer),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+        modifier = Modifier.padding(top = 4.dp)
     )
 }
 
@@ -401,7 +364,7 @@ private fun CooldownDropdown(
             label = { Text(stringResource(R.string.cooldown)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
-                .width(180.dp)
+                .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         )
         ExposedDropdownMenu(

@@ -54,6 +54,7 @@ import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.constants.NotificationDefaults
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.UserNotification
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationDetailsViewModel
@@ -306,7 +307,7 @@ private fun NotificationDetailsSummary(
 ) {
     SectionHeader(
         text = stringResource(R.string.condition),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
+        topPadding = Enums.SectionHeaderPaddingTop.NONE
     )
     if (viewModel.noCondition) {
         SummaryTile(text = stringResource(R.string.any_alert))
@@ -318,11 +319,7 @@ private fun NotificationDetailsSummary(
     } else {
         viewModel.rules.forEachIndexed { index, rule ->
             RoundedCornersListTile(index = index, totalItems = viewModel.rules.size) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(
                             R.string.rule_label_fmt,
@@ -352,10 +349,7 @@ private fun NotificationDetailsSummary(
                 ?: NotificationDefaults.DEFAULT_COOLDOWN_SECONDS
         )
     )
-    SectionHeader(
-        text = stringResource(R.string.content),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
-    )
+    SectionHeader(text = stringResource(R.string.content))
     SummaryTile(text = viewModel.message)
     SummaryLabeledRow(
         label = stringResource(R.string.channels),
@@ -374,9 +368,7 @@ private fun SummaryTile(
     RoundedCornersListTile(index = 0, totalItems = 1) {
         Text(
             text = text,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.bodyLarge,
             color = tint
         )
@@ -386,25 +378,7 @@ private fun SummaryTile(
 @Composable
 private fun SummaryLabeledRow(label: String, value: String) {
     RoundedCornersListTile(index = 0, totalItems = 1) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1.4f),
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        ListItemContent(headlineText = label, subHeadlineText = value)
     }
 }
 
@@ -416,46 +390,32 @@ private fun SummaryLabeledRow(label: String, value: String) {
 private fun NotificationDetailsEditContent(viewModel: NotificationFormViewModel) {
     SectionHeader(
         text = stringResource(R.string.details),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
+        topPadding = Enums.SectionHeaderPaddingTop.NONE
     )
-    RoundedCornersListTile(index = 0, totalItems = 2) {
-        OutlinedTextField(
-            value = viewModel.name,
-            onValueChange = { viewModel.name = it },
-            label = { Text(stringResource(R.string.name)) },
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
-    RoundedCornersListTile(index = 1, totalItems = 2) {
-        OutlinedTextField(
-            value = viewModel.notificationDescription,
-            onValueChange = { viewModel.notificationDescription = it },
-            label = { Text(stringResource(R.string.description_optional)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
+    OutlinedTextField(
+        value = viewModel.name,
+        onValueChange = { viewModel.name = it },
+        label = { Text(stringResource(R.string.name)) },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(modifier = Modifier.height(24.dp))
+    OutlinedTextField(
+        value = viewModel.notificationDescription,
+        onValueChange = { viewModel.notificationDescription = it },
+        label = { Text(stringResource(R.string.description_optional)) },
+        modifier = Modifier.fillMaxWidth()
+    )
     ConditionEditorSections(viewModel = viewModel)
-    SectionHeader(
-        text = stringResource(R.string.content),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
+    SectionHeader(text = stringResource(R.string.content))
+    OutlinedTextField(
+        value = viewModel.message,
+        onValueChange = { viewModel.message = it },
+        label = { Text(stringResource(R.string.message)) },
+        minLines = 2,
+        maxLines = 8,
+        modifier = Modifier.fillMaxWidth()
     )
-    RoundedCornersListTile(index = 0, totalItems = 1) {
-        OutlinedTextField(
-            value = viewModel.message,
-            onValueChange = { viewModel.message = it },
-            label = { Text(stringResource(R.string.message)) },
-            minLines = 2,
-            maxLines = 8,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
     NotificationAlertInfoSections(viewModel = viewModel)
     ChannelsSelectorSection(viewModel = viewModel)
 }

@@ -61,7 +61,6 @@ import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.NotificationProvider
 import com.jgeek00.crowdsecmonitor.data.models.ProviderField
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
-import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelTestState
@@ -121,6 +120,8 @@ fun ChannelWizard(
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,
+                // Pager centers wrapped-height pages by default.
+                verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -291,7 +292,7 @@ private fun ChannelWizardProviderStep(viewModel: ChannelFormViewModel) {
         } else {
             SectionHeader(
                 text = stringResource(R.string.choose_provider_section),
-                topPadding = Enums.SectionHeaderPaddingTop.SMALL
+                topPadding = Enums.SectionHeaderPaddingTop.NONE
             )
             // FIXED 2-column rows built explicitly (gotcha 4): no lazy grid
             // inside this scrollable form content.
@@ -398,15 +399,21 @@ private fun ChannelWizardFormStep(viewModel: ChannelFormViewModel) {
             definition.descriptionKey?.let { descriptionKey ->
                 FormInfoBox(label = backendString(descriptionKey))
             }
+            var hasContentAbove = definition.descriptionKey != null
             viewModel.groupedFields().forEach { (section, fields) ->
                 if (section != null) {
                     SectionHeader(
                         text = backendString(section.labelKey),
-                        topPadding = Enums.SectionHeaderPaddingTop.SMALL
+                        topPadding = if (hasContentAbove) {
+                            Enums.SectionHeaderPaddingTop.NORMAL
+                        } else {
+                            Enums.SectionHeaderPaddingTop.NONE
+                        }
                     )
+                    hasContentAbove = true
                 }
-                fields.forEachIndexed { index, field ->
-                    RoundedCornersListTile(index = index, totalItems = fields.size) {
+                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    fields.forEach { field ->
                         ProviderFieldEditor(viewModel = viewModel, field = field)
                     }
                 }
@@ -428,62 +435,44 @@ private fun ChannelWizardFinalStep(viewModel: ChannelFormViewModel) {
             .padding(horizontal = 16.dp)
     ) {
         FormInfoBox(label = stringResource(R.string.channel_final_step_info))
-        SectionHeader(
-            text = stringResource(R.string.name),
-            topPadding = Enums.SectionHeaderPaddingTop.SMALL
+        SectionHeader(text = stringResource(R.string.name))
+        OutlinedTextField(
+            value = viewModel.name,
+            onValueChange = { viewModel.name = it },
+            label = { Text(stringResource(R.string.name)) },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
         )
-        RoundedCornersListTile(index = 0, totalItems = 1) {
-            OutlinedTextField(
-                value = viewModel.name,
-                onValueChange = { viewModel.name = it },
-                label = { Text(stringResource(R.string.name)) },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
-        SectionHeader(
-            text = stringResource(R.string.test),
-            topPadding = Enums.SectionHeaderPaddingTop.SMALL
-        )
-        RoundedCornersListTile(index = 0, totalItems = 1) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Button(
-                    onClick = { scope.launch { viewModel.test() } },
-                    enabled = viewModel.testState != ChannelTestState.Testing &&
-                        viewModel.providerValid(),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.send_test_notification))
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (viewModel.testState == ChannelTestState.Testing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(24.dp)
-                                .padding(4.dp),
-                            strokeWidth = 2.5.dp
-                        )
-                    }
-                }
-                when (val state = viewModel.testState) {
-                    ChannelTestState.Idle, ChannelTestState.Testing -> Unit
-                    ChannelTestState.Success -> TestFeedbackRow(
-                        icon = Icons.Rounded.CheckCircle,
-                        tint = Color.Green,
-                        text = stringResource(R.string.test_notification_sent)
-                    )
-                    is ChannelTestState.Failure -> TestFeedbackRow(
-                        icon = Icons.Rounded.Cancel,
-                        tint = MaterialTheme.colorScheme.error,
-                        text = stringResource(R.string.test_failed_fmt, state.detail)
-                    )
-                }
+        SectionHeader(text = stringResource(R.string.test))
+        Button(
+            onClick = { scope.launch { viewModel.test() } },
+            enabled = viewModel.testState != ChannelTestState.Testing &&
+                viewModel.providerValid(),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.send_test_notification))
+            Spacer(modifier = Modifier.weight(1f))
+            if (viewModel.testState == ChannelTestState.Testing) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .padding(4.dp),
+                    strokeWidth = 2.5.dp
+                )
             }
+        }
+        when (val state = viewModel.testState) {
+            ChannelTestState.Idle, ChannelTestState.Testing -> Unit
+            ChannelTestState.Success -> TestFeedbackRow(
+                icon = Icons.Rounded.CheckCircle,
+                tint = Color.Green,
+                text = stringResource(R.string.test_notification_sent)
+            )
+            is ChannelTestState.Failure -> TestFeedbackRow(
+                icon = Icons.Rounded.Cancel,
+                tint = MaterialTheme.colorScheme.error,
+                text = stringResource(R.string.test_failed_fmt, state.detail)
+            )
         }
         Spacer(modifier = Modifier.height(24.dp))
     }

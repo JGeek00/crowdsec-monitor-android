@@ -31,14 +31,12 @@ import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 @Composable
 fun ChannelsSelectorSection(viewModel: NotificationFormViewModel) {
     FormInfoBox(label = stringResource(R.string.channels_step_info))
-    SectionHeader(text = stringResource(R.string.channels), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
+    SectionHeader(text = stringResource(R.string.channels))
     if (viewModel.channels.isEmpty()) {
         RoundedCornersListTile(index = 0, totalItems = 1) {
             Text(
                 text = stringResource(R.string.no_channels_configured),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

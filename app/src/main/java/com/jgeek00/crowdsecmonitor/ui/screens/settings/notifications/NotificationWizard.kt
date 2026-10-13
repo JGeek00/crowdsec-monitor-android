@@ -50,6 +50,7 @@ import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.UserNotification
 import com.jgeek00.crowdsecmonitor.data.models.UserNotificationChannel
 import com.jgeek00.crowdsecmonitor.ui.components.FullScreenDialog
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.constants.Enums
@@ -111,6 +112,8 @@ fun NotificationWizard(
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,
+                // Pager centers wrapped-height pages by default.
+                verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -254,28 +257,21 @@ private fun WizardInfoStep(viewModel: NotificationFormViewModel) {
             .padding(horizontal = 16.dp)
     ) {
         FormInfoBox(label = stringResource(R.string.wizard_info_box))
-        SectionHeader(text = stringResource(R.string.details), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
-        RoundedCornersListTile(index = 0, totalItems = 2) {
-            OutlinedTextField(
-                value = viewModel.name,
-                onValueChange = { viewModel.name = it },
-                label = { Text(stringResource(R.string.name)) },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
-        RoundedCornersListTile(index = 1, totalItems = 2) {
-            OutlinedTextField(
-                value = viewModel.notificationDescription,
-                onValueChange = { viewModel.notificationDescription = it },
-                label = { Text(stringResource(R.string.description_optional)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
+        SectionHeader(text = stringResource(R.string.details))
+        OutlinedTextField(
+            value = viewModel.name,
+            onValueChange = { viewModel.name = it },
+            label = { Text(stringResource(R.string.name)) },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        OutlinedTextField(
+            value = viewModel.notificationDescription,
+            onValueChange = { viewModel.notificationDescription = it },
+            label = { Text(stringResource(R.string.description_optional)) },
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
@@ -291,19 +287,15 @@ private fun WizardMessageStep(viewModel: NotificationFormViewModel) {
             .padding(horizontal = 16.dp)
     ) {
         FormInfoBox(label = stringResource(R.string.message_step_info))
-        SectionHeader(text = stringResource(R.string.content), topPadding = Enums.SectionHeaderPaddingTop.SMALL)
-        RoundedCornersListTile(index = 0, totalItems = 1) {
-            OutlinedTextField(
-                value = viewModel.message,
-                onValueChange = { viewModel.message = it },
-                label = { Text(stringResource(R.string.message)) },
-                minLines = 2,
-                maxLines = 8,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
+        SectionHeader(text = stringResource(R.string.content))
+        OutlinedTextField(
+            value = viewModel.message,
+            onValueChange = { viewModel.message = it },
+            label = { Text(stringResource(R.string.message)) },
+            minLines = 2,
+            maxLines = 8,
+            modifier = Modifier.fillMaxWidth()
+        )
         NotificationAlertInfoSections(viewModel = viewModel)
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -322,11 +314,7 @@ fun NotificationAlertInfoSections(viewModel: NotificationFormViewModel) {
     var showSupportingChannels by rememberSaveable { mutableStateOf(false) }
 
     RoundedCornersListTile(index = 0, totalItems = 1) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -350,11 +338,7 @@ fun NotificationAlertInfoSections(viewModel: NotificationFormViewModel) {
     }
     if (viewModel.channels.isNotEmpty()) {
         RoundedCornersListTile(index = 0, totalItems = 1) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -459,25 +443,7 @@ private fun WizardReviewStep(viewModel: NotificationFormViewModel) {
 @Composable
 private fun SummaryRow(label: String, value: String) {
     RoundedCornersListTile(index = 0, totalItems = 1) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1.4f),
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        ListItemContent(headlineText = label, subHeadlineText = value)
     }
 }
 

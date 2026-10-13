@@ -119,9 +119,7 @@ internal fun ProviderTextField(
         singleLine = true,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
@@ -129,9 +127,7 @@ internal fun ProviderTextField(
 private fun ProviderBooleanField(viewModel: ChannelFormViewModel, field: ProviderField) {
     val checked = (viewModel.values[field.key] as? JsonPrimitive)?.content == "true"
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -182,7 +178,6 @@ private fun ProviderSelectField(viewModel: ChannelFormViewModel, field: Provider
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         )
         ExposedDropdownMenu(

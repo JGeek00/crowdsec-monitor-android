@@ -55,8 +55,10 @@ import com.jgeek00.crowdsecmonitor.constants.Enums
 import com.jgeek00.crowdsecmonitor.data.models.LoadingResult
 import com.jgeek00.crowdsecmonitor.data.models.NotificationProvider
 import com.jgeek00.crowdsecmonitor.data.models.UserNotificationChannel
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
 import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
+import androidx.compose.foundation.layout.Arrangement
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelDetailsViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import kotlinx.coroutines.launch
@@ -313,44 +315,24 @@ private fun ChannelDetailsSummaryContent(
 
     SectionHeader(
         text = stringResource(R.string.channel_section),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
+        topPadding = Enums.SectionHeaderPaddingTop.NONE
     )
     RoundedCornersListTile(index = 0, totalItems = 1) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.provider),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1.4f)
-            ) {
+        ListItemContent(
+            headlineText = stringResource(R.string.provider),
+            subHeadlineText = channel.type.value,
+            leadingContent = {
                 Icon(
                     imageVector = channelIconVector(definition?.icon ?: channel.type.value),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = channel.type.value,
-                    style = MaterialTheme.typography.bodyLarge
-                )
             }
-        }
+        )
     }
 
-    SectionHeader(
-        text = stringResource(R.string.configuration_section),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
-    )
+    SectionHeader(text = stringResource(R.string.configuration_section))
     val definitionLabels = definition?.fields
         ?.associate { it.key to backendString(it.labelKey) }
         ?: emptyMap()
@@ -365,9 +347,7 @@ private fun ChannelDetailsSummaryContent(
         RoundedCornersListTile(index = 0, totalItems = 1) {
             Text(
                 text = stringResource(R.string.no_configuration_values),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -375,25 +355,7 @@ private fun ChannelDetailsSummaryContent(
     } else {
         rows.forEachIndexed { index, row ->
             RoundedCornersListTile(index = index, totalItems = rows.size) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                ) {
-                    Text(
-                        text = row.label,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = row.value,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1.4f),
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                ListItemContent(headlineText = row.label, subHeadlineText = row.value)
             }
         }
     }
@@ -407,31 +369,33 @@ private fun ChannelDetailsSummaryContent(
 private fun ChannelDetailsEditContent(viewModel: ChannelFormViewModel) {
     SectionHeader(
         text = stringResource(R.string.name),
-        topPadding = Enums.SectionHeaderPaddingTop.SMALL
+        topPadding = Enums.SectionHeaderPaddingTop.NONE
     )
-    RoundedCornersListTile(index = 0, totalItems = 1) {
-        OutlinedTextField(
-            value = viewModel.name,
-            onValueChange = { viewModel.name = it },
-            label = { Text(stringResource(R.string.name)) },
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
+    OutlinedTextField(
+        value = viewModel.name,
+        onValueChange = { viewModel.name = it },
+        label = { Text(stringResource(R.string.name)) },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
     if (viewModel.definition == null) {
         FormInfoBox(label = stringResource(R.string.error_load_providers))
     } else {
+        var hasContentAbove = true
         viewModel.groupedFields().forEach { (section, fields) ->
             if (section != null) {
                 SectionHeader(
                     text = backendString(section.labelKey),
-                    topPadding = Enums.SectionHeaderPaddingTop.SMALL
+                    topPadding = if (hasContentAbove) {
+                        Enums.SectionHeaderPaddingTop.NORMAL
+                    } else {
+                        Enums.SectionHeaderPaddingTop.NONE
+                    }
                 )
+                hasContentAbove = true
             }
-            fields.forEachIndexed { index, field ->
-                RoundedCornersListTile(index = index, totalItems = fields.size) {
+            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                fields.forEach { field ->
                     ProviderFieldEditor(viewModel = viewModel, field = field)
                 }
             }

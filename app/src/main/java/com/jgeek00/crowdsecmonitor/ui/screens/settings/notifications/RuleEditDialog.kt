@@ -129,28 +129,24 @@ fun RuleEditDialog(
         ) {
             SectionHeader(
                 text = stringResource(R.string.rule_section_field),
-                topPadding = Enums.SectionHeaderPaddingTop.SMALL
+                topPadding = Enums.SectionHeaderPaddingTop.NONE
             )
-            RoundedCornersListTile(index = 0, totalItems = 1) {
-                FieldDropdown(
-                    label = stringResource(R.string.field_label),
-                    selected = draft.field,
-                    options = ConditionField.entries.toList(),
-                    labelFor = { fieldLabel(it) },
-                    onSelected = { onFieldChanged(it) }
-                )
-            }
+            FieldDropdown(
+                label = stringResource(R.string.field_label),
+                selected = draft.field,
+                options = ConditionField.entries.toList(),
+                labelFor = { fieldLabel(it) },
+                onSelected = { onFieldChanged(it) }
+            )
 
             SectionHeader(text = stringResource(R.string.rule_section_operator))
-            RoundedCornersListTile(index = 0, totalItems = 1) {
-                FieldDropdown(
-                    label = stringResource(R.string.operator_label),
-                    selected = draft.op,
-                    options = ConditionOperator.entries.toList(),
-                    labelFor = { operatorPhrase(it) },
-                    onSelected = { onOperatorChanged(it) }
-                )
-            }
+            FieldDropdown(
+                label = stringResource(R.string.operator_label),
+                selected = draft.op,
+                options = ConditionOperator.entries.toList(),
+                labelFor = { operatorPhrase(it) },
+                onSelected = { onOperatorChanged(it) }
+            )
 
             SectionHeader(text = stringResource(R.string.rule_section_values))
             RuleValueEditor(
@@ -224,7 +220,6 @@ private fun <T> FieldDropdown(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         )
         ExposedDropdownMenu(
@@ -276,9 +271,7 @@ private fun RuleValueEditor(
             onValueChange = onContainsValueChanged,
             label = { Text(stringResource(R.string.rule_value_text)) },
             singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         )
 
         else -> SingleValueEditor(
@@ -304,7 +297,7 @@ private fun MultiValueEditor(
     if (options.isEmpty()) {
         Text(
             text = stringResource(R.string.no_options_available),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else {
@@ -319,8 +312,7 @@ private fun MultiValueEditor(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onToggleOption(option) }
-                            .padding(horizontal = 16.dp),
+                            .clickable { onToggleOption(option) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -351,9 +343,7 @@ private fun MultiValueEditor(
             ) {
                 customValues.forEach { value ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -376,7 +366,7 @@ private fun MultiValueEditor(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
@@ -408,28 +398,24 @@ private fun SingleValueEditor(
         if (options.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_options_custom_hint),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
-            RoundedCornersListTile(index = 0, totalItems = 1) {
-                ValueDropdown(
-                    label = stringResource(R.string.value_label),
-                    selectedOption = selectedOption,
-                    options = options,
-                    onSelected = onSelectedOptionChanged
-                )
-            }
+            ValueDropdown(
+                label = stringResource(R.string.value_label),
+                selectedOption = selectedOption,
+                options = options,
+                onSelected = onSelectedOptionChanged
+            )
         }
         OutlinedTextField(
             value = customValue,
             onValueChange = onCustomValueChanged,
             label = { Text(stringResource(R.string.or_type_custom)) },
             singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -455,7 +441,6 @@ private fun ValueDropdown(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         )
         ExposedDropdownMenu(
