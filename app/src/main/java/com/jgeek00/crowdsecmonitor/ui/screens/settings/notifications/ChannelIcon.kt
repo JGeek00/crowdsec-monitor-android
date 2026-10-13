@@ -14,7 +14,7 @@ import com.jgeek00.crowdsecmonitor.data.models.NotificationChannelType
 
 /**
  * Maps a channel type to an icon, with a generic bell fallback for provider
- * types the app does not know yet (mirrors the iOS ChannelIcon).
+ * types the app does not know yet.
  */
 @Composable
 fun ChannelIcon(

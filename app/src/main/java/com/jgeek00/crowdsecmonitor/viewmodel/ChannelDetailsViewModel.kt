@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Loads a single notification channel (GET /notification-channels/{id}) for the
- * details screen. Session flow mirrors [NotificationDetailsViewModel]: Loading
- * until the session client exists, re-fetch on session changes.
+ * Loads a single notification channel (GET /notification-channels/{id}). Stays
+ * in Loading until the server session exists; every session change while an id
+ * is set re-fetches, so a server switch or a late login refreshes the details.
  */
 @HiltViewModel
 class ChannelDetailsViewModel @Inject constructor(
@@ -56,8 +56,8 @@ class ChannelDetailsViewModel @Inject constructor(
     }
 
     /**
-     * In-place replacement after a successful save (matches the iOS
-     * `currentChannel = saved`).
+     * In-place replacement after a successful save, so the read summary updates
+     * without a round-trip.
      */
     fun update(channel: UserNotificationChannel) {
         if (initializedForId == channel.id) {

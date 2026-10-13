@@ -4,20 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
-/**
- * Wire models for notification channels. Mirrors the iOS Monitor models
- * (NotificationChannel.swift) and the backend contract at /api/v1/notification-channels.
- */
-
-// MARK: - Channel type (built-in providers)
-
 @Serializable
 enum class NotificationChannelType(val value: String) {
     @SerialName("ntfy") NTFY("ntfy"),
     @SerialName("email") EMAIL("email")
 }
-
-// MARK: - Channel
 
 @Serializable
 data class UserNotificationChannel(
@@ -29,8 +20,6 @@ data class UserNotificationChannel(
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
 )
-
-// MARK: - Responses
 
 @Serializable
 data class NotificationChannelsListResponse(
@@ -59,13 +48,9 @@ data class ChannelTestResponse(
     @SerialName("data") val data: ChannelTestResult
 )
 
-// MARK: - Request bodies
-//
-// Omit-vs-null semantics: optional fields are declared as nullable properties
-// with `= null` default values. The shared Json instance in HttpClient keeps
-// kotlinx.serialization's default encodeDefaults = false, so null-valued optional
-// fields are omitted from the JSON body entirely instead of being sent as
-// explicit `null` — backend defaults then apply.
+// Optional request fields default to null: with encodeDefaults = false, the
+// shared Json instance omits null-valued fields from the body instead of sending
+// explicit null, so backend defaults apply.
 
 @Serializable
 data class CreateChannelRequest(

@@ -24,10 +24,6 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import javax.inject.Inject
 
-/**
- * Test state for channel connectivity tests. Mirrors the iOS `ChannelTestState`
- * enum: idle / testing / success / failure(detail).
- */
 sealed class ChannelTestState {
     data object Idle : ChannelTestState()
     data object Testing : ChannelTestState()
@@ -36,19 +32,11 @@ sealed class ChannelTestState {
 }
 
 /**
- * ViewModel for the channel creation/edit form. Mirrors the iOS
- * ChannelFormViewModel behavior 1:1:
- *
- * - Providers are fetched from the backend; selecting a provider applies
- *   definition defaults for missing keys so displayed selections always match
- *   an option/tag (gotcha 11).
- * - Field visibility (`visibleIf`), conditional requiredness (`requiredIf`)
- *   and mutual exclusion (`exclusiveWith`) follow the provider definitions.
- * - Client-side validation is light on purpose; the backend enforces strictly.
- * - Numbers entered as strings are coerced to int/double in the payload.
- * - Testing uses the saved channel endpoint when editing, or the inline test
- *   endpoint for unsaved configurations.
- * - Saving always sends the FULL config (never partial), like on iOS.
+ * Channel creation/edit form. Field visibility, conditional requiredness and
+ * exclusivity follow the provider definitions; client-side validation is light
+ * on purpose because the backend enforces strictly. Saving always sends the
+ * full config, never a partial one; testing uses the saved channel endpoint
+ * when editing and the inline test endpoint otherwise.
  */
 @HiltViewModel
 class ChannelFormViewModel @Inject constructor(
@@ -79,11 +67,6 @@ class ChannelFormViewModel @Inject constructor(
     val definition: NotificationProvider?
         get() = providers.firstOrNull { it.type == providerType }
 
-    // MARK: - Load / prefill
-
-    /**
-     * Prefills the form from an existing channel (edit mode).
-     */
     fun load(channel: UserNotificationChannel) {
         editing = channel
         providerType = channel.type.value
@@ -125,8 +108,6 @@ class ChannelFormViewModel @Inject constructor(
         }
         values = filled
     }
-
-    // MARK: - Field evaluation
 
     private fun isPresent(value: JsonElement?): Boolean {
         if (value == null || value is JsonNull) return false
@@ -178,8 +159,6 @@ class ChannelFormViewModel @Inject constructor(
         }
         return groups
     }
-
-    // MARK: - Validation (light; the backend enforces strictly)
 
     fun isFieldValid(field: ProviderField): Boolean {
         val value = values[field.key]
@@ -259,8 +238,6 @@ class ChannelFormViewModel @Inject constructor(
         return name.trim().isNotEmpty()
     }
 
-    // MARK: - Payload
-
     /**
      * Builds the config payload from definition fields with present values.
      * Number strings are coerced to int (when the field is integer) or double.
@@ -298,8 +275,6 @@ class ChannelFormViewModel @Inject constructor(
         return payload
     }
 
-    // MARK: - Test & save
-
     suspend fun test() {
         val apiClient = sessionManager.apiClient ?: return
         val type = providerType ?: return
@@ -333,9 +308,8 @@ class ChannelFormViewModel @Inject constructor(
     }
 
     /**
-     * Creates or updates the channel sending the FULL config (never partial,
-     * matching the iOS behavior). Returns the saved channel or null on failure
-     * (with [saveError] set).
+     * Creates or updates the channel sending the full config (never partial).
+     * Returns the saved channel or null on failure (with [saveError] set).
      */
     suspend fun save(): UserNotificationChannel? {
         val apiClient = sessionManager.apiClient ?: return null

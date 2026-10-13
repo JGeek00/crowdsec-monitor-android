@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.jgeek00.crowdsecmonitor.R
 
 /**
- * Progress capsules for wizard pagers, mirroring the iOS WizardStepIndicator:
- * completed and current steps are filled, current one is wider.
+ * Progress capsules for wizard pagers: completed and current steps are filled,
+ * current one is wider.
  */
 @Composable
 fun WizardStepIndicator(

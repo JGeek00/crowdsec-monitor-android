@@ -15,12 +15,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Loads a single notification (GET /notifications/{id}) for the details screen.
- *
- * Mirrors the list ViewModels' session flow: when the server session is not
- * ready yet (`apiClient == null`) the screen stays in Loading, and every
- * session change while an id is set re-fetches, so a server switch or a late
- * login refreshes the details.
+ * Loads a single notification (GET /notifications/{id}). Stays in Loading until
+ * the server session exists; every session change while an id is set re-fetches,
+ * so a server switch or a late login refreshes the details.
  */
 @HiltViewModel
 class NotificationDetailsViewModel @Inject constructor(
@@ -60,7 +57,7 @@ class NotificationDetailsViewModel @Inject constructor(
 
     /**
      * In-place replacement after a successful save, so the read summary updates
-     * without a round-trip (matches the iOS `currentNotification = saved`).
+     * without a round-trip.
      */
     fun update(notification: UserNotification) {
         if (initializedForId == notification.id) {

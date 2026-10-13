@@ -16,13 +16,11 @@ import org.junit.Test
 
 class NotificationModelsTest {
 
-    // Mirrors the shared Json configuration used by HttpClient for the wire.
+    // Same Json configuration as the shared HttpClient instance.
     private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
-
-    // MARK: - Condition DSL round-trip
 
     @Test
     fun `leaf condition with single value encodes value as bare string`() {
@@ -120,8 +118,6 @@ class NotificationModelsTest {
         assertEquals(listOf("a", "b"), multiple.asArray)
     }
 
-    // MARK: - UserNotification decoding
-
     @Test
     fun `user notification decodes snake_case wire fields`() {
         val wire = """
@@ -174,8 +170,6 @@ class NotificationModelsTest {
         assertTrue(notification.includeAlertInfo)
     }
 
-    // MARK: - History
-
     @Test
     fun `history response decodes snake_case wire fields`() {
         val wire = """
@@ -208,8 +202,6 @@ class NotificationModelsTest {
         assertTrue(entry.channels.first().ok)
         assertNull(entry.channels.last().detail)
     }
-
-    // MARK: - Omit-vs-null request bodies
 
     @Test
     fun `create request omits unset optional fields`() {

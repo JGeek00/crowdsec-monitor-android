@@ -9,8 +9,6 @@ import org.junit.Test
 
 class ConditionFormattingTest {
 
-    // MARK: - valuesSummaryParts
-
     @Test
     fun `values summary shows empty list as empty head`() {
         val summary = ConditionFormatting.valuesSummaryParts(emptyList())
@@ -44,8 +42,6 @@ class ConditionFormattingTest {
         assertTrue(five.hasMore)
     }
 
-    // MARK: - windowLabelRes
-
     @Test
     fun `window labels map to human durations`() {
         assertEquals(R.string.duration_one_minute, ConditionFormatting.windowLabelRes(60))
@@ -62,8 +58,6 @@ class ConditionFormattingTest {
         assertNull(ConditionFormatting.windowLabelRes(59))
         assertNull(ConditionFormatting.windowLabelRes(7200))
     }
-
-    // MARK: - cooldownLabelRes
 
     @Test
     fun `cooldown labels map to human durations`() {

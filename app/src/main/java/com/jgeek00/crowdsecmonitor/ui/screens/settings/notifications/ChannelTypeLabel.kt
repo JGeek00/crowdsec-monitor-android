@@ -5,7 +5,7 @@ import androidx.compose.ui.res.stringResource
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.data.models.NotificationChannelType
 
-/** Localized label for a channel type ("ntfy", "Email"), like the iOS ChannelListItem. */
+/** Localized label for a channel type ("ntfy", "Email"). */
 @Composable
 fun ChannelTypeLabel(type: NotificationChannelType): String = stringResource(
     when (type) {

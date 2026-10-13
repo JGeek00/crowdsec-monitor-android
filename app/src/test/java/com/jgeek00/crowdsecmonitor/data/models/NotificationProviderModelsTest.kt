@@ -10,7 +10,7 @@ import org.junit.Test
 
 class NotificationProviderModelsTest {
 
-    // Mirrors the shared Json configuration used by HttpClient for the wire.
+    // Same Json configuration as the shared HttpClient instance.
     private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true

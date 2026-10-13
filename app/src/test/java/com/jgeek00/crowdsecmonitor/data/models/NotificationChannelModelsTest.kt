@@ -15,13 +15,11 @@ import org.junit.Test
 
 class NotificationChannelModelsTest {
 
-    // Mirrors the shared Json configuration used by HttpClient for the wire.
+    // Same Json configuration as the shared HttpClient instance.
     private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
-
-    // MARK: - Channel decoding
 
     @Test
     fun `channel decodes snake_case wire fields and closed type enum`() {
@@ -90,8 +88,6 @@ class NotificationChannelModelsTest {
         )
     }
 
-    // MARK: - Responses
-
     @Test
     fun `channel test response decodes`() {
         val wire = """
@@ -115,8 +111,6 @@ class NotificationChannelModelsTest {
         assertEquals(true, response.data.ok)
         assertNull(response.data.detail)
     }
-
-    // MARK: - Omit-vs-null request bodies
 
     @Test
     fun `create channel request sends full config`() {

@@ -82,8 +82,6 @@ class NotificationFormViewModelTest {
     private fun leafNode(field: String, op: String, value: NotificationConditionValue) =
         NotificationConditionNode.Leaf(field = field, operator = op, value = value)
 
-    // MARK: - Step gates
-
     @Test
     fun `step zero requires name`() {
         val vm = makeVm()
@@ -121,8 +119,6 @@ class NotificationFormViewModelTest {
         vm.selectedChannelIds = setOf(4)
         assertTrue(vm.canProceed(3))
     }
-
-    // MARK: - OR merging / advanced detection (A4 deferred behavior)
 
     @Test
     fun `or same field merges into one rule`() {
@@ -273,8 +269,6 @@ class NotificationFormViewModelTest {
         assertEquals(2, vm.rules.size)
     }
 
-    // MARK: - Defaults
-
     @Test
     fun `defaults are three in ten seconds`() {
         val vm = makeVm()
@@ -287,8 +281,6 @@ class NotificationFormViewModelTest {
         assertEquals(RulesValidationIssue.EMPTY, vm.validationIssue(1))
         assertEquals(EditableCondition.And(emptyList()), vm.buildCondition())
     }
-
-    // MARK: - Draft prefill
 
     @Test
     fun `new draft prefills first scenario`() {
@@ -309,8 +301,6 @@ class NotificationFormViewModelTest {
         assertFalse(draft.isValid)
     }
 
-    // MARK: - Window boundaries
-
     @Test
     fun `window boundaries`() {
         val vm = makeVm()
@@ -328,8 +318,6 @@ class NotificationFormViewModelTest {
         vm.windowSecondsText = "abc"
         assertFalse(vm.canProceed(1))
     }
-
-    // MARK: - No condition
 
     @Test
     fun `no condition prefill and build`() {
@@ -355,8 +343,6 @@ class NotificationFormViewModelTest {
         assertNull(vm.validationIssue(1))
     }
 
-    // MARK: - Condition building
-
     @Test
     fun `build condition always and`() {
         val vm = makeVm()
@@ -368,8 +354,6 @@ class NotificationFormViewModelTest {
         assertTrue(built is EditableCondition.And)
         assertEquals(2, (built as EditableCondition.And).children.size)
     }
-
-    // MARK: - Edit prefill
 
     @Test
     fun `edit prefills from notification`() {
@@ -413,8 +397,6 @@ class NotificationFormViewModelTest {
         assertFalse(vm.isEditing && vm.name.isEmpty())
         assertEquals("n", vm.name)
     }
-
-    // MARK: - loadOptions
 
     @Test
     fun `load options populates filter options and channels`() = runTest {
@@ -476,8 +458,6 @@ class NotificationFormViewModelTest {
         assertFalse(vm.loadError)
         assertEquals(NotificationFilterOptions(), vm.filterOptions)
     }
-
-    // MARK: - Rule sheet staging
 
     @Test
     fun `open rule sheet presents immediately without keyboard`() {
@@ -544,8 +524,6 @@ class NotificationFormViewModelTest {
         assertNull(vm.ruleSheet)
         assertTrue(vm.rules.isEmpty())
     }
-
-    // MARK: - Save
 
     @Test
     fun `save create sends enabled true and threshold`() = runTest {

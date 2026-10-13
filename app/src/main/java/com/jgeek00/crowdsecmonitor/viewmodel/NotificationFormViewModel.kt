@@ -39,11 +39,9 @@ data class NotificationFilterOptions(
 )
 
 /**
- * Presentation model for the rule editor dialog. A single nullable state drives
- * presentation atomically: one state, one attempt. Hosted by the wizard and
- * detail screen roots (never by form rows), so host/lifecycle recycling during
- * keyboard transitions cannot re-trigger presentation. Mirrors the iOS
- * RuleSheetModel (.sheet(item:) equivalent).
+ * Single nullable state drives the rule editor atomically (one state, one
+ * attempt); hosted at screen roots so lifecycle recycling during keyboard
+ * transitions cannot re-trigger presentation.
  */
 data class RuleSheetModel(
     val draft: EditableLeaf,
@@ -109,13 +107,10 @@ class NotificationFormViewModel @Inject constructor(
     val parsedWindowSeconds: Int
         get() = windowSecondsText.trim().toIntOrNull() ?: NotificationDefaults.WINDOW_MIN_SECONDS
 
-    // MARK: - Rule editor dialog state
-    //
     // `null` = dismissed. Opening the rule editor while the keyboard is visible
     // collapses the whole dialog stack, so when the keyboard is visible the
     // dialog is staged and only presented after [keyboardDidHide] plus a short
-    // settle delay; otherwise it is presented synchronously. Mirrors the iOS
-    // keyboard-staging behavior (6d5f4ef).
+    // settle delay.
 
     var ruleSheet by mutableStateOf<RuleSheetModel?>(null)
         private set
@@ -172,8 +167,6 @@ class NotificationFormViewModel @Inject constructor(
             ruleSheet = RuleSheetModel(draft = pending.draft, index = pending.index)
         }
     }
-
-    // MARK: - Load / prefill
 
     fun load(notification: UserNotification) {
         editing = notification
@@ -232,8 +225,6 @@ class NotificationFormViewModel @Inject constructor(
         }
     }
 
-    // MARK: - Condition building
-
     fun buildCondition(): EditableCondition {
         if (noCondition) {
             return EditableCondition.And(emptyList())
@@ -258,8 +249,6 @@ class NotificationFormViewModel @Inject constructor(
             values = listOf(first)
         )
     }
-
-    // MARK: - Validation
 
     fun validationIssue(step: Int): RulesValidationIssue? {
         if (step != 1) return null
@@ -298,8 +287,6 @@ class NotificationFormViewModel @Inject constructor(
             else -> true
         }
     }
-
-    // MARK: - Save
 
     suspend fun save(): UserNotification? {
         val apiClient = sessionManager.apiClient ?: return null

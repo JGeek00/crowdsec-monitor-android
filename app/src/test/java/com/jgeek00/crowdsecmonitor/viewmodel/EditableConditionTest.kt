@@ -9,8 +9,6 @@ import org.junit.Test
 
 class EditableConditionTest {
 
-    // MARK: - Leaf validation
-
     @Test
     fun `empty leaf defaults to scenario equals with no values and is invalid`() {
         val leaf = EditableLeaf.Empty
@@ -40,8 +38,6 @@ class EditableConditionTest {
         assertFalse(leaf.isValid)
     }
 
-    // MARK: - Operator vocabulary
-
     @Test
     fun `in and notIn need multiple values, others do not`() {
         assertTrue(ConditionOperator.IN.needsMultipleValues)
@@ -67,8 +63,6 @@ class EditableConditionTest {
         assertEquals("target", ConditionField.TARGET.wireName)
         assertEquals("ipOwner", ConditionField.IP_OWNER.wireName)
     }
-
-    // MARK: - Group validation
 
     @Test
     fun `valid and group is valid`() {
@@ -108,8 +102,6 @@ class EditableConditionTest {
         )
     }
 
-    // MARK: - leafCount
-
     @Test
     fun `leafCount counts leaves in nested groups`() {
         val condition = EditableCondition.And(
@@ -128,8 +120,6 @@ class EditableConditionTest {
         assertEquals(3, condition.leafCount)
         assertEquals(1, EditableCondition.Leaf(EditableLeaf()).leafCount)
     }
-
-    // MARK: - Wire conversion
 
     @Test
     fun `single value leaf encodes as string`() {
@@ -262,7 +252,7 @@ class EditableConditionTest {
 
     @Test
     fun `OR of same-field leaves is not auto-merged by conversion`() {
-        // Merging belongs to the form ViewModel (A5); conversion must stay faithful.
+        // Merging belongs to the form ViewModel; conversion must stay faithful.
         val api = NotificationConditionNode.Or(
             listOf(
                 NotificationConditionNode.Leaf(

@@ -47,13 +47,12 @@ import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.RuleSheetModel
 
 /**
- * Atomic rule editor dialog, hosted ONCE at the wizard root and driven entirely
- * by `vm.ruleSheet` (gotcha 2 — never per-row, keyboard staged by the VM).
+ * Atomic rule editor dialog, hosted once at the wizard root and driven entirely
+ * by `vm.ruleSheet` (never per-row; keyboard staged by the VM).
  *
- * Value editing applies the `syncSingleValue` guard (gotcha 3): single-value
- * operators only reassign `values` when the computed array differs, a field
- * change clears custom values, and switching to a multi-value operator clears
- * values.
+ * Value editing applies the `syncSingleValue` guard: single-value operators
+ * only reassign `values` when the computed array differs, a field change clears
+ * custom values, and switching to a multi-value operator clears values.
  */
 @Composable
 fun RuleEditDialog(

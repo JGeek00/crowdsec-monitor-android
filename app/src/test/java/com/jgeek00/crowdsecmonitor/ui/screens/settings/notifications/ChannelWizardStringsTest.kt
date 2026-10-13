@@ -23,13 +23,10 @@ class ChannelWizardStringsTest {
         RuntimeEnvironment.setQualifiers(qualifiers)
     }
 
-    // MARK: - Static wizard keys
-
     @Test
     fun `wizard strings resolve in default locale`() {
         setLocale("+en")
 
-        // Shell
         assertEquals("New channel", string(R.string.channel_wizard_new_title))
         assertEquals("Edit channel", string(R.string.channel_wizard_edit_title))
         assertEquals(
@@ -41,7 +38,6 @@ class ChannelWizardStringsTest {
             string(R.string.error_load_providers)
         )
 
-        // Intro step
         assertEquals(
             "A notification channel defines how the backend delivers a notification: " +
                 "through ntfy or by email. Configure the provider access once here, " +
@@ -49,20 +45,17 @@ class ChannelWizardStringsTest {
             string(R.string.channel_wizard_info_box)
         )
 
-        // Provider step
         assertEquals(
             "Choose the provider for this channel.",
             string(R.string.choose_provider_section)
         )
         assertEquals("No providers available", string(R.string.no_providers_available))
 
-        // Form step
         assertEquals(
             "Go back and choose a provider first.",
             string(R.string.provider_form_no_provider)
         )
 
-        // Final step
         assertEquals(
             "Give the channel a name, optionally send a test notification, " +
                 "then finish to save it.",
@@ -157,13 +150,10 @@ class ChannelWizardStringsTest {
         assertEquals("Test fehlgeschlagen: timeout", string(R.string.test_failed_fmt, "timeout"))
     }
 
-    // MARK: - Backend-provided provider definition keys (resolved at runtime)
-
     @Test
     fun `backend provider keys resolve in default locale`() {
         setLocale("+en")
 
-        // Providers
         assertEquals("ntfy", resolveBackendString(context, "provider_ntfy"))
         assertEquals("Email", resolveBackendString(context, "provider_email"))
         assertEquals(
@@ -171,14 +161,12 @@ class ChannelWizardStringsTest {
             resolveBackendString(context, "provider_email_description")
         )
 
-        // Sections
         assertEquals("Topic", resolveBackendString(context, "section_topic"))
         assertEquals("Authentication", resolveBackendString(context, "section_authentication"))
         assertEquals("Appearance", resolveBackendString(context, "section_appearance"))
         assertEquals("Server", resolveBackendString(context, "section_server"))
         assertEquals("Addresses", resolveBackendString(context, "section_addresses"))
 
-        // Fields
         assertEquals("Topic", resolveBackendString(context, "field_topic"))
         assertEquals("Server", resolveBackendString(context, "field_server"))
         assertEquals("Username", resolveBackendString(context, "field_username"))

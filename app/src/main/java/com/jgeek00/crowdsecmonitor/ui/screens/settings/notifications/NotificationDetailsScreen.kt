@@ -62,13 +62,11 @@ import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import kotlinx.coroutines.launch
 
 /**
- * Notification details: read-only summary with an in-place edit mode, mirroring
- * the iOS NotificationDetailsView. The top bar switches from a pencil to
- * separate Cancel/Save actions while editing (gotcha 6); `isSaving` blocks
- * input without any modal blocker. Delete stays out of edit mode (gotcha 5) —
- * deletion lives in the list menus. The atomic rule editor dialog is hosted
- * once at the screen root with the same keyboard staging as the wizard
- * (gotcha 2). Save ends with a snackbar result.
+ * Notification details: read-only summary with an in-place edit mode. The top
+ * bar switches from a pencil to separate Cancel/Save actions while editing;
+ * `isSaving` blocks input without any modal blocker. Delete stays out of edit
+ * mode — deletion lives in the list menus. The atomic rule editor dialog is
+ * hosted once at the screen root with the same keyboard staging as the wizard.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +106,7 @@ fun NotificationDetailsScreen(
     val saveErrorMessage = stringResource(R.string.error_save_notification)
 
     fun cancelEditing() {
-        // Cancel reloads from the server object (gotcha 6 companion).
+        // Cancel reloads from the server object.
         currentNotification?.let { formViewModel.load(it) }
         isEditing = false
     }
@@ -165,7 +163,7 @@ fun NotificationDetailsScreen(
                 },
                 actions = {
                     if (isEditing) {
-                        // Cancel/Save as separate top-bar actions (gotcha 6).
+                        // Cancel/Save as separate top-bar actions.
                         IconButton(
                             onClick = { cancelEditing() },
                             enabled = !formViewModel.isSaving
@@ -257,7 +255,7 @@ fun NotificationDetailsScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                         }
                         // While saving, block input silently — no modal
-                        // progress blocker (gotcha 6).
+                        // progress blocker.
                         if (formViewModel.isSaving) {
                             val interactionSource = remember { MutableInteractionSource() }
                             Box(
@@ -291,14 +289,14 @@ fun NotificationDetailsScreen(
     }
 
     // Single atomic rule editor dialog at the screen root, driven by
-    // vm.ruleSheet with keyboard staging (gotcha 2).
+    // vm.ruleSheet with keyboard staging.
     RuleEditorKeyboardStaging(viewModel = formViewModel)
     RuleEditDialog(viewModel = formViewModel)
 }
 
 /**
- * Read-only summary (gotcha 8): rules with their values underneath,
- * pluralized frequency, cooldown, message and channels — no redundant labels.
+ * Read-only summary: rules with their values underneath, pluralized frequency,
+ * cooldown, message and channels — no redundant labels.
  */
 @Composable
 private fun NotificationDetailsSummary(

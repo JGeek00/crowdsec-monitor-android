@@ -66,11 +66,10 @@ private const val STEP_CHANNELS = 3
 private const val STEP_REVIEW = 4
 
 /**
- * Notification wizard: 5 steps (Info, Condition, Message, Channels, Review) in a
- * non-swipeable pager — navigation happens ONLY through the footer buttons
- * (gotcha 1). Hosts the rule editor dialog once at the root (gotcha 2) and
- * handles save/save-error state. `onClose(true)` means the notification was
- * saved; the caller refreshes its list.
+ * Notification wizard: 5 steps (Info, Condition, Message, Channels, Review) in
+ * a non-swipeable pager — navigation happens only through the footer buttons.
+ * `onClose(true)` means the notification was saved; the caller refreshes its
+ * list.
  */
 @Composable
 fun NotificationWizard(
@@ -87,13 +86,13 @@ fun NotificationWizard(
         viewModel.loadOptions()
     }
 
-    // Close the keyboard on every step change (gotcha 2 companion).
+    // Close the keyboard on every step change.
     LaunchedEffect(viewModel.selectedStep) {
         keyboard?.hide()
         pagerState.animateScrollToPage(viewModel.selectedStep)
     }
 
-    // Keyboard staging for the rule editor presentation (gotcha 2).
+    // Keyboard staging for the rule editor presentation.
     RuleEditorKeyboardStaging(viewModel = viewModel)
 
     FullScreenDialog(
@@ -163,7 +162,7 @@ fun NotificationWizard(
         )
     }
 
-    // Single atomic rule editor dialog, driven by vm.ruleSheet (gotcha 2).
+    // Single atomic rule editor dialog, driven by vm.ruleSheet.
     RuleEditDialog(viewModel = viewModel)
 }
 
@@ -246,8 +245,6 @@ private fun WizardErrorAlert(message: String, onDismiss: () -> Unit) {
     )
 }
 
-// MARK: - Step 0: Info
-
 @Composable
 private fun WizardInfoStep(viewModel: NotificationFormViewModel) {
     Column(
@@ -276,8 +273,6 @@ private fun WizardInfoStep(viewModel: NotificationFormViewModel) {
     }
 }
 
-// MARK: - Step 2: Message
-
 @Composable
 private fun WizardMessageStep(viewModel: NotificationFormViewModel) {
     Column(
@@ -301,13 +296,11 @@ private fun WizardMessageStep(viewModel: NotificationFormViewModel) {
     }
 }
 
-// MARK: - Alert-info sections (shared with the detail edit form, A10)
-
 /**
  * Opt-in alert-info toggle with explanatory footer, plus a collapsed-by-default
  * accordion listing the configured channels sorted supporting-first with
- * check/cross per `supportsAlertInfo` (gotcha 12: delivery is decided
- * per-channel by the backend).
+ * check/cross per `supportsAlertInfo` (delivery is decided per-channel by the
+ * backend).
  */
 @Composable
 fun NotificationAlertInfoSections(viewModel: NotificationFormViewModel) {
@@ -398,11 +391,6 @@ private fun channelsBySupport(channels: List<UserNotificationChannel>) =
         compareByDescending<UserNotificationChannel> { it.supportsAlertInfo }
             .thenBy { it.id }
     )
-
-// MARK: - Step 3: Channels (shared ChannelsSelectorSection in
-// NotificationChannelsSelector.kt, also used by the details edit form)
-
-// MARK: - Step 4: Review
 
 @Composable
 private fun WizardReviewStep(viewModel: NotificationFormViewModel) {

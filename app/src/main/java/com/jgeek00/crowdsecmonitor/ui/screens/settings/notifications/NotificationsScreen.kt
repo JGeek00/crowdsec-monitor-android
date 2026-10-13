@@ -61,9 +61,7 @@ private const val TAB_CHANNELS = 1
 
 /**
  * Entry point of the notifications settings: two tabs (notifications / channels)
- * hosting the lists, mirroring the iOS NotificationsSettingsView. Add-actions are
- * placeholders until the wizards land (tasks A8/A9); row taps navigate to the
- * details destinations (filled by task A10).
+ * hosting the lists. Row taps navigate to the details destinations.
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -80,7 +78,7 @@ fun NotificationsScreen(
 
     var selectedTab by rememberSaveable { mutableIntStateOf(TAB_NOTIFICATIONS) }
 
-    // A8: present the notification wizard (identity-fresh view model per
+    // Present the notification wizard (identity-fresh view model per
     // presentation) and refresh the list after a successful save.
     var showNotificationWizard by rememberSaveable { mutableStateOf(false) }
     var wizardPresentationId by remember { mutableIntStateOf(0) }
@@ -88,8 +86,8 @@ fun NotificationsScreen(
         wizardPresentationId++
         showNotificationWizard = true
     }
-    // A9: present the channel wizard (identity-fresh view model per
-    // presentation) and refresh the list after a successful save.
+    // Present the channel wizard (identity-fresh view model per presentation)
+    // and refresh the list after a successful save.
     var showChannelWizard by rememberSaveable { mutableStateOf(false) }
     var channelWizardPresentationId by remember { mutableIntStateOf(0) }
     val onAddChannel: () -> Unit = {
@@ -109,9 +107,9 @@ fun NotificationsScreen(
         channelsViewModel.initialFetch()
     }
 
-    // A10: the details screens edit notifications/channels in place; when this
-    // screen becomes active again after editing, silently refresh both lists
-    // (mirrors the iOS onSaved callback). No-op while a list has not loaded yet.
+    // The details screens edit notifications/channels in place; when this
+    // screen becomes active again after editing, silently refresh both lists.
+    // No-op while a list has not loaded yet.
     LaunchedEffect(Unit) {
         if (notificationsViewModel.state.data != null) notificationsViewModel.refresh()
         if (channelsViewModel.state.data != null) channelsViewModel.refresh()

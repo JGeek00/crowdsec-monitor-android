@@ -23,7 +23,6 @@ class NotificationWizardStringsTest {
     fun `wizard strings resolve in default locale`() {
         RuntimeEnvironment.setQualifiers("+en")
 
-        // Shell
         assertEquals("Next", string(R.string.next))
         assertEquals("Edit", string(R.string.edit))
         assertEquals("Finish", string(R.string.finish))
@@ -39,7 +38,6 @@ class NotificationWizardStringsTest {
             string(R.string.error_load_filter_options)
         )
 
-        // Info step
         assertEquals(
             "Notifications are sent by the backend when new alerts match the condition " +
                 "you build in the next steps. Give it a name so you can recognize it later.",
@@ -48,7 +46,6 @@ class NotificationWizardStringsTest {
         assertEquals("Details", string(R.string.details))
         assertEquals("Description (optional)", string(R.string.description_optional))
 
-        // Message step
         assertEquals(
             "This is the text sent through the selected channels every time the condition triggers.",
             string(R.string.message_step_info)
@@ -62,7 +59,6 @@ class NotificationWizardStringsTest {
         )
         assertEquals("Which channels support it?", string(R.string.which_channels_support))
 
-        // Channels step
         assertEquals(
             "Choose one or more channels used to deliver this notification. " +
                 "Channels are configured in the Channels tab.",
@@ -70,7 +66,6 @@ class NotificationWizardStringsTest {
         )
         assertEquals("No channels configured yet", string(R.string.no_channels_configured))
 
-        // Review step
         assertEquals(
             "Review the notification before finishing. Use Back to change anything.",
             string(R.string.review_step_info)
@@ -80,7 +75,6 @@ class NotificationWizardStringsTest {
         assertEquals("Condition blocks", string(R.string.condition_blocks))
         assertEquals("None", string(R.string.review_none))
 
-        // Condition editor
         assertEquals("Condition", string(R.string.condition))
         assertEquals(
             "Triggers on any alert, without filters. Combine it with the frequency below.",
@@ -137,7 +131,6 @@ class NotificationWizardStringsTest {
         assertEquals("6 hours", string(R.string.duration_six_hours))
         assertEquals("24 hours", string(R.string.duration_twentyfour_hours))
 
-        // Rule editor dialog
         assertEquals("Rule", string(R.string.rule_title))
         assertEquals("1. What to look at", string(R.string.rule_section_field))
         assertEquals("2. How to compare", string(R.string.rule_section_operator))
@@ -155,7 +148,6 @@ class NotificationWizardStringsTest {
         assertEquals("Or type a custom value", string(R.string.or_type_custom))
         assertEquals("Text", string(R.string.rule_value_text))
 
-        // Frequency plurals
         assertEquals("3 times", quantityString(R.plurals.notification_times, 3))
         assertEquals("1 time", quantityString(R.plurals.notification_times, 1))
         assertEquals("10 seconds", quantityString(R.plurals.notification_seconds, 10))
@@ -285,7 +277,6 @@ class NotificationWizardStringsTest {
         assertEquals("O escribe un valor personalizado", string(R.string.or_type_custom))
         assertEquals("Texto", string(R.string.rule_value_text))
 
-        // Frequency plurals
         assertEquals("3 veces", quantityString(R.plurals.notification_times, 3))
         assertEquals("1 vez", quantityString(R.plurals.notification_times, 1))
         assertEquals("10 segundos", quantityString(R.plurals.notification_seconds, 10))
@@ -414,7 +405,6 @@ class NotificationWizardStringsTest {
         assertEquals("Oder gib einen benutzerdefinierten Wert ein", string(R.string.or_type_custom))
         assertEquals("Text", string(R.string.rule_value_text))
 
-        // Frequency plurals
         assertEquals("3 Mal", quantityString(R.plurals.notification_times, 3))
         assertEquals("1 Mal", quantityString(R.plurals.notification_times, 1))
         assertEquals("10 Sekunden", quantityString(R.plurals.notification_seconds, 10))

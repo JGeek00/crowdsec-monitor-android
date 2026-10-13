@@ -64,14 +64,12 @@ import com.jgeek00.crowdsecmonitor.viewmodel.ChannelFormViewModel
 import kotlinx.coroutines.launch
 
 /**
- * Channel details: read-only summary with an in-place edit mode, mirroring the
- * iOS ChannelDetailsView. Read-only rows are derived from the provider
- * definition (value falls back to the field default), with a raw-config-keys
- * fallback when the definition is unavailable; secrets are NEVER displayed
- * (gotcha 13). Editing reuses the wizard's dynamic field editors. The top bar
- * switches from a pencil to separate Cancel/Save actions while editing
- * (gotcha 6); `isSaving` blocks input without a modal blocker. Delete stays
- * out of edit mode (gotcha 5). Save ends with a snackbar result.
+ * Channel details: read-only summary with an in-place edit mode. Read-only rows
+ * are derived from the provider definition (value falls back to the field
+ * default), with a raw-config-keys fallback when the definition is unavailable;
+ * secrets are never displayed. Editing reuses the wizard's dynamic field
+ * editors; `isSaving` blocks input without a modal blocker. Delete stays out of
+ * edit mode.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,7 +168,7 @@ fun ChannelDetailsScreen(
                 },
                 actions = {
                     if (isEditing) {
-                        // Cancel/Save as separate top-bar actions (gotcha 6).
+                        // Cancel/Save as separate top-bar actions.
                         IconButton(
                             onClick = { cancelEditing() },
                             enabled = !formViewModel.isSaving
@@ -265,7 +263,7 @@ fun ChannelDetailsScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                         }
                         // While saving, block input silently — no modal
-                        // progress blocker (gotcha 6).
+                        // progress blocker.
                         if (formViewModel.isSaving) {
                             val interactionSource = remember { MutableInteractionSource() }
                             Box(
@@ -301,9 +299,9 @@ fun ChannelDetailsScreen(
 
 /**
  * Read-only summary: provider row with the channel icon, plus configuration
- * rows derived from the provider definition — secrets hidden (gotcha 13),
- * value falling back to the field default; raw config keys fallback when the
- * definition is unavailable.
+ * rows derived from the provider definition — secrets hidden, value falling
+ * back to the field default; raw config keys fallback when the definition is
+ * unavailable.
  */
 @Composable
 private fun ChannelDetailsSummaryContent(

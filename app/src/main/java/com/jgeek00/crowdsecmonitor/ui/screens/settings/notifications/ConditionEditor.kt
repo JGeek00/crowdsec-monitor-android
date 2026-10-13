@@ -53,8 +53,6 @@ import com.jgeek00.crowdsecmonitor.viewmodel.ConditionOperator
 import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 import com.jgeek00.crowdsecmonitor.viewmodel.RulesValidationIssue
 
-// MARK: - Localized vocabulary (shared with the rule editor and detail screens)
-
 @Composable
 fun fieldLabel(field: ConditionField): String = when (field) {
     ConditionField.SCENARIO -> stringResource(R.string.field_scenario)
@@ -108,8 +106,6 @@ fun validationHint(issue: RulesValidationIssue): String = when (issue) {
     RulesValidationIssue.INVALID_WINDOW -> stringResource(R.string.window_range_error)
 }
 
-// MARK: - Condition editor (wizard step 1)
-
 /**
  * Full condition step of the notification wizard: info box plus the shared
  * condition/rule/frequency/cooldown sections.
@@ -133,7 +129,7 @@ fun ConditionEditor(
 
 /**
  * Condition, rules, frequency and cooldown sections shared by the wizard and
- * (later, A10) the notification detail edit form.
+ * the notification detail edit form.
  */
 @Composable
 fun ConditionEditorSections(viewModel: NotificationFormViewModel) {

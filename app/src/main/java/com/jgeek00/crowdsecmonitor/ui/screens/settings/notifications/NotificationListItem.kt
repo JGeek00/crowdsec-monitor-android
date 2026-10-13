@@ -64,7 +64,7 @@ fun NotificationListItem(
         )
 
         // Delete is isolated in its own menu section, separated from the toggle
-        // action to avoid accidental adjacency (gotcha 7).
+        // action to avoid accidental adjacency.
         OptionsMenuBottomSheet(
             options = emptyList(),
             showMenu = menuExpanded,

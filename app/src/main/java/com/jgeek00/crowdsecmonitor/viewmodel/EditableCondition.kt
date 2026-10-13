@@ -3,14 +3,9 @@ package com.jgeek00.crowdsecmonitor.viewmodel
 import com.jgeek00.crowdsecmonitor.data.models.NotificationConditionNode
 import com.jgeek00.crowdsecmonitor.data.models.NotificationConditionValue
 
-/**
- * Editor vocabulary for notification conditions. Mirrors the iOS EditableCondition.swift:
- * a small, UI-friendly subset of the wire condition DSL, with bidirectional conversion
- * to/from [NotificationConditionNode]. Conversion is faithful — no normalization
- * (e.g. OR merging of same-field leaves) happens here; that is the form ViewModel's job.
- */
-
-// MARK: - Editor vocabulary (subset of the API DSL)
+// UI-friendly subset of the wire condition DSL, with bidirectional conversion to
+// [NotificationConditionNode]. Conversion is faithful: no normalization (e.g. OR
+// merging of same-field leaves) happens here; that is the form ViewModel's job.
 
 enum class ConditionField(val wireName: String) {
     SCENARIO("scenario"),
@@ -41,8 +36,6 @@ enum class ConditionOperator(val wireName: String) {
         }
     }
 }
-
-// MARK: - Editable tree
 
 data class EditableLeaf(
     val field: ConditionField = ConditionField.SCENARIO,
@@ -83,8 +76,6 @@ sealed class EditableCondition {
             is Or -> children.isNotEmpty() && children.all { it.isValid }
             is Not -> child.isValid
         }
-
-    // MARK: API conversion
 
     fun toApi(): NotificationConditionNode {
         return when (this) {

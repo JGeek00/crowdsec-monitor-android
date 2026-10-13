@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * Explanatory intro box at the top of wizard steps, mirroring the iOS
- * FormInfoBox. The icon scales with typography (sp) instead of a fixed dp size.
+ * Explanatory intro box at the top of wizard steps. The icon scales with
+ * typography (sp) instead of a fixed dp size.
  */
 @Composable
 fun FormInfoBox(label: String) {

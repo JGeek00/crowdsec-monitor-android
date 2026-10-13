@@ -60,8 +60,6 @@ class ChannelFormViewModelTest {
         return vm
     }
 
-    // MARK: - Fixtures (provider fixtures ALWAYS include options on selects — gotcha 15)
-
     private fun field(
         key: String,
         type: String,
@@ -173,8 +171,6 @@ class ChannelFormViewModelTest {
         values = values + (key to value)
     }
 
-    // MARK: - Grouping
-
     @Test
     fun `grouped fields follow definition order with trailing ungrouped group`() {
         val vm = makeVm()
@@ -200,8 +196,6 @@ class ChannelFormViewModelTest {
         assertEquals(listOf("ungrouped", "weird"), groups[2].second.map { it.key })
     }
 
-    // MARK: - visibleIf
-
     @Test
     fun `visible fields respect visibleIf`() {
         val vm = makeVm()
@@ -210,8 +204,6 @@ class ChannelFormViewModelTest {
         vm.set("username", JsonPrimitive("u"))
         assertTrue(vm.visibleFields().map { it.key }.contains("password"))
     }
-
-    // MARK: - Validation
 
     @Test
     fun `ntfy validation with requiredIf and exclusiveWith`() {
@@ -250,8 +242,6 @@ class ChannelFormViewModelTest {
         assertNull(payload?.get("username"))
     }
 
-    // MARK: - Defaults on provider select (gotcha 11)
-
     @Test
     fun `select provider applies defaults`() {
         val vm = makeVm()
@@ -276,8 +266,6 @@ class ChannelFormViewModelTest {
         assertEquals(JsonPrimitive(465), vm.buildPayload()?.get("port"))
     }
 
-    // MARK: - Edit prefill
-
     @Test
     fun `edit prefills from channel`() {
         val vm = makeVm(editing = makeChannel())
@@ -287,8 +275,6 @@ class ChannelFormViewModelTest {
         assertEquals(JsonPrimitive("alerts"), vm.values["topic"])
         assertTrue(vm.providerValid())
     }
-
-    // MARK: - loadProviders
 
     @Test
     fun `load providers fetches and applies defaults`() = runTest {
@@ -312,8 +298,6 @@ class ChannelFormViewModelTest {
         assertTrue(vm.loadError)
     }
 
-    // MARK: - Save
-
     @Test
     fun `save create posts full config`() = runTest {
         val vm = makeVm(withApiClient = true)
@@ -336,8 +320,6 @@ class ChannelFormViewModelTest {
         assertEquals(JsonPrimitive("d@e.f"), body.config["to"])
         assertFalse(body.config.containsKey("username"))
     }
-
-    // MARK: - Inline test
 
     @Test
     fun `inline test success`() = runTest {

@@ -8,22 +8,19 @@ import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * Read-only summary rows for the channel details screen, derived from the
- * provider definition. Pure logic (no Compose), mirroring the iOS
- * ChannelDetailsView summary computation:
+ * provider definition. Pure logic (no Compose):
  *
- * - With a definition: one row per non-secret field, in definition order;
- *   the shown value is the channel config value, falling back to the field
- *   default.
+ * - With a definition: one row per non-secret field, in definition order; the
+ *   shown value is the channel config value, falling back to the field default.
  * - Without a definition: fallback to the raw config keys (sorted), hiding the
- *   well-known secret keys `password` and `accessToken` (gotcha 13).
- * - Secrets are NEVER displayed (gotcha 13): definition fields with
- *   `secret == true` are filtered out, also in the fallback path.
+ *   well-known secret keys.
+ * - Secrets are never displayed: definition fields with `secret == true` are
+ *   filtered out, also in the fallback path.
  */
 object ChannelDetailsSummary {
 
     /**
-     * Fallback secret keys used when the provider definition is unavailable:
-     * mirrors the iOS `["password", "accessToken"]`.
+     * Well-known secret keys used when the provider definition is unavailable.
      */
     val FALLBACK_SECRET_KEYS: Set<String> = setOf("password", "accessToken")
 
@@ -98,9 +95,8 @@ object ChannelDetailsSummary {
     }
 
     /**
-     * Plain-text rendering of a dynamic JSON value, mirroring the iOS
-     * `plainText(_:)`: strings verbatim, ints and doubles as numbers, booleans
-     * as localized Yes/No.
+     * Plain-text rendering of a dynamic JSON value: strings verbatim, ints and
+     * doubles as numbers, booleans as localized Yes/No.
      */
     fun plainText(value: JsonElement, yesLabel: String, noLabel: String): String {
         val primitive = value as? JsonPrimitive ?: return value.toString()

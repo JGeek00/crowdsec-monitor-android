@@ -13,9 +13,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Pure-logic tests for the channel details summary rows: secret hiding
- * (gotcha 13), value fallback to field defaults, and the raw-config-keys
- * fallback when the provider definition is unavailable.
+ * Pure-logic tests for the channel details summary rows: secret hiding, value
+ * fallback to field defaults, and the raw-config-keys fallback when the
+ * provider definition is unavailable.
  */
 class ChannelDetailsSummaryTest {
 
@@ -55,8 +55,6 @@ class ChannelDetailsSummaryTest {
     private fun labelsFor(definition: NotificationProvider?): Map<String, String> =
         definition?.fields?.associate { it.key to ("label:" + it.key) } ?: emptyMap()
 
-    // MARK: - Secret keys
-
     @Test
     fun `secret keys come from definition fields flagged secret`() {
         val definition = provider(
@@ -81,8 +79,6 @@ class ChannelDetailsSummaryTest {
             ChannelDetailsSummary.FALLBACK_SECRET_KEYS
         )
     }
-
-    // MARK: - Rows from definition
 
     @Test
     fun `definition rows hide secrets and use config values`() {
@@ -148,8 +144,6 @@ class ChannelDetailsSummaryTest {
         assertEquals(listOf(ChannelDetailsSummary.Row("label:secure", "Yes")), rows)
     }
 
-    // MARK: - Fallback rows (definition unavailable)
-
     @Test
     fun `fallback rows use raw sorted config keys and hide known secrets`() {
         val rows = ChannelDetailsSummary.buildRows(
@@ -166,8 +160,7 @@ class ChannelDetailsSummaryTest {
             yesLabel = yesLabel,
             noLabel = noLabel
         )
-        // Gotcha 13: password/accessToken are never displayed, even in the
-        // fallback path.
+        // password/accessToken are never displayed, even in the fallback path.
         assertEquals(
             listOf(
                 ChannelDetailsSummary.Row("host", "https://example.com"),
@@ -176,8 +169,6 @@ class ChannelDetailsSummaryTest {
             rows
         )
     }
-
-    // MARK: - displayText / plainText
 
     @Test
     fun `displayText prefers config value then default`() {

@@ -33,12 +33,10 @@ import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * Dynamic provider field editors shared by the channel wizard (step 2) and the
- * channel details edit form (A10). Mirrors the iOS ChannelWizardFormStep:
- * text, password (masked), number (numeric keyboard), boolean (switch),
- * select (dropdown with the current value injected as a temporary option when
- * it is not among the definition options — gotcha 11), email/url with the
- * right keyboard and no autocorrect/capitalization. Unknown field types are
- * skipped safely.
+ * channel details edit form: text, password (masked), number (numeric
+ * keyboard), boolean (switch), select (dropdown), email/url with the right
+ * keyboard and no autocorrect/capitalization. Unknown field types are skipped
+ * safely.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +89,6 @@ fun ProviderFieldEditor(viewModel: ChannelFormViewModel, field: ProviderField) {
                 autoCorrectEnabled = false
             )
         )
-        // Unknown field types are ignored with safe defaults, like on iOS.
     }
 }
 
@@ -150,8 +147,8 @@ private fun ProviderSelectField(viewModel: ChannelFormViewModel, field: Provider
     var expanded by remember { mutableStateOf(false) }
     val current = fieldTextValue(viewModel, field)
     val options = field.options ?: emptyList()
-    // Gotcha 11: inject the current value as a temporary option when it is not
-    // among the definition options, so the selection never renders blank.
+    // Inject the current value as a temporary option when it is not among the
+    // definition options, so the selection never renders blank.
     val effectiveOptions = if (current.isNotEmpty() && options.none { it.value == current }) {
         listOf(ProviderFieldOption(value = current, labelKey = "")) + options
     } else {

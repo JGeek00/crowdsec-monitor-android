@@ -6,22 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 /**
- * Resolution of backend-provided localization keys (`labelKey`, `placeholderKey`,
- * `descriptionKey`, section/option `labelKey`s) to localized strings.
- *
- * The backend serves provider definitions with open string keys (for example
- * `provider_ntfy`, `section_topic`, `field_password`). This app localizes with
- * static Android resources (the values, values-es and values-de string
- * catalogs), so every backend key that
- * can reach the UI MUST have a matching `<string name="...">` entry in the
- * default catalog. The lookup uses [Resources.getIdentifier] because the key is
- * only known at runtime; if a key is missing (unknown provider, older app
- * talking to a newer backend), we fall back to the raw key instead of crashing
- * or rendering a blank label.
- *
- * Note: `getIdentifier` is cached by the framework and this is only hit for a
- * handful of labels per provider form, so the reflection-style lookup cost is
- * negligible.
+ * Resolves backend localization keys (`labelKey`, `placeholderKey`, ...
+ * open string keys) to localized strings. Every backend key that can reach the
+ * UI must have a `<string name="...">` entry in the default catalog; the
+ * lookup uses [Resources.getIdentifier] because the key is only known at
+ * runtime. Missing entries fall back to the raw key (unknown provider or an
+ * older app talking to a newer backend) instead of crashing or rendering a
+ * blank label. The framework caches `getIdentifier` results and this is hit
+ * only for a handful of labels per form, so the cost is negligible.
  */
 fun backendStringResId(resources: Resources, packageName: String, key: String): Int =
     resources.getIdentifier(key, "string", packageName)

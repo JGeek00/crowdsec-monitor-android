@@ -4,16 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
-/**
- * Provider definitions served by the backend (notificationProvidersVersion = 2).
- * They drive the generic channel forms. Mirrors the iOS Monitor model
- * (NotificationProvider.swift) field-for-field.
- *
- * Field `type` strings are intentionally open (plain String): unknown field types
- * must be ignored with safe defaults, like on iOS.
- */
-
-// MARK: - Provider definition
+// Provider definitions served by the backend. Field `type` strings are
+// intentionally open (plain String): unknown field types are ignored with safe
+// defaults.
 
 @Serializable
 data class ProviderFieldCondition(

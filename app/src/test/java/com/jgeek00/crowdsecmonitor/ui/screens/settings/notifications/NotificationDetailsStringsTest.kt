@@ -8,16 +8,14 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 
 /**
- * Localization checks for the details screens' new strings (A10) across the
- * three catalogs (en/es/de).
+ * Localization checks for the details screens' strings across the three
+ * catalogs (en/es/de).
  */
 @RunWith(RobolectricTestRunner::class)
 class NotificationDetailsStringsTest {
 
     private fun string(resId: Int): String =
         RuntimeEnvironment.getApplication().getString(resId)
-
-    // MARK: - en
 
     @Test
     fun `details strings resolve in default locale`() {
@@ -56,8 +54,6 @@ class NotificationDetailsStringsTest {
         )
     }
 
-    // MARK: - es
-
     @Test
     fun `details strings resolve in Spanish locale`() {
         RuntimeEnvironment.setQualifiers("+es")
@@ -89,8 +85,6 @@ class NotificationDetailsStringsTest {
             string(R.string.error_load_providers)
         )
     }
-
-    // MARK: - de
 
     @Test
     fun `details strings resolve in German locale`() {

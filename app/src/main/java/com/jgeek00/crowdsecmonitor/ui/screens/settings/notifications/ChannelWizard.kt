@@ -74,11 +74,11 @@ private const val STEP_FORM = 2
 private const val STEP_FINAL = 3
 
 /**
- * Channel wizard: 4 steps (Intro, Provider grid, Dynamic form, Name + Test) in a
- * non-swipeable pager — navigation happens ONLY through the footer buttons
- * (gotcha 1), reusing the NotificationWizard shell pattern. The view model is
- * identity-fresh per presentation (created by the caller), and `onClose(true)`
- * means the channel was saved so the caller refreshes its list.
+ * Channel wizard: 4 steps (Intro, Provider grid, Dynamic form, Name + Test) in
+ * a non-swipeable pager — navigation happens only through the footer buttons.
+ * The view model is identity-fresh per presentation (created by the caller),
+ * and `onClose(true)` means the channel was saved so the caller refreshes its
+ * list.
  */
 @Composable
 fun ChannelWizard(
@@ -89,16 +89,15 @@ fun ChannelWizard(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { WIZARD_STEPS })
 
-    // The Android ChannelFormViewModel does not hold step state (unlike its iOS
-    // counterpart); the wizard composable owns it, surviving configuration
-    // changes like the iOS @State.
+    // The view model does not hold step state; the wizard composable owns it,
+    // and rememberSaveable makes it survive configuration changes.
     var selectedStep by rememberSaveable { mutableIntStateOf(STEP_INTRO) }
 
     LaunchedEffect(Unit) {
         viewModel.loadProviders()
     }
 
-    // Close the keyboard on every step change (gotcha 2 companion).
+    // Close the keyboard on every step change.
     LaunchedEffect(selectedStep) {
         keyboard?.hide()
         pagerState.animateScrollToPage(selectedStep)
@@ -262,8 +261,6 @@ private fun WizardErrorAlert(message: String, onDismiss: () -> Unit) {
     )
 }
 
-// MARK: - Step 0: Intro
-
 @Composable
 private fun ChannelWizardIntroStep() {
     Column(
@@ -276,8 +273,6 @@ private fun ChannelWizardIntroStep() {
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
-
-// MARK: - Step 1: Provider grid
 
 @Composable
 private fun ChannelWizardProviderStep(viewModel: ChannelFormViewModel) {
@@ -294,8 +289,8 @@ private fun ChannelWizardProviderStep(viewModel: ChannelFormViewModel) {
                 text = stringResource(R.string.choose_provider_section),
                 topPadding = Enums.SectionHeaderPaddingTop.NONE
             )
-            // FIXED 2-column rows built explicitly (gotcha 4): no lazy grid
-            // inside this scrollable form content.
+            // Fixed 2-column rows built explicitly: no lazy grid inside this
+            // scrollable form content.
             viewModel.providers.chunked(2).forEachIndexed { rowIndex, row ->
                 Row(
                     modifier = Modifier
@@ -382,8 +377,6 @@ private fun ProviderCard(
     }
 }
 
-// MARK: - Step 2: Dynamic provider form
-
 @Composable
 private fun ChannelWizardFormStep(viewModel: ChannelFormViewModel) {
     val definition = viewModel.definition
@@ -422,8 +415,6 @@ private fun ChannelWizardFormStep(viewModel: ChannelFormViewModel) {
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
-
-// MARK: - Step 3: Name + Test
 
 @Composable
 private fun ChannelWizardFinalStep(viewModel: ChannelFormViewModel) {

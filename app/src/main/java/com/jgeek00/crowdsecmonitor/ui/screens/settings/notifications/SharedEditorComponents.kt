@@ -31,10 +31,9 @@ fun EditorErrorAlert(message: String, onDismiss: () -> Unit) {
 }
 
 /**
- * Keyboard staging feed for the rule editor (gotcha 2): reports IME
- * visibility changes to the form ViewModel, which stages the atomic rule
- * dialog until the keyboard has hidden plus a settle delay. Used by the
- * notification wizard and the notification details screen.
+ * Keyboard staging feed for the rule editor: reports IME visibility changes to
+ * the form ViewModel, which stages the atomic rule dialog until the keyboard
+ * has hidden plus a settle delay.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

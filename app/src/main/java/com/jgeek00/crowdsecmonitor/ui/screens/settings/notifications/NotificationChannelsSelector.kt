@@ -25,7 +25,7 @@ import com.jgeek00.crowdsecmonitor.viewmodel.NotificationFormViewModel
 
 /**
  * Channels multi-select section shared by the notification wizard (step 3) and
- * the notification details edit form (A10). Toggling rows updates
+ * the notification details edit form. Toggling rows updates
  * `viewModel.selectedChannelIds`.
  */
 @Composable

@@ -19,13 +19,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
-/**
- * Wire models for user notifications. Mirrors the iOS Monitor models
- * (Notification.swift) and the backend contract at /api/v1/notifications.
- */
-
-// MARK: - Condition value (string or string array)
-
 @Serializable(with = NotificationConditionValueSerializer::class)
 sealed class NotificationConditionValue {
 
@@ -81,8 +74,6 @@ object NotificationConditionValueSerializer : KSerializer<NotificationConditionV
         }
     }
 }
-
-// MARK: - Condition node (recursive block tree)
 
 @Serializable(with = NotificationConditionNodeSerializer::class)
 sealed class NotificationConditionNode {
@@ -168,16 +159,12 @@ object NotificationConditionNodeSerializer : KSerializer<NotificationConditionNo
 
 }
 
-// MARK: - Threshold ("x times in y seconds")
-
 @Serializable
 data class NotificationThreshold(
     val count: Int,
     val windowSeconds: Int,
     val cooldownSeconds: Int? = null
 )
-
-// MARK: - User notification
 
 @Serializable
 data class UserNotification(
@@ -190,13 +177,10 @@ data class UserNotification(
     val message: String,
     val includeAlertInfo: Boolean,
     val channelIds: List<Int>,
-    // Only these two are snake_case on the wire (Sequelize column-named properties);
-    // everything else is camelCase (channelIds, includeAlertInfo...).
+    // These two are snake_case on the wire; everything else is camelCase.
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
 )
-
-// MARK: - History
 
 @Serializable
 data class NotificationHistoryChannel(
@@ -214,8 +198,6 @@ data class NotificationHistoryEntry(
     val triggeredAt: String,
     val channels: List<NotificationHistoryChannel>
 )
-
-// MARK: - Responses
 
 @Serializable
 data class NotificationsListResponse(
@@ -238,14 +220,9 @@ data class DeleteNotificationResponse(
     @SerialName("message") val message: String
 )
 
-// MARK: - Request bodies
-//
-// Omit-vs-null semantics: optional fields are declared as nullable properties
-// with `= null` default values. The shared Json instance in HttpClient
-// (ignoreUnknownKeys = true, coerceInputValues = true) keeps kotlinx.serialization's
-// default encodeDefaults = false, so a null-valued optional field is omitted from
-// the JSON body entirely instead of being sent as explicit `null` — backend
-// defaults then apply. We deliberately do not send `false`/`0` for unset fields.
+// Optional request fields default to null: with encodeDefaults = false, the
+// shared Json instance omits null-valued fields from the body instead of sending
+// explicit null, so backend defaults apply.
 
 @Serializable
 data class CreateNotificationRequest(
