@@ -22,6 +22,9 @@ import com.jgeek00.crowdsecmonitor.ui.screens.noServer.NoServerScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.AppConfigurationScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.LanguageSelectionScreen
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.ServerConfigurationScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.channels.ChannelDetailsScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.generic.NotificationsScreen
+import com.jgeek00.crowdsecmonitor.ui.screens.settings.notifications.notifications.NotificationDetailsScreen
 import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 
 private fun NavDestination.topLevelAncestorRoute(): String? {
@@ -142,7 +145,37 @@ fun AppNavGraph(
                 LanguageSelectionScreen(onBack = { navController.popBackStack() })
             }
             composable<Route.ServerConfiguration> {
-                ServerConfigurationScreen(onBack = { navController.popBackStack() })
+                ServerConfigurationScreen(
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNotifications = {
+                        navController.navigate(Route.Notifications)
+                    }
+                )
+            }
+            composable<Route.Notifications> {
+                NotificationsScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenNotification = { id ->
+                        navController.navigate(Route.NotificationDetails(id))
+                    },
+                    onOpenChannel = { id ->
+                        navController.navigate(Route.ChannelDetails(id))
+                    }
+                )
+            }
+            composable<Route.NotificationDetails> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.NotificationDetails>()
+                NotificationDetailsScreen(
+                    notificationId = route.id,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable<Route.ChannelDetails> { backStackEntry ->
+                val route = backStackEntry.toRoute<Route.ChannelDetails>()
+                ChannelDetailsScreen(
+                    channelId = route.id,
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }

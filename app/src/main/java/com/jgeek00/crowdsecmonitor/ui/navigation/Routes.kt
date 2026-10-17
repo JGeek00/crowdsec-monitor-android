@@ -41,6 +41,9 @@ sealed interface Route {
     @Serializable data object AppConfiguration : Route
     @Serializable data object LanguageSelection : Route
     @Serializable data object ServerConfiguration : Route
+    @Serializable data object Notifications : Route
+    @Serializable data class NotificationDetails(val id: Int) : Route
+    @Serializable data class ChannelDetails(val id: Int) : Route
 }
 
 data class TopLevelRoute(

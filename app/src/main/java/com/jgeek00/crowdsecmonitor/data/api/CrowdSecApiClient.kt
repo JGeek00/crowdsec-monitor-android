@@ -24,6 +24,8 @@ class CrowdSecApiClient(server: CSServerModel) {
     val decisions: DecisionsApiClient by lazy { DecisionsApiClient(httpClient) }
     val allowlists: AllowlistsApiClient by lazy { AllowlistsApiClient(httpClient) }
     val blocklists: BlocklistsApiClient by lazy { BlocklistsApiClient(httpClient) }
+    val notifications: NotificationsApiClient by lazy { NotificationsApiClient(httpClient) }
+    val notificationChannels: NotificationChannelsApiClient by lazy { NotificationChannelsApiClient(httpClient) }
 
     private val statusService: StatusService by lazy { httpClient.retrofit.create(StatusService::class.java) }
 

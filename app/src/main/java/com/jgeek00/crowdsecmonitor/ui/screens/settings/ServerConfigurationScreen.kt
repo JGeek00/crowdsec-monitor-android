@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +45,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jgeek00.crowdsecmonitor.R
 import com.jgeek00.crowdsecmonitor.constants.Enums
+import com.jgeek00.crowdsecmonitor.ui.components.ListItemContent
+import com.jgeek00.crowdsecmonitor.ui.components.RoundedCornersListTile
 import com.jgeek00.crowdsecmonitor.ui.components.SectionHeader
 import com.jgeek00.crowdsecmonitor.ui.components.connectionForm.CreateServerSheet
 import com.jgeek00.crowdsecmonitor.ui.screens.settings.components.ServerInformationSection
@@ -56,6 +59,7 @@ import com.jgeek00.crowdsecmonitor.viewmodel.ServersManagerViewModel
 @Composable
 fun ServerConfigurationScreen(
     onBack: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
     serversManagerViewModel: ServersManagerViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -146,6 +150,19 @@ fun ServerConfigurationScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(stringResource(R.string.add_server))
                     }
+                }
+            }
+            item {
+                SectionHeader(stringResource(R.string.notifications))
+            }
+            item {
+                RoundedCornersListTile(index = 0, totalItems = 1, onClick = onNavigateToNotifications) {
+                    ListItemContent(
+                        headlineText = stringResource(R.string.notifications),
+                        leadingContent = {
+                            Icon(Icons.Rounded.Notifications, contentDescription = null)
+                        }
+                    )
                 }
             }
             if (serversManagerViewModel.hasServerConfigured) {
